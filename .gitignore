@@ -1,0 +1,22 @@
+# Environment variables
+.env
+.env.database
+
+# Database files
+*.db
+spool.db
+
+# Node modules
+node_modules/
+
+# Build output
+dist/
+
+# Logs
+*.log
+
+# Local notes and plans
+todo.txt
+*-7cb55e.md
+.windsurf/
+.cursor/
