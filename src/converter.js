@@ -9,10 +9,13 @@ import { enqueueJob } from "./queue.js";
 
 const exec = promisify(execFile);
 
+const FFMPEG = process.env.FFMPEG_PATH || "ffmpeg";
+const YTDLP = process.env.YTDLP_PATH || "yt-dlp";
+
 // Check if video is already in optimal format (MP4 with H.264/AAC)
 async function isOptimalFormat(filePath) {
   try {
-    const { stdout } = await exec("C:/Users/Anwender/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1-full_build/bin/ffmpeg.exe", [
+    const { stdout } = await exec(FFMPEG, [
       "-i", filePath,
       "-f", "null",
       "-"
@@ -77,10 +80,9 @@ async function doConvertReel(instagramUrl, ttl = "30d") {
 
 async function downloadWithYtDlp(url, outputPath) {
   try {
-    const { stdout, stderr } = await exec("C:/Users/Anwender/AppData/Local/Microsoft/WinGet/Packages/yt-dlp.yt-dlp_Microsoft.Winget.Source_8wekyb3d8bbwe/yt-dlp.exe", [
+    const { stdout, stderr } = await exec(YTDLP, [
       "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
       "--merge-output-format", "mp4",
-      "--ffmpeg-location", "C:/Users/Anwender/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1-full_build/bin",
       "--output", outputPath,
       "--no-playlist",
       url,
@@ -93,7 +95,7 @@ async function downloadWithYtDlp(url, outputPath) {
 }
 
 async function reEncodeWithFfmpeg(inputPath, outputPath) {
-  await exec("C:/Users/Anwender/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.1-full_build/bin/ffmpeg.exe", [
+  await exec(FFMPEG, [
     "-i", inputPath,
     "-c:v", "libx264",
     "-preset", "veryfast",
