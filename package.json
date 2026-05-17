@@ -7,7 +7,7 @@
     "dev": "node --watch src/server.js",
     "dev:ui": "vite",
     "build": "vite build",
-    "render-build": "npm install && pip install yt-dlp"
+    "render-build": "npm install && pip install yt-dlp --break-system-packages"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.600.0",
