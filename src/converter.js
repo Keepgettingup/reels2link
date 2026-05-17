@@ -98,11 +98,12 @@ async function reEncodeWithFfmpeg(inputPath, outputPath) {
   await exec(FFMPEG, [
     "-i", inputPath,
     "-c:v", "libx264",
-    "-preset", "veryfast",
-    "-crf", "23",
+    "-preset", "ultrafast",
+    "-crf", "28",
     "-c:a", "aac",
-    "-b:a", "128k",
+    "-b:a", "96k",
     "-movflags", "+faststart",
+    "-threads", "1",
     "-y",
     outputPath,
   ]);
