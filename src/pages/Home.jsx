@@ -466,37 +466,37 @@ export default function Home() {
               </div>
             </div>
 
-            {/* MCP Server Section */}
+            {/* AI Integration Section */}
             <div>
               <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Zap className="w-5 h-5 text-purple-600" />
-                  <h3 className="text-xl font-bold text-gray-900">MCP Server Available</h3>
+                  <h3 className="text-xl font-bold text-gray-900">AI Agent Integration</h3>
                 </div>
                 <p className="text-gray-600 mb-4">
-                  Connect Reels2Link to AI agents with our Model Context Protocol (MCP) server. 
-                  Enable Claude, Cursor, and other AI tools to convert Instagram Reels directly.
+                  Connect Reels2Link to AI agents using our REST API or optional MCP server. 
+                  Perfect for Claude, Cursor, and other AI tools.
                 </p>
                 
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Check className="w-4 h-4 text-green-500" />
-                    Natural language video conversion
+                    Simple REST API integration
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Check className="w-4 h-4 text-green-500" />
-                    Built-in authentication handling
+                    Optional MCP server for advanced users
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Check className="w-4 h-4 text-green-500" />
-                    Usage statistics and history
+                    Works with any AI platform
                   </div>
                 </div>
 
                 <div className="bg-white rounded-lg p-3 mb-4">
-                  <p className="text-xs font-medium text-gray-700 mb-1">Installation</p>
-                  <code className="text-xs text-gray-600 font-mono">git clone https://github.com/Keepgettingup/reels2link.git</code>
-                  <p className="text-xs text-gray-500 mt-1">cd reels2link/mcp && npm install && npm run build</p>
+                  <p className="text-xs font-medium text-gray-700 mb-1">Quick Start</p>
+                  <code className="text-xs text-gray-600 font-mono">Get API key above → Use REST API</code>
+                  <p className="text-xs text-gray-500 mt-1">No complex setup required</p>
                 </div>
 
                 <a
@@ -506,7 +506,7 @@ export default function Home() {
                   className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  View MCP Documentation
+                  Advanced: MCP Server
                 </a>
               </div>
 
