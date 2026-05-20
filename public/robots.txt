@@ -1,17 +1,14 @@
 User-agent: *
 Allow: /
 
-# Allow search engines to crawl the main site
+# Allow public API endpoints and video pages
 Allow: /api/docs
 Allow: /v/
 Allow: /api/v/
 
-# Disallow admin/private areas
-Disallow: /api/
-Disallow: /admin/
-Disallow: /app/
-Disallow: /auth/
+# Disallow only sensitive areas
 Disallow: /webhooks/
+Disallow: /auth/
 
 # Sitemap
 Sitemap: https://reels2link.link/sitemap.xml
