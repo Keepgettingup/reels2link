@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "reels2link": {
+      "command": "node",
+      "args": ["./dist/index.js"],
+      "env": {
+        "REELS2LINK_API_KEY": "spool_live_your_api_key_here"
+      }
+    }
+  }
+}

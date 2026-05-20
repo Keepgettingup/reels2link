@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Instagram, Zap, Crown, Check, ArrowRight, Play, Shield, Globe, Clock, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Instagram, Zap, Crown, Check, ArrowRight, Play, Shield, Globe, Clock, Loader2, CheckCircle2, AlertCircle, ExternalLink } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -395,21 +395,139 @@ export default function Home() {
 
       {/* API Section */}
       <section id="api" className="py-24 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="max-w-xl">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
               <h2 className="text-3xl font-bold mb-4">Built for Developers</h2>
               <p className="text-gray-500 mb-6">One API call. Get a hosted video link back. That's it.</p>
-              <ul className="space-y-3">
+              <ul className="space-y-3 mb-8">
                 <li className="flex items-center gap-2 text-sm text-gray-600">
                   <Check className="w-4 h-4 text-purple-500" /> RESTful JSON API
                 </li>
                 <li className="flex items-center gap-2 text-sm text-gray-600">
                   <Check className="w-4 h-4 text-purple-500" /> API Key auth
                 </li>
+                <li className="flex items-center gap-2 text-sm text-gray-600">
+                  <Check className="w-4 h-4 text-purple-500" /> Usage statistics
+                </li>
                 <li className="flex items-center gap-2 text-sm text-gray-400">
                   <span className="text-xs font-semibold px-1.5 py-0.5 bg-yellow-100 text-yellow-600 rounded">Soon</span> x402 AI agent payments
                 </li>
               </ul>
+
+              {/* API Key Section */}
+              {apiKey ? (
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Your API Key</span>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(apiKey);
+                        // You could add a toast notification here
+                      }}
+                      className="text-xs bg-purple-500 text-white px-2 py-1 rounded hover:bg-purple-600 transition"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <code className="text-xs text-gray-600 break-all font-mono">{apiKey}</code>
+                </div>
+              ) : (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-yellow-800">
+                    <strong>No API key?</strong> <Link to="/app" className="underline">Sign in</Link> to get your API key and start building.
+                  </p>
+                </div>
+              )}
+
+              {/* Quick API Example */}
+              <div className="bg-gray-900 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-gray-400">Quick Example</span>
+                  <button
+                    onClick={() => {
+                      const code = `curl -X POST https://reels2link.onrender.com/api/convert \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"url": "https://instagram.com/reel/ABC123/"}'`;
+                      navigator.clipboard.writeText(code);
+                    }}
+                    className="text-xs bg-gray-700 text-white px-2 py-1 rounded hover:bg-gray-600 transition"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <pre className="text-xs text-green-400 font-mono overflow-x-auto">
+{`curl -X POST https://reels2link.onrender.com/api/convert \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"url": "https://instagram.com/reel/ABC123/"}'`}
+                </pre>
+              </div>
+            </div>
+
+            {/* MCP Server Section */}
+            <div>
+              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Zap className="w-5 h-5 text-purple-600" />
+                  <h3 className="text-xl font-bold text-gray-900">MCP Server Available</h3>
+                </div>
+                <p className="text-gray-600 mb-4">
+                  Connect Reels2Link to AI agents with our Model Context Protocol (MCP) server. 
+                  Enable Claude, Cursor, and other AI tools to convert Instagram Reels directly.
+                </p>
+                
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="w-4 h-4 text-green-500" />
+                    Natural language video conversion
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="w-4 h-4 text-green-500" />
+                    Built-in authentication handling
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Check className="w-4 h-4 text-green-500" />
+                    Usage statistics and history
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-3 mb-4">
+                  <p className="text-xs font-medium text-gray-700 mb-1">Installation</p>
+                  <code className="text-xs text-gray-600 font-mono">npm install mcp-reels2link</code>
+                </div>
+
+                <a
+                  href="https://github.com/Keepgettingup/reels2link/tree/main/mcp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  View MCP Documentation
+                </a>
+              </div>
+
+              {/* API Endpoints Quick Reference */}
+              <div className="mt-6 bg-gray-50 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-gray-900 mb-3">API Endpoints</h4>
+                <div className="space-y-2 text-xs">
+                  <div className="font-mono">
+                    <span className="text-purple-600">POST</span> /api/convert
+                  </div>
+                  <div className="font-mono">
+                    <span className="text-blue-600">GET</span> /api/me
+                  </div>
+                  <div className="font-mono">
+                    <span className="text-blue-600">GET</span> /api/stats
+                  </div>
+                  <div className="font-mono">
+                    <span className="text-blue-600">GET</span> /api/my-conversions
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
