@@ -138,17 +138,20 @@ class Reels2LinkMCPServer {
       try {
         switch (name) {
           case 'convert_reel':
-            return await this.convertReel(args.url, args.ttl);
+            return await this.convertReel(args?.url as string, args?.ttl as string || '24h');
           case 'get_user_info':
             return await this.getUserInfo();
           case 'get_conversion_stats':
             return await this.getConversionStats();
           case 'get_conversions':
-            return await this.getConversions(args.limit);
+            return await this.getConversions(args?.limit as number || 10);
           case 'get_video_info':
-            return await this.getVideoInfo(args.id);
+            return await this.getVideoInfo(args?.id as string);
           case 'request_magic_link':
-            return await this.requestMagicLink(args.email);
+            if (!args?.email) {
+              throw new Error('Email is required for magic link request');
+            }
+            return await this.requestMagicLink(String(args.email));
           default:
             throw new Error(`Unknown tool: ${name}`);
         }

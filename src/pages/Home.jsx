@@ -495,7 +495,8 @@ export default function Home() {
 
                 <div className="bg-white rounded-lg p-3 mb-4">
                   <p className="text-xs font-medium text-gray-700 mb-1">Installation</p>
-                  <code className="text-xs text-gray-600 font-mono">npm install mcp-reels2link</code>
+                  <code className="text-xs text-gray-600 font-mono">git clone https://github.com/Keepgettingup/reels2link.git</code>
+                  <p className="text-xs text-gray-500 mt-1">cd reels2link/mcp && npm install && npm run build</p>
                 </div>
 
                 <a
