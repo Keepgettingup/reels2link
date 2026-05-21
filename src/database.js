@@ -2,7 +2,15 @@ import pg from "pg";
 import "dotenv/config";
 
 const { Pool } = pg;
+
+if (!process.env.DATABASE_URL) {
+  console.error('[Database] FATAL: DATABASE_URL is not set');
+}
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+pool.on('error', (err) => console.error('[Database] Pool error:', err.message));
+
+export { pool };
 
 async function query(sql, params = []) {
   const client = await pool.connect();
