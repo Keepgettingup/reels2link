@@ -129,9 +129,14 @@ app.get("/auth/verify", (req, res) => {
 
 // OAuth Routes
 app.get("/auth/google", oauthLimiter, async (req, res) => {
-  const redirectUri = `${process.env.BASE_URL}/auth/google/callback`;
-  const authUrl = await getGoogleAuthUrl(redirectUri, req.query.fp);
-  res.redirect(authUrl);
+  try {
+    const redirectUri = `${process.env.BASE_URL}/auth/google/callback`;
+    const authUrl = await getGoogleAuthUrl(redirectUri, req.query.fp);
+    res.redirect(authUrl);
+  } catch (err) {
+    console.error('[OAuth] Google auth init failed:', err.message);
+    res.status(500).json({ error: 'Auth service temporarily unavailable' });
+  }
 });
 
 app.get("/auth/google/callback", async (req, res) => {
@@ -203,9 +208,14 @@ app.get("/auth/google/callback", async (req, res) => {
 });
 
 app.get("/auth/github", oauthLimiter, async (req, res) => {
-  const redirectUri = `${process.env.BASE_URL}/auth/github/callback`;
-  const authUrl = await getGitHubAuthUrl(redirectUri, req.query.fp);
-  res.redirect(authUrl);
+  try {
+    const redirectUri = `${process.env.BASE_URL}/auth/github/callback`;
+    const authUrl = await getGitHubAuthUrl(redirectUri, req.query.fp);
+    res.redirect(authUrl);
+  } catch (err) {
+    console.error('[OAuth] GitHub auth init failed:', err.message);
+    res.status(500).json({ error: 'Auth service temporarily unavailable' });
+  }
 });
 
 app.get("/auth/github/callback", async (req, res) => {

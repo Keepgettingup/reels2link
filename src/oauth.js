@@ -1,6 +1,8 @@
 import { randomBytes } from "crypto";
 import { pool } from "./database.js";
 
+const memoryStates = new Map();
+
 async function dbQuery(sql, params = []) {
   const client = await pool.connect();
   try { return await client.query(sql, params); } finally { client.release(); }
@@ -8,22 +10,44 @@ async function dbQuery(sql, params = []) {
 
 export async function generateState(fp = null) {
   const state = randomBytes(16).toString("hex");
-  await dbQuery("INSERT INTO oauth_states (state, fp, created_at) VALUES ($1, $2, $3)", [state, fp ?? null, Date.now()]);
+  try {
+    await dbQuery("INSERT INTO oauth_states (state, fp, created_at) VALUES ($1, $2, $3)", [state, fp ?? null, Date.now()]);
+  } catch {
+    memoryStates.set(state, { fp: fp ?? null, createdAt: Date.now() });
+  }
   return state;
 }
 
 export async function validateState(state) {
-  const r = await dbQuery("SELECT * FROM oauth_states WHERE state = $1", [state]);
-  const data = r.rows[0];
-  if (!data) return false;
-  await dbQuery("DELETE FROM oauth_states WHERE state = $1", [state]);
-  if (Date.now() - Number(data.created_at) > 10 * 60 * 1000) return false;
-  return { fp: data.fp };
+  try {
+    const r = await dbQuery("SELECT * FROM oauth_states WHERE state = $1", [state]);
+    const data = r.rows[0];
+    if (!data) {
+      const mem = memoryStates.get(state);
+      if (!mem) return false;
+      memoryStates.delete(state);
+      if (Date.now() - mem.createdAt > 10 * 60 * 1000) return false;
+      return { fp: mem.fp };
+    }
+    await dbQuery("DELETE FROM oauth_states WHERE state = $1", [state]).catch(() => {});
+    if (Date.now() - Number(data.created_at) > 10 * 60 * 1000) return false;
+    return { fp: data.fp };
+  } catch {
+    const mem = memoryStates.get(state);
+    if (!mem) return false;
+    memoryStates.delete(state);
+    if (Date.now() - mem.createdAt > 10 * 60 * 1000) return false;
+    return { fp: mem.fp };
+  }
 }
 
 export async function getFingerprintFromState(state) {
-  const r = await dbQuery("SELECT fp FROM oauth_states WHERE state = $1", [state]);
-  return r.rows[0]?.fp || null;
+  try {
+    const r = await dbQuery("SELECT fp FROM oauth_states WHERE state = $1", [state]);
+    return r.rows[0]?.fp || memoryStates.get(state)?.fp || null;
+  } catch {
+    return memoryStates.get(state)?.fp || null;
+  }
 }
 
 export async function getGoogleAuthUrl(redirectUri, fp = null) {
