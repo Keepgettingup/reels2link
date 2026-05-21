@@ -19,6 +19,9 @@ function setCookie(name, value, days) {
 
 function App() {
   const [url, setUrl] = useState('');
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkUrls, setBulkUrls] = useState('');
+  const [bulkResults, setBulkResults] = useState(null);
   const [apiKey, setApiKeyState] = useState(() => getCookie('reels2link_apikey') || '');
   
   // Helper to set API key and persist to cookie
@@ -192,28 +195,67 @@ function App() {
     setLoading(true);
     setError(null);
     setResult(null);
+    setBulkResults(null);
 
     try {
-      const response = await fetch(`${API}/api/convert`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({ url, ttl }),
-      });
+      if (bulkMode) {
+        // Parse bulk URLs (split by newlines, commas, or spaces)
+        const urls = bulkUrls
+          .split(/[\n\r,]+/)
+          .map(u => u.trim())
+          .filter(u => u.length > 0);
 
-      const data = await response.json();
+        if (urls.length === 0) {
+          throw new Error('Please enter at least one Instagram URL');
+        }
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Conversion failed');
+        if (urls.length > 50) {
+          throw new Error('Maximum 50 URLs per bulk conversion');
+        }
+
+        const response = await fetch(`${API}/api/convert/bulk`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({ urls, ttl }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Bulk conversion failed');
+        }
+
+        setBulkResults(data);
+        setSliderMinutes(60);
+        if (ttl.endsWith('m')) handleTtlChange('1h');
+        fetch(`${API}/api/my-conversions`, { headers: { 'Authorization': `Bearer ${apiKey}` } })
+          .then(r => r.json()).then(d => { if (Array.isArray(d)) setMyConversions(d); }).catch(() => {});
+      } else {
+        // Single conversion
+        const response = await fetch(`${API}/api/convert`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({ url, ttl }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Conversion failed');
+        }
+
+        setResult(data);
+        setSliderMinutes(60);
+        if (ttl.endsWith('m')) handleTtlChange('1h');
+        fetch(`${API}/api/my-conversions`, { headers: { 'Authorization': `Bearer ${apiKey}` } })
+          .then(r => r.json()).then(d => { if (Array.isArray(d)) setMyConversions(d); }).catch(() => {});
       }
-
-      setResult(data);
-      setSliderMinutes(60);
-      if (ttl.endsWith('m')) handleTtlChange('1h');
-      fetch(`${API}/api/my-conversions`, { headers: { 'Authorization': `Bearer ${apiKey}` } })
-        .then(r => r.json()).then(d => { if (Array.isArray(d)) setMyConversions(d); }).catch(() => {});
     } catch (err) {
       setError(err.message);
     } finally {
@@ -660,11 +702,31 @@ function App() {
 
         {/* Conversion Form */}
         <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-lg font-semibold mb-4">Convert Reel</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Convert Reel</h2>
+            <button
+              type="button"
+              onClick={() => {
+                setBulkMode(!bulkMode);
+                setUrl('');
+                setBulkUrls('');
+                setResult(null);
+                setBulkResults(null);
+                setError(null);
+              }}
+              className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-all ${
+                bulkMode
+                  ? 'bg-purple-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {bulkMode ? '🔄 Single Mode' : '📋 Bulk Mode'}
+            </button>
+          </div>
           <form onSubmit={handleConvert} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">
-                Instagram Reel URL
+                {bulkMode ? 'Instagram Reel URLs (one per line)' : 'Instagram Reel URL'}
               </label>
               <div
                 className="relative rounded-2xl overflow-hidden"
@@ -674,74 +736,87 @@ function App() {
                   border: '1px solid #e0e0e0',
                 }}
               >
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-pink-400">
+                <span className="absolute left-4 text-pink-400" style={{ top: bulkMode ? '12px' : '50%', transform: bulkMode ? 'none' : 'translateY(-50%)' }}>
                   <Instagram className="w-4 h-4" />
                 </span>
-                <input
-                  ref={urlInputRef}
-                  type="url"
-                  value={url}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    const trimmed = val.trim();
-                    const delta = trimmed.length - url.trim().length;
-                    // Looks like a paste: jumped by more than 5 chars at once
-                    if (delta > 5) {
-                      const clean = trimmed.replace(/[\r\n\t\u200B\u00A0]/g, '');
-                      const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(clean);
-                      if (!isInstagram || trimmed.length >= 200) {
-                        // Let React render the invalid value briefly, then clear it
+                {bulkMode ? (
+                  <textarea
+                    value={bulkUrls}
+                    onChange={(e) => setBulkUrls(e.target.value)}
+                    placeholder="https://www.instagram.com/reel/ABC123&#10;https://www.instagram.com/reel/DEF456&#10;https://www.instagram.com/reel/GHI789"
+                    rows={6}
+                    required
+                    className="w-full bg-transparent pl-10 pr-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none resize-none"
+                  />
+                ) : (
+                  <>
+                    <input
+                      ref={urlInputRef}
+                      type="url"
+                      value={url}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const trimmed = val.trim();
+                        const delta = trimmed.length - url.trim().length;
+                        // Looks like a paste: jumped by more than 5 chars at once
+                        if (delta > 5) {
+                          const clean = trimmed.replace(/[\r\n\t\u200B\u00A0]/g, '');
+                          const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(clean);
+                          if (!isInstagram || trimmed.length >= 200) {
+                            // Let React render the invalid value briefly, then clear it
+                            setUrl(val);
+                            setTimeout(() => {
+                              setUrl('');
+                              setWrongPasteUrl(true);
+                              setTimeout(() => setWrongPasteUrl(false), 2500);
+                            }, 0);
+                            return;
+                          }
+                        }
                         setUrl(val);
-                        setTimeout(() => {
-                          setUrl('');
-                          setWrongPasteUrl(true);
-                          setTimeout(() => setWrongPasteUrl(false), 2500);
-                        }, 0);
-                        return;
-                      }
-                    }
-                    setUrl(val);
-                  }}
-                  onPaste={(e) => {
-                    const pasted = e.clipboardData.getData('text').trim();
-                    const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(pasted);
-                    if (!isInstagram || pasted.length >= 200) {
-                      e.preventDefault();
-                      setWrongPasteUrl(true);
-                      setTimeout(() => setWrongPasteUrl(false), 2500);
-                    }
-                  }}
-                  placeholder="https://www.instagram.com/reel/..."
-                  required
-                  className="w-full bg-transparent pl-10 pr-12 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none"
-                />
-                {!url && (
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      try {
-                        const text = await navigator.clipboard.readText();
-                        const trimmed = text.trim();
-                        const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(trimmed);
-                        if (isInstagram && trimmed.length < 200) {
-                          setUrl(trimmed);
-                          setWrongPasteUrl(false);
-                        } else {
+                      }}
+                      onPaste={(e) => {
+                        const pasted = e.clipboardData.getData('text').trim();
+                        const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(pasted);
+                        if (!isInstagram || pasted.length >= 200) {
+                          e.preventDefault();
                           setWrongPasteUrl(true);
                           setTimeout(() => setWrongPasteUrl(false), 2500);
                         }
-                      } catch {}
-                    }}
-                    className={`absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 transition-colors text-xs font-medium ${wrongPasteUrl ? 'text-red-400' : 'text-gray-400 hover:text-pink-500'}`}
-                  >
-                    {wrongPasteUrl ? (
-                      <><svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg><span>Wrong</span></>
-                    ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                      </svg>
+                      }}
+                      placeholder="https://www.instagram.com/reel/..."
+                      required
+                      className="w-full bg-transparent pl-10 pr-12 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none"
+                    />
+                    {!url && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            const text = await navigator.clipboard.readText();
+                            const trimmed = text.trim();
+                            const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(trimmed);
+                            if (isInstagram && trimmed.length < 200) {
+                              setUrl(trimmed);
+                              setWrongPasteUrl(false);
+                            } else {
+                              setWrongPasteUrl(true);
+                              setTimeout(() => setWrongPasteUrl(false), 2500);
+                            }
+                          } catch {}
+                        }}
+                        className={`absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 transition-colors text-xs font-medium ${wrongPasteUrl ? 'text-red-400' : 'text-gray-400 hover:text-pink-500'}`}
+                      >
+                        {wrongPasteUrl ? (
+                          <><svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg><span>Wrong</span></>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                        )}
+                      </button>
                     )}
-                  </button>
+                  </>
                 )}
               </div>
             </div>
@@ -877,6 +952,48 @@ function App() {
                   </p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Bulk Results */}
+          {bulkResults && (
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-start gap-3 mb-4">
+                <CheckCircle2 className="w-5 h-5 text-blue-600 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-medium text-blue-900">Bulk conversion complete!</p>
+                  <p className="text-sm text-blue-700">
+                    {bulkResults.successful} of {bulkResults.total} conversions successful
+                  </p>
+                </div>
+              </div>
+              
+              {bulkResults.results && bulkResults.results.length > 0 && (
+                <div className="space-y-2 mt-4">
+                  <p className="text-xs font-semibold text-blue-800 uppercase tracking-wide">Successful conversions:</p>
+                  {bulkResults.results.map((r, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3 border border-blue-100">
+                      <p className="text-xs text-gray-500 truncate mb-1">{r.url}</p>
+                      <a href={r.viewer_url || r.link} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                        {r.viewer_url || r.link}
+                      </a>
+                      <p className="text-xs text-gray-400 mt-1">Size: {r.size_mb} MB</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {bulkResults.errors && bulkResults.errors.length > 0 && (
+                <div className="space-y-2 mt-4">
+                  <p className="text-xs font-semibold text-red-800 uppercase tracking-wide">Failed conversions:</p>
+                  {bulkResults.errors.map((err, idx) => (
+                    <div key={idx} className="bg-red-50 rounded-lg p-3 border border-red-100">
+                      <p className="text-xs text-gray-500 truncate mb-1">{err.url}</p>
+                      <p className="text-xs text-red-600">{err.error}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

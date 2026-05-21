@@ -408,6 +408,118 @@ app.post("/api/convert", async (req, res) => {
   }
 });
 
+// Bulk conversion endpoint
+app.post("/api/convert/bulk", async (req, res) => {
+  const { urls, ttl = "30d" } = req.body;
+  
+  if (!urls || !Array.isArray(urls) || urls.length === 0) {
+    return res.status(400).json({ error: "Invalid URLs array" });
+  }
+  
+  if (urls.length > 50) {
+    return res.status(400).json({ error: "Maximum 50 URLs per bulk request" });
+  }
+  
+  // Validate all URLs
+  const validUrls = urls.filter(url => url && isValidInstagramUrl(url));
+  if (validUrls.length === 0) {
+    return res.status(400).json({ error: "No valid Instagram URLs provided" });
+  }
+  
+  // Get API key from header
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Missing API key" });
+  }
+  
+  const apiKey = authHeader.slice(7);
+  
+  // Look up user in database
+  const user = await getUserByApiKey(apiKey);
+  if (!user) {
+    return res.status(401).json({ error: "Invalid API key" });
+  }
+  
+  // Check usage limits for bulk request
+  const usageLimits = await getUsageLimits(apiKey);
+  if (!usageLimits.allowed) {
+    return res.status(429).json({ 
+      error: "Usage limit reached", 
+      daily_usage: usageLimits.daily.daily_usage, 
+      daily_limit: usageLimits.daily.limit,
+      monthly_usage: usageLimits.monthly.monthly_usage,
+      monthly_limit: usageLimits.monthly.limit,
+      tier: user.tier,
+      message: usageLimits.message
+    });
+  }
+  
+  // Check if user has enough remaining conversions for bulk request
+  const remainingDaily = usageLimits.daily.limit - usageLimits.daily.daily_usage;
+  const remainingMonthly = usageLimits.monthly.limit - usageLimits.monthly.monthly_usage;
+  
+  if (validUrls.length > remainingDaily || validUrls.length > remainingMonthly) {
+    return res.status(429).json({ 
+      error: "Not enough conversions remaining for bulk request", 
+      requested: validUrls.length,
+      remaining_daily: remainingDaily,
+      remaining_monthly: remainingMonthly,
+      tier: user.tier
+    });
+  }
+  
+  // Process conversions in parallel
+  const results = [];
+  const errors = [];
+  
+  for (const url of validUrls) {
+    try {
+      // Increment usage for each conversion
+      await incrementUsage(apiKey);
+      
+      // Trust check
+      const trustCheck = checkRequest({ tier: user.tier, usage_today: user.usage_count }, req);
+      if (!trustCheck.allowed) {
+        errors.push({ url, error: "Rate limit exceeded" });
+        continue;
+      }
+      if (trustCheck.delay_ms > 0) {
+        await new Promise(r => setTimeout(r, trustCheck.delay_ms));
+      }
+      
+      const result = await convertReel(url, ttl);
+      recordOutcome({ tier: user.tier, usage_today: user.usage_count }, req, "success");
+      
+      const cdnId = result.link?.split('/v/').pop() || randomBytes(6).toString('hex');
+      const bunnyBase = process.env.BUNNY_CDN_URL || process.env.BUNNY_STORAGE_ENDPOINT || 'http://localhost:3000';
+      const publicVideoUrl = `${bunnyBase.replace(/\/$/, '')}/reels/${cdnId}.mp4`;
+      await saveConversion(cdnId, user.id, url, publicVideoUrl, result.expires, result.size_mb);
+      const viewerUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/v/${cdnId}`;
+      
+      results.push({
+        url,
+        success: true,
+        ...result,
+        viewer_url: viewerUrl,
+        conversion_id: cdnId
+      });
+    } catch (err) {
+      recordOutcome({ tier: user.tier, usage_today: user.usage_count }, req, "error");
+      errors.push({ url, error: err.message });
+    }
+  }
+  
+  res.json({
+    total: validUrls.length,
+    successful: results.length,
+    failed: errors.length,
+    results,
+    errors,
+    tier: user.tier,
+    usage_today: user.usage_count
+  });
+});
+
 app.get("/api/v/:id", async (req, res) => {
   const conv = await getConversion(req.params.id);
   if (!conv) return res.status(404).json({ error: "Not found" });
