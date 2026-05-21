@@ -647,7 +647,7 @@ function isValidInstagramUrl(url) {
 }
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`SPOOL running on :${PORT}`);
   console.log(`  humans:  POST /api/auth/request-link`);
   console.log(`  bots:    Authorization: Bearer spool_live_...`);
