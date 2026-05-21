@@ -320,7 +320,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-4">Simple Pricing</h2>
           <p className="text-center text-gray-500 mb-16">Start free. Scale when you need to.</p>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
 
             {/* Free */}
             <div className="bg-white rounded-2xl border border-gray-200 p-8 flex flex-col">
@@ -387,6 +387,31 @@ export default function Home() {
                 <span className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 55%)' }} />
                 <span className="relative">Upgrade to Ultra</span>
               </Link>
+            </div>
+
+            {/* X402 Pay-per-Call */}
+            <div className="bg-gradient-to-b from-blue-600 to-blue-700 rounded-2xl p-8 flex flex-col relative shadow-xl shadow-blue-200">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full font-semibold">AI Agents</span>
+              <p className="text-sm font-semibold text-blue-200 uppercase tracking-wide mb-2">X402</p>
+              <p className="text-4xl font-black text-white mb-1">€0.01</p>
+              <p className="text-blue-300 text-sm mb-8">per conversion</p>
+              <ul className="space-y-3 flex-1 mb-8">
+                {["Pay per conversion", "No subscription needed", "USDC on Base network", "AI agent ready", "Automatic payment", "Usage tracking"].map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-white">
+                    <Check className="w-4 h-4 text-blue-300 flex-shrink-0" /> {f}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="/.well-known/x402"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative overflow-hidden block text-center py-2.5 text-blue-700 text-sm font-semibold rounded-xl transition-all duration-100 active:translate-y-0.5"
+                style={{ background: 'linear-gradient(145deg, #ffffff, #e0f2fe)', boxShadow: '0 4px 0 #93c5fd, 0 6px 10px rgba(37,99,235,0.2)', border: '1px solid #bfdbfe' }}
+              >
+                <span className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 55%)' }} />
+                <span className="relative">View X402 Info</span>
+              </a>
             </div>
 
           </div>

@@ -20,7 +20,8 @@
     "helmet": "^8.1.0",
     "react-router-dom": "^7.15.0",
     "sql.js": "^1.10.3",
-    "stripe": "^15.0.0"
+    "stripe": "^15.0.0",
+    "x402-express": "^1.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
