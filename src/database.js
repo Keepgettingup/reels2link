@@ -7,7 +7,7 @@ if (!process.env.DATABASE_URL) {
   console.error('[Database] FATAL: DATABASE_URL is not set');
 }
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false }, family: 4 });
 pool.on('error', (err) => console.error('[Database] Pool error:', err.message));
 
 export { pool };
