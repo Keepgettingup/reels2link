@@ -393,7 +393,7 @@ export default function Home() {
             <div className="bg-gradient-to-b from-blue-600 to-blue-700 rounded-2xl p-8 flex flex-col relative shadow-xl shadow-blue-200">
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full font-semibold">AI Agents</span>
               <p className="text-sm font-semibold text-blue-200 uppercase tracking-wide mb-2">X402</p>
-              <p className="text-4xl font-black text-white mb-1">€0.01</p>
+              <p className="text-4xl font-black text-white mb-1">$0.01</p>
               <p className="text-blue-300 text-sm mb-8">per conversion</p>
               <ul className="space-y-3 flex-1 mb-8">
                 {["Pay per conversion", "No subscription needed", "USDC on Base network", "AI agent ready", "Automatic payment", "Usage tracking"].map(f => (
