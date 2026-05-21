@@ -4,7 +4,6 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { randomBytes } from "crypto";
-import geoip from "geoip-lite";
 import { convertReel } from "./converter.js";
 import { getLink } from "./storage.js";
 import { requireApiKey, createApiKey, revokeApiKey, listKeys } from "./keys.js";
@@ -34,10 +33,8 @@ async function generateOtpToken(apiKey) {
   return token;
 }
 
-function lookupGeo(ip) {
-  const cleanIp = ip?.replace(/^::ffff:/, "") || "";
-  const geo = geoip.lookup(cleanIp);
-  return { country: geo?.country || null, city: geo?.city || null };
+function lookupGeo() {
+  return { country: null, city: null };
 }
 
 const app = express();
@@ -179,13 +176,11 @@ app.get("/auth/google/callback", async (req, res) => {
         }
       }
     }
-    const { country, city } = lookupGeo(ipAddress);
+    const { country, city } = lookupGeo();
     console.log('[DEBUG] Step 4 - before final update, user:', user);
     user = await updateUserLogin(userInfo.email, ipAddress, fp, country);
     if (user?.id) {
       await recordLoginEvent(user.id, ipAddress, country, city);
-      const recentCountries = await getRecentCountries(user.id, 60);
-      if (recentCountries.length > 2) await incrementSuspiciousScore(user.id);
     }
 
     console.log('[DEBUG] user object:', user);
@@ -241,12 +236,10 @@ app.get("/auth/github/callback", async (req, res) => {
         user = await createUser(userInfo.email, apiKey.key, ipAddress, fp);
       }
     }
-    const { country, city } = lookupGeo(ipAddress);
+    const { country, city } = lookupGeo();
     user = await updateUserLogin(userInfo.email, ipAddress, fp, country);
     if (user?.id) {
       await recordLoginEvent(user.id, ipAddress, country, city);
-      const recentCountries = await getRecentCountries(user.id, 60);
-      if (recentCountries.length > 2) await incrementSuspiciousScore(user.id);
     }
 
     const token = await generateOtpToken(user.api_key);
@@ -416,8 +409,8 @@ app.post("/api/convert/bulk", async (req, res) => {
     return res.status(400).json({ error: "Invalid URLs array" });
   }
   
-  if (urls.length > 50) {
-    return res.status(400).json({ error: "Maximum 50 URLs per bulk request" });
+  if (urls.length > 10) {
+    return res.status(400).json({ error: "Maximum 10 URLs per bulk request" });
   }
   
   // Validate all URLs

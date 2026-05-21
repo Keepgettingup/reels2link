@@ -1,7 +1,7 @@
 // In-memory job queue for parallel conversion management
 // Prevents overwhelming ffmpeg/yt-dlp with too many concurrent jobs
 
-const MAX_CONCURRENT_JOBS = 2; // Max parallel conversions
+const MAX_CONCURRENT_JOBS = 1; // Max parallel conversions (1 = serialize to stay under 512MB RAM)
 const queue = [];
 const activeJobs = new Set();
 

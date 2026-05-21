@@ -16,10 +16,9 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^8.5.2",
-    "geoip-lite": "^1.4.10",
+    "better-sqlite3": "^9.4.3",
     "helmet": "^8.1.0",
     "react-router-dom": "^7.15.0",
-    "sql.js": "^1.10.3",
     "stripe": "^15.0.0",
     "x402-express": "^1.0.0"
   },

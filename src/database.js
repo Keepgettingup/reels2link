@@ -1,23 +1,14 @@
-import initSqlJs from "sql.js";
+import Database from "better-sqlite3";
 import "dotenv/config";
-import { readFileSync, writeFileSync } from "fs";
 
-let db = null;
+const dbPath = process.env.DB_PATH || "./spool.db";
+const db = new Database(dbPath);
+db.pragma("journal_mode = WAL");
+db.pragma("synchronous = NORMAL");
 
 // Initialize database schema
 export async function initDatabase() {
   try {
-    const SQL = await initSqlJs();
-    const dbPath = process.env.DB_PATH || "./spool.db";
-    
-    try {
-      const fileBuffer = readFileSync(dbPath);
-      db = new SQL.Database(fileBuffer);
-    } catch {
-      // File doesn't exist, create new database
-      db = new SQL.Database();
-    }
-    
     db.exec(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,105 +70,61 @@ export async function initDatabase() {
   }
 }
 
-// Save database to file
 function saveDatabase() {
-  const data = db.export();
-  const buffer = Buffer.from(data);
-  const dbPath = process.env.DB_PATH || "./spool.db";
-  writeFileSync(dbPath, buffer);
+  // No-op: better-sqlite3 writes to disk automatically
 }
 
 // User operations
 export async function getUserByEmail(email) {
-  const stmt = db.prepare("SELECT * FROM users WHERE email = ?");
-  stmt.bind([email ?? null]);
-  if (stmt.step()) {
-    const result = stmt.getAsObject();
-    stmt.free();
-    return result;
-  }
-  stmt.free();
-  return null;
+  return db.prepare("SELECT * FROM users WHERE email = ?").get(email ?? null) ?? null;
 }
 
 export async function getUserByApiKey(apiKey) {
-  const stmt = db.prepare("SELECT * FROM users WHERE api_key = ?");
-  stmt.bind([apiKey ?? null]);
-  if (stmt.step()) {
-    const result = stmt.getAsObject();
-    stmt.free();
-    return result;
-  }
-  stmt.free();
-  return null;
+  return db.prepare("SELECT * FROM users WHERE api_key = ?").get(apiKey ?? null) ?? null;
 }
 
 export async function getUserByFingerprint(fingerprint) {
   if (!fingerprint) return null;
-  const stmt = db.prepare("SELECT * FROM users WHERE fingerprint = ?");
-  stmt.bind([fingerprint ?? null]);
-  if (stmt.step()) {
-    const result = stmt.getAsObject();
-    stmt.free();
-    return result;
-  }
-  stmt.free();
-  return null;
+  return db.prepare("SELECT * FROM users WHERE fingerprint = ?").get(fingerprint ?? null) ?? null;
 }
 
 export async function addLinkedEmail(userId, email) {
-  const user = db.prepare("SELECT * FROM users WHERE id = ?").getAsObject([userId ?? null]);
+  const user = db.prepare("SELECT * FROM users WHERE id = ?").get(userId ?? null);
   if (!user) return;
   const linked = JSON.parse(user.linked_emails || "[]");
   if (!linked.includes(email)) {
     linked.push(email);
-    db.prepare("UPDATE users SET linked_emails = ? WHERE id = ?").run([JSON.stringify(linked), userId ?? null]);
-    saveDatabase();
+    db.prepare("UPDATE users SET linked_emails = ? WHERE id = ?").run(JSON.stringify(linked), userId ?? null);
   }
 }
 
 export async function createUser(email, apiKey, ipAddress, fingerprint = null) {
-  console.log('[DB DEBUG] createUser called with:', { email, apiKey: apiKey?.substring(0, 20), ipAddress, fingerprint });
-  const stmt = db.prepare(`
+  db.prepare(`
     INSERT INTO users (email, api_key, remember_ip, fingerprint, last_login) 
     VALUES (?, ?, ?, ?, datetime('now'))
-  `);
-  const params = [email ?? null, apiKey ?? null, ipAddress ?? null, fingerprint ?? null];
-  console.log('[DB DEBUG] Running SQL with params:', params);
-  stmt.run(params);
-  saveDatabase();
+  `).run(email ?? null, apiKey ?? null, ipAddress ?? null, fingerprint ?? null);
   return getUserByEmail(email);
 }
 
 export async function updateUserLogin(email, ipAddress, fingerprint = null, country = null) {
-  const stmt = db.prepare(`
+  db.prepare(`
     UPDATE users 
     SET last_login = datetime('now'), remember_ip = ?, fingerprint = COALESCE(?, fingerprint),
         country = COALESCE(?, country)
     WHERE email = ?
-  `);
-  stmt.run([ipAddress ?? null, fingerprint ?? null, country ?? null, email ?? null]);
-  saveDatabase();
-  const user = getUserByEmail(email);
-  return user;
+  `).run(ipAddress ?? null, fingerprint ?? null, country ?? null, email ?? null);
+  return getUserByEmail(email);
 }
 
 export async function recordLoginEvent(userId, ip, country, city) {
   db.prepare(`
     INSERT INTO login_events (user_id, ip, country, city) VALUES (?, ?, ?, ?)
-  `).run([userId ?? null, ip ?? null, country ?? null, city ?? null]);
-  saveDatabase();
+  `).run(userId ?? null, ip ?? null, country ?? null, city ?? null);
 }
 
-// Helper to fetch all rows as objects (since sql.js doesn't have .all())
+// Helper to fetch all rows — better-sqlite3 has .all() built in
 function fetchAll(stmt, params = []) {
-  const rows = [];
-  stmt.bind(params);
-  while (stmt.step()) {
-    rows.push(stmt.getAsObject());
-  }
-  stmt.free();
-  return rows;
+  return stmt.all(...params);
 }
 
 export async function getRecentCountries(userId, windowMinutes = 60) {
@@ -190,46 +137,38 @@ export async function getRecentCountries(userId, windowMinutes = 60) {
   return rows.map(r => r.country);
 }
 
+
 export async function incrementSuspiciousScore(userId) {
-  db.prepare(`UPDATE users SET suspicious_score = suspicious_score + 1 WHERE id = ?`).run([userId ?? null]);
-  saveDatabase();
+  db.prepare(`UPDATE users SET suspicious_score = suspicious_score + 1 WHERE id = ?`).run(userId ?? null);
 }
 
 export async function storeOtpToken(token, apiKey, expiresAt) {
-  db.prepare("INSERT INTO otp_tokens (token, api_key, expires_at) VALUES (?, ?, ?)").run([token ?? null, apiKey ?? null, expiresAt ?? null]);
-  saveDatabase();
+  db.prepare("INSERT INTO otp_tokens (token, api_key, expires_at) VALUES (?, ?, ?)").run(token ?? null, apiKey ?? null, expiresAt ?? null);
 }
 
 export async function getOtpToken(token) {
-  const row = db.prepare("SELECT * FROM otp_tokens WHERE token = ? AND expires_at > ?").getAsObject([token ?? null, Date.now()]);
-  return row || null;
+  return db.prepare("SELECT * FROM otp_tokens WHERE token = ? AND expires_at > ?").get(token ?? null, Date.now()) ?? null;
 }
 
 export async function deleteOtpToken(token) {
-  db.prepare("DELETE FROM otp_tokens WHERE token = ?").run([token ?? null]);
-  saveDatabase();
+  db.prepare("DELETE FROM otp_tokens WHERE token = ?").run(token ?? null);
 }
 
 export async function cleanupExpiredTokens() {
-  db.prepare("DELETE FROM otp_tokens WHERE expires_at <= ?").run([Date.now()]);
-  saveDatabase();
+  db.prepare("DELETE FROM otp_tokens WHERE expires_at <= ?").run(Date.now());
 }
 
 export async function updateUserTier(email, tier) {
-  const stmt = db.prepare("UPDATE users SET tier = ? WHERE email = ?");
-  stmt.run([tier ?? null, email ?? null]);
-  saveDatabase();
+  db.prepare("UPDATE users SET tier = ? WHERE email = ?").run(tier ?? null, email ?? null);
   return getUserByEmail(email);
 }
 
 export async function getAllUsers() {
-  const stmt = db.prepare("SELECT id, email, tier, usage_count, country, suspicious_score, last_login, created_at FROM users ORDER BY created_at DESC");
-  return fetchAll(stmt, []);
+  return db.prepare("SELECT id, email, tier, usage_count, country, suspicious_score, last_login, created_at FROM users ORDER BY created_at DESC").all();
 }
 
 export async function getRecentLoginEvents(limit = 100) {
-  const stmt = db.prepare("SELECT le.*, u.email FROM login_events le LEFT JOIN users u ON le.user_id = u.id ORDER BY le.timestamp DESC LIMIT ?");
-  return fetchAll(stmt, [limit ?? 100]);
+  return db.prepare("SELECT le.*, u.email FROM login_events le LEFT JOIN users u ON le.user_id = u.id ORDER BY le.timestamp DESC LIMIT ?").all(limit ?? 100);
 }
 
 // Limits configuration
@@ -240,9 +179,7 @@ export async function incrementUsage(apiKey) {
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   const thisMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
   
-  // Check current usage
-  const checkStmt = db.prepare("SELECT usage_date, daily_usage, monthly_date, monthly_usage FROM users WHERE api_key = ?");
-  const user = checkStmt.getAsObject([apiKey ?? null]);
+  const user = db.prepare("SELECT usage_date, daily_usage, monthly_date, monthly_usage FROM users WHERE api_key = ?").get(apiKey ?? null);
   
   let dailyReset = false;
   let monthlyReset = false;
@@ -252,27 +189,20 @@ export async function incrementUsage(apiKey) {
     if (user.monthly_date !== thisMonth) monthlyReset = true;
   }
   
-  // Build update query
   if (dailyReset && monthlyReset) {
-    const stmt = db.prepare("UPDATE users SET usage_date = ?, daily_usage = 1, monthly_date = ?, monthly_usage = 1, usage_count = usage_count + 1 WHERE api_key = ?");
-    stmt.run([today, thisMonth, apiKey ?? null]);
+    db.prepare("UPDATE users SET usage_date = ?, daily_usage = 1, monthly_date = ?, monthly_usage = 1, usage_count = usage_count + 1 WHERE api_key = ?").run(today, thisMonth, apiKey ?? null);
   } else if (dailyReset) {
-    const stmt = db.prepare("UPDATE users SET usage_date = ?, daily_usage = 1, monthly_usage = monthly_usage + 1, usage_count = usage_count + 1 WHERE api_key = ?");
-    stmt.run([today, apiKey ?? null]);
+    db.prepare("UPDATE users SET usage_date = ?, daily_usage = 1, monthly_usage = monthly_usage + 1, usage_count = usage_count + 1 WHERE api_key = ?").run(today, apiKey ?? null);
   } else if (monthlyReset) {
-    const stmt = db.prepare("UPDATE users SET monthly_date = ?, monthly_usage = 1, daily_usage = daily_usage + 1, usage_count = usage_count + 1 WHERE api_key = ?");
-    stmt.run([thisMonth, apiKey ?? null]);
+    db.prepare("UPDATE users SET monthly_date = ?, monthly_usage = 1, daily_usage = daily_usage + 1, usage_count = usage_count + 1 WHERE api_key = ?").run(thisMonth, apiKey ?? null);
   } else {
-    const stmt = db.prepare("UPDATE users SET usage_count = usage_count + 1, daily_usage = daily_usage + 1, monthly_usage = monthly_usage + 1 WHERE api_key = ?");
-    stmt.run([apiKey ?? null]);
+    db.prepare("UPDATE users SET usage_count = usage_count + 1, daily_usage = daily_usage + 1, monthly_usage = monthly_usage + 1 WHERE api_key = ?").run(apiKey ?? null);
   }
-  saveDatabase();
 }
 
 export async function getDailyUsage(apiKey) {
   const today = new Date().toISOString().split('T')[0];
-  const stmt = db.prepare("SELECT daily_usage, usage_date, tier FROM users WHERE api_key = ?");
-  const user = stmt.getAsObject([apiKey ?? null]);
+  const user = db.prepare("SELECT daily_usage, usage_date, tier FROM users WHERE api_key = ?").get(apiKey ?? null);
   
   if (!user) return { allowed: false, daily_usage: 0, limit: 0 };
   
@@ -288,8 +218,7 @@ export async function getDailyUsage(apiKey) {
 
 export async function getMonthlyUsage(apiKey) {
   const thisMonth = new Date().toISOString().slice(0, 7);
-  const stmt = db.prepare("SELECT monthly_usage, monthly_date, tier FROM users WHERE api_key = ?");
-  const user = stmt.getAsObject([apiKey ?? null]);
+  const user = db.prepare("SELECT monthly_usage, monthly_date, tier FROM users WHERE api_key = ?").get(apiKey ?? null);
   
   if (!user) return { allowed: false, monthly_usage: 0, limit: 0 };
   
@@ -323,52 +252,38 @@ export async function saveConversion(id, userId, instagramUrl, cdnUrl, expiresAt
   db.prepare(`
     INSERT OR IGNORE INTO conversions (id, user_id, instagram_url, cdn_url, expires_at, size_mb)
     VALUES (?, ?, ?, ?, ?, ?)
-  `).run([id ?? null, userId ?? null, instagramUrl ?? null, cdnUrl ?? null, expiresAt ?? null, sizeMb ?? null]);
-  saveDatabase();
+  `).run(id ?? null, userId ?? null, instagramUrl ?? null, cdnUrl ?? null, expiresAt ?? null, sizeMb ?? null);
 }
 
 export async function getConversion(id) {
-  const stmt = db.prepare('SELECT * FROM conversions WHERE id = ?');
-  stmt.bind([id ?? null]);
-  if (stmt.step()) { const r = stmt.getAsObject(); stmt.free(); return r; }
-  stmt.free();
-  return null;
+  return db.prepare('SELECT * FROM conversions WHERE id = ?').get(id ?? null) ?? null;
 }
 
 export async function incrementConversionViews(id) {
-  db.prepare('UPDATE conversions SET views = views + 1 WHERE id = ?').run([id ?? null]);
-  saveDatabase();
+  db.prepare('UPDATE conversions SET views = views + 1 WHERE id = ?').run(id ?? null);
 }
 
 export async function getUserConversionStats(apiKey) {
   const user = await getUserByApiKey(apiKey);
   if (!user) return null;
-  const stmt = db.prepare('SELECT COUNT(*) as total, SUM(views) as total_views FROM conversions WHERE user_id = ?');
-  stmt.bind([user.id ?? null]);
-  if (stmt.step()) { const r = stmt.getAsObject(); stmt.free(); return { total: r.total || 0, total_views: r.total_views || 0, daily: user.daily_usage || 0, monthly: user.monthly_usage || 0 }; }
-  stmt.free();
-  return { total: 0, total_views: 0, daily: user.daily_usage || 0, monthly: user.monthly_usage || 0 };
+  const r = db.prepare('SELECT COUNT(*) as total, SUM(views) as total_views FROM conversions WHERE user_id = ?').get(user.id ?? null);
+  return { total: r?.total || 0, total_views: r?.total_views || 0, daily: user.daily_usage || 0, monthly: user.monthly_usage || 0 };
 }
 
 export async function updateSubscriptionEndsAt(email, endsAt) {
-  db.prepare('UPDATE users SET subscription_ends_at = ? WHERE email = ?').run([endsAt ?? null, email ?? null]);
-  saveDatabase();
+  db.prepare('UPDATE users SET subscription_ends_at = ? WHERE email = ?').run(endsAt ?? null, email ?? null);
 }
 
 export async function getAllActiveConversions() {
-  const stmt = db.prepare("SELECT id, cdn_url, expires_at, size_mb FROM conversions WHERE expires_at IS NULL OR expires_at > datetime('now')");
-  return fetchAll(stmt, []);
+  return db.prepare("SELECT id, cdn_url, expires_at, size_mb FROM conversions WHERE expires_at IS NULL OR expires_at > datetime('now')").all();
 }
 
 export async function getUserConversions(apiKey, limit = 50) {
   const user = await getUserByApiKey(apiKey);
   if (!user) return null;
-  const stmt = db.prepare('SELECT id, instagram_url, views, size_mb, expires_at, created_at FROM conversions WHERE user_id = ? ORDER BY created_at DESC LIMIT ?');
-  return fetchAll(stmt, [user.id ?? null, limit ?? 50]);
+  return db.prepare('SELECT id, instagram_url, views, size_mb, expires_at, created_at FROM conversions WHERE user_id = ? ORDER BY created_at DESC LIMIT ?').all(user.id ?? null, limit ?? 50);
 }
 
 export async function closePool() {
-  if (db) {
-    db.close();
-  }
+  if (db) db.close();
 }

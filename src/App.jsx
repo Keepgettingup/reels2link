@@ -209,8 +209,8 @@ function App() {
           throw new Error('Please enter at least one Instagram URL');
         }
 
-        if (urls.length > 50) {
-          throw new Error('Maximum 50 URLs per bulk conversion');
+        if (urls.length > 10) {
+          throw new Error('Maximum 10 URLs per bulk conversion');
         }
 
         const response = await fetch(`${API}/api/convert/bulk`, {
@@ -743,7 +743,7 @@ function App() {
                   <textarea
                     value={bulkUrls}
                     onChange={(e) => setBulkUrls(e.target.value)}
-                    placeholder="https://www.instagram.com/reel/ABC123&#10;https://www.instagram.com/reel/DEF456&#10;https://www.instagram.com/reel/GHI789"
+                    placeholder="https://www.instagram.com/reel/ABC123&#10;https://www.instagram.com/reel/DEF456&#10;(max 10 URLs)"
                     rows={6}
                     required
                     className="w-full bg-transparent pl-10 pr-4 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none resize-none"

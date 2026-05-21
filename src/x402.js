@@ -2,8 +2,8 @@ let paymentMiddleware;
 try {
   const x402 = await import("x402-express");
   paymentMiddleware = x402.paymentMiddleware;
-} catch {
-  console.log("x402-express not installed — AI agent payments disabled");
+} catch (err) {
+  console.log("x402-express not installed — AI agent payments disabled:", err.message);
 }
 
 const PRICING = {
@@ -14,7 +14,7 @@ const PRICING = {
 const PAY_TO_ADDRESS = process.env.X402_PAYOUT_ADDRESS;
 
 export function applyX402(app) {
-  if (!paymentMiddleware) return;
+  if (!paymentMiddleware || !PAY_TO_ADDRESS) return;
   app.use(
     paymentMiddleware(
       PAY_TO_ADDRESS,
