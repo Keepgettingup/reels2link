@@ -1,32 +1,36 @@
 import { randomBytes } from "crypto";
+import pg from "pg";
 
-// OAuth State Storage (in-memory for dev)
-const oauthStates = new Map();
+const { Pool } = pg;
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 
-export function generateState(fp = null) {
+async function dbQuery(sql, params = []) {
+  const client = await pool.connect();
+  try { return await client.query(sql, params); } finally { client.release(); }
+}
+
+export async function generateState(fp = null) {
   const state = randomBytes(16).toString("hex");
-  oauthStates.set(state, { createdAt: Date.now(), fp });
+  await dbQuery("INSERT INTO oauth_states (state, fp, created_at) VALUES ($1, $2, $3)", [state, fp ?? null, Date.now()]);
   return state;
 }
 
-export function validateState(state) {
-  const data = oauthStates.get(state);
+export async function validateState(state) {
+  const r = await dbQuery("SELECT * FROM oauth_states WHERE state = $1", [state]);
+  const data = r.rows[0];
   if (!data) return false;
-  if (Date.now() - data.createdAt > 10 * 60 * 1000) {
-    oauthStates.delete(state);
-    return false;
-  }
-  oauthStates.delete(state);
-  return data;
+  await dbQuery("DELETE FROM oauth_states WHERE state = $1", [state]);
+  if (Date.now() - Number(data.created_at) > 10 * 60 * 1000) return false;
+  return { fp: data.fp };
 }
 
-export function getFingerprintFromState(state) {
-  const data = oauthStates.get(state);
-  return data?.fp || null;
+export async function getFingerprintFromState(state) {
+  const r = await dbQuery("SELECT fp FROM oauth_states WHERE state = $1", [state]);
+  return r.rows[0]?.fp || null;
 }
 
-export function getGoogleAuthUrl(redirectUri, fp = null) {
-  const state = generateState(fp);
+export async function getGoogleAuthUrl(redirectUri, fp = null) {
+  const state = await generateState(fp);
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID,
     redirect_uri: redirectUri,
@@ -38,8 +42,8 @@ export function getGoogleAuthUrl(redirectUri, fp = null) {
   return `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
 }
 
-export function getGitHubAuthUrl(redirectUri, fp = null) {
-  const state = generateState(fp);
+export async function getGitHubAuthUrl(redirectUri, fp = null) {
+  const state = await generateState(fp);
   const params = new URLSearchParams({
     client_id: process.env.GITHUB_CLIENT_ID,
     redirect_uri: redirectUri,

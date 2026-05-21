@@ -126,16 +126,16 @@ app.get("/auth/verify", (req, res) => {
 });
 
 // OAuth Routes
-app.get("/auth/google", oauthLimiter, (req, res) => {
+app.get("/auth/google", oauthLimiter, async (req, res) => {
   const redirectUri = `${process.env.BASE_URL}/auth/google/callback`;
-  const authUrl = getGoogleAuthUrl(redirectUri, req.query.fp);
+  const authUrl = await getGoogleAuthUrl(redirectUri, req.query.fp);
   res.redirect(authUrl);
 });
 
 app.get("/auth/google/callback", async (req, res) => {
   try {
     const { code, state } = req.query;
-    const stateData = validateState(state);
+    const stateData = await validateState(state);
     if (!stateData) {
       return res.status(400).json({ error: "Invalid state parameter" });
     }
@@ -200,16 +200,16 @@ app.get("/auth/google/callback", async (req, res) => {
   }
 });
 
-app.get("/auth/github", oauthLimiter, (req, res) => {
+app.get("/auth/github", oauthLimiter, async (req, res) => {
   const redirectUri = `${process.env.BASE_URL}/auth/github/callback`;
-  const authUrl = getGitHubAuthUrl(redirectUri, req.query.fp);
+  const authUrl = await getGitHubAuthUrl(redirectUri, req.query.fp);
   res.redirect(authUrl);
 });
 
 app.get("/auth/github/callback", async (req, res) => {
   try {
     const { code, state } = req.query;
-    const stateData = validateState(state);
+    const stateData = await validateState(state);
     if (!stateData) {
       return res.status(400).json({ error: "Invalid state parameter" });
     }
