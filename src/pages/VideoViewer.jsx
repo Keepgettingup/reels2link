@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
+import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX } from 'lucide-react';
+
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -10,6 +12,8 @@ export default function VideoViewer() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState('');
+  const [muted, setMuted] = useState(isMobile);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     fetch(`${API}/api/v/${id}`)
@@ -100,6 +104,12 @@ export default function VideoViewer() {
           Converted with{' '}
           <Link to="/" className="text-gray-400 hover:text-purple-400 transition font-medium">Reels2Link</Link>
         </p>
+        {/* Left ad slot — only on wide desktop */}
+        <div className="hidden xl:flex flex-col items-center mt-4">
+          <div className="w-full max-w-[160px] h-[600px] bg-gray-900/50 border border-gray-800 rounded-lg flex items-center justify-center text-gray-600 text-xs">
+            <span>Ad</span>
+          </div>
+        </div>
       </div>
 
       {/* Video — center, full height, relative for arc overlay */}
@@ -110,12 +120,31 @@ export default function VideoViewer() {
             <p>This link has expired</p>
           </div>
         ) : (
-          <video
-            src={data.cdn_url}
-            controls
-            autoPlay
-            className="max-h-screen max-w-full w-auto h-screen object-contain"
-          />
+          <>
+            <video
+              ref={videoRef}
+              src={data.cdn_url}
+              controls
+              autoPlay
+              muted={muted}
+              playsInline
+              className="max-h-screen max-w-full w-auto h-screen object-contain"
+            />
+            {/* Mute toggle */}
+            <button
+              onClick={() => {
+                setMuted(m => {
+                  const next = !m;
+                  if (videoRef.current) videoRef.current.muted = next;
+                  return next;
+                });
+              }}
+              className="absolute top-4 left-4 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white transition z-10"
+              title={muted ? 'Unmute' : 'Mute'}
+            >
+              {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </button>
+          </>
         )}
 
         {/* Arc Instagram button — right edge of video */}
@@ -159,6 +188,13 @@ export default function VideoViewer() {
             </span>
           </div>
         </a>
+      </div>
+
+      {/* Right ad panel — only on wide desktop */}
+      <div className="hidden xl:flex w-44 2xl:w-56 flex-col items-center justify-center p-4 flex-shrink-0">
+        <div className="w-full max-w-[160px] h-[600px] bg-gray-900/50 border border-gray-800 rounded-lg flex items-center justify-center text-gray-600 text-xs">
+          <span>Ad</span>
+        </div>
       </div>
 
       {/* Mobile bottom bar */}
