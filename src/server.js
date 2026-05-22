@@ -29,9 +29,12 @@ import {
 import { initDatabase, getUserByEmail, createUser, updateUserLogin, getUserByApiKey, getUserByFingerprint, addLinkedEmail, incrementUsage, recordLoginEvent, getRecentCountries, incrementSuspiciousScore, getAllUsers, getRecentLoginEvents, storeOtpToken, getOtpToken, deleteOtpToken, cleanupExpiredTokens, getUsageLimits, updateUserTier, saveConversion, getConversion, incrementConversionViews, getUserConversionStats, getUserConversions, getAllActiveConversions, updateSubscriptionEndsAt } from "./database.js";
 
 async function generateOtpToken(apiKey) {
+  console.log('[DEBUG] generateOtpToken called with apiKey:', apiKey);
   const token = "otp_" + randomBytes(16).toString("hex");
   const expiresAt = Date.now() + 5 * 60_000;
+  console.log('[DEBUG] Generated token:', token, 'expiresAt:', expiresAt);
   await storeOtpToken(token, apiKey, expiresAt);
+  console.log('[DEBUG] Token stored successfully');
   return token;
 }
 
