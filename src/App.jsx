@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Instagram, Download, Loader2, CheckCircle2, AlertCircle, Zap, Crown, ExternalLink, Eye } from 'lucide-react';
+import { Instagram, Download, Loader2, CheckCircle2, AlertCircle, Zap, Crown, ExternalLink, Eye, Copy, Check } from 'lucide-react';
 import { getFingerprint } from './fingerprint.js';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -57,6 +57,7 @@ function App() {
   const [myConversions, setMyConversions] = useState([]);
   const [linkFilter, setLinkFilter] = useState('all');
   const [subscriptionEndsAt, setSubscriptionEndsAt] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
   const urlInputRef = useRef(null);
   const apiKeyInputRef = useRef(null);
   const [sliderMinutes, setSliderMinutes] = useState(60);
@@ -572,6 +573,18 @@ function App() {
                             {expired ? <span className="text-red-400 ml-1">· Expired</span> : ''}
                           </p>
                         </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigator.clipboard.writeText(viewerUrl);
+                            setCopiedId(c.id);
+                            setTimeout(() => setCopiedId(null), 2000);
+                          }}
+                          className="flex-shrink-0 p-1.5 rounded-lg hover:bg-purple-50 transition"
+                          title="Copy link"
+                        >
+                          {copiedId === c.id ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5 text-gray-400" />}
+                        </button>
                         <div className="flex items-center gap-1 text-sm flex-shrink-0">
                           <Eye className="w-3.5 h-3.5 text-purple-400" />
                           <span className="font-semibold text-gray-700">{c.views || 0}</span>
@@ -942,10 +955,21 @@ function App() {
                 <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
                 <div className="flex-1">
                   <p className="font-medium text-green-900">Conversion successful!</p>
-                  <p className="text-sm text-green-700 mt-1">
-                    <a href={result.viewer_url || result.link} target="_blank" rel="noopener noreferrer" className="underline hover:text-green-800">
+                  <p className="text-sm text-green-700 mt-1 flex items-center gap-2">
+                    <a href={result.viewer_url || result.link} target="_blank" rel="noopener noreferrer" className="underline hover:text-green-800 truncate">
                       {result.viewer_url || result.link}
                     </a>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(result.viewer_url || result.link);
+                        setCopiedId('result');
+                        setTimeout(() => setCopiedId(null), 2000);
+                      }}
+                      className="flex-shrink-0 p-1 rounded hover:bg-green-200 transition"
+                      title="Copy link"
+                    >
+                      {copiedId === 'result' ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5 text-green-600" />}
+                    </button>
                   </p>
                   <p className="text-sm text-green-700 mt-1">
                     Size: {result.size_mb} MB • Expires: {new Date(result.expires).toLocaleString()}

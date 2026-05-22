@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX } from 'lucide-react';
+import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX, Copy, Check } from 'lucide-react';
 
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -13,6 +13,7 @@ export default function VideoViewer() {
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState('');
   const [muted, setMuted] = useState(isMobile);
+  const [copied, setCopied] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -143,6 +144,18 @@ export default function VideoViewer() {
               title={muted ? 'Unmute' : 'Mute'}
             >
               {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </button>
+            {/* Copy link button */}
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="absolute top-4 left-16 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white transition z-10"
+              title="Copy link"
+            >
+              {copied ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5" />}
             </button>
           </>
         )}
