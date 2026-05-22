@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX, Copy, Check } from 'lucide-react';
+import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX, Copy, Check, RotateCcw } from 'lucide-react';
 
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -14,7 +14,32 @@ export default function VideoViewer() {
   const [countdown, setCountdown] = useState('');
   const [muted, setMuted] = useState(isMobile);
   const [copied, setCopied] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [isSmallScreen, setIsSmallScreen] = useState(typeof window !== 'undefined' && window.innerWidth < 1280);
   const videoRef = useRef(null);
+  const hideTimerRef = useRef(null);
+
+  const shouldAutoHide = isMobile || isSmallScreen;
+
+  // Resize listener for small screen detection
+  useEffect(() => {
+    const onResize = () => setIsSmallScreen(window.innerWidth < 1280);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const showControls = () => {
+    if (!shouldAutoHide) return;
+    setControlsVisible(true);
+    clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = setTimeout(() => setControlsVisible(false), 2000);
+  };
+
+  const startHideTimer = () => {
+    if (!shouldAutoHide) return;
+    clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = setTimeout(() => setControlsVisible(false), 2000);
+  };
 
   useEffect(() => {
     fetch(`${API}/api/v/${id}`)
@@ -101,20 +126,25 @@ export default function VideoViewer() {
             </div>
           )}
         </div>
-        <p className="md:text-xs lg:text-sm text-gray-600 truncate">
-          Converted with{' '}
-          <Link to="/" className="text-gray-400 hover:text-purple-400 transition font-medium">Reels2Link</Link>
-        </p>
         {/* Left ad slot — only on wide desktop */}
         <div className="hidden xl:flex flex-col items-center mt-4">
           <div className="w-full max-w-[160px] h-[600px] bg-gray-900/50 border border-gray-800 rounded-lg flex items-center justify-center text-gray-600 text-xs">
             <span>Ad</span>
           </div>
         </div>
+        <p className="md:text-xs lg:text-sm text-gray-600 truncate mt-4">
+          Converted with{' '}
+          <Link to="/" className="text-gray-400 hover:text-purple-400 transition font-medium">Reels2Link</Link>
+        </p>
       </div>
 
       {/* Video — center, full height, relative for arc overlay */}
-      <div className="flex-1 relative flex items-center justify-center bg-black">
+      <div
+        className="flex-1 relative flex items-center justify-center bg-black"
+        onClick={showControls}
+        onMouseMove={showControls}
+        onTouchStart={showControls}
+      >
         {isExpired ? (
           <div className="flex flex-col items-center gap-3 text-gray-500">
             <Clock className="w-10 h-10" />
@@ -130,6 +160,9 @@ export default function VideoViewer() {
               muted={muted}
               playsInline
               className="max-h-screen max-w-full w-auto h-screen object-contain"
+              onPlay={startHideTimer}
+              onPause={() => { clearTimeout(hideTimerRef.current); setControlsVisible(true); }}
+              onEnded={() => { clearTimeout(hideTimerRef.current); setControlsVisible(true); }}
             />
             {/* Mute toggle */}
             <button
@@ -140,7 +173,7 @@ export default function VideoViewer() {
                   return next;
                 });
               }}
-              className="absolute top-4 left-4 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white transition z-10"
+              className={`absolute top-4 left-4 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white z-10 transition-opacity duration-300 ${!controlsVisible && shouldAutoHide ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
               title={muted ? 'Unmute' : 'Mute'}
             >
               {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
@@ -152,20 +185,40 @@ export default function VideoViewer() {
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
               }}
-              className="absolute top-4 left-16 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white transition z-10"
+              className={`absolute top-4 left-16 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white z-10 transition-opacity duration-300 ${!controlsVisible && shouldAutoHide ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
               title="Copy link"
             >
               {copied ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5" />}
             </button>
+            {/* Replay button */}
+            <button
+              onClick={() => {
+                if (videoRef.current) {
+                  videoRef.current.currentTime = 0;
+                  videoRef.current.play();
+                }
+              }}
+              className={`absolute top-4 left-28 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white z-10 transition-opacity duration-300 ${!controlsVisible && shouldAutoHide ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+              title="Replay"
+            >
+              <RotateCcw className="w-5 h-5" />
+            </button>
           </>
         )}
+
+        {/* Right ad slot — inside video area, inner from Instagram button, only on xl+ */}
+        <div className="absolute right-12 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center z-0">
+          <div className="w-[120px] h-[400px] bg-gray-900/30 border border-gray-800/50 rounded-lg flex items-center justify-center text-gray-600 text-xs">
+            <span>Ad</span>
+          </div>
+        </div>
 
         {/* Arc Instagram button — right edge of video */}
         <a
           href={data.instagram_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute right-0 top-1/2 -translate-y-1/2 group hidden md:flex"
+          className="absolute right-0 top-1/2 -translate-y-1/2 group hidden md:flex z-10"
           style={{ height: '85%' }}
         >
           {/* Arc shape: wide rounded-left pill, very narrow at rest, expands on hover */}
@@ -201,13 +254,6 @@ export default function VideoViewer() {
             </span>
           </div>
         </a>
-      </div>
-
-      {/* Right ad panel — only on wide desktop */}
-      <div className="hidden xl:flex w-44 2xl:w-56 flex-col items-center justify-center p-4 flex-shrink-0">
-        <div className="w-full max-w-[160px] h-[600px] bg-gray-900/50 border border-gray-800 rounded-lg flex items-center justify-center text-gray-600 text-xs">
-          <span>Ad</span>
-        </div>
       </div>
 
       {/* Mobile bottom bar */}
