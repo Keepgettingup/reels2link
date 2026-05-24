@@ -82,11 +82,19 @@ app.post(
   "/webhooks/stripe",
   express.raw({ type: "application/json" }),
   async (req, res) => {
+    console.log('[WEBHOOK] Received Stripe webhook');
+    console.log('[WEBHOOK] Headers:', JSON.stringify(req.headers));
+    console.log('[WEBHOOK] Body length:', req.body?.length);
+    console.log('[WEBHOOK] Has stripe-signature:', !!req.headers["stripe-signature"]);
+    console.log('[WEBHOOK] WEBHOOK_SECRET exists:', !!process.env.STRIPE_WEBHOOK_SECRET);
+    
     try {
       const result = await handleStripeWebhook(req.body, req.headers["stripe-signature"]);
+      console.log('[WEBHOOK] Success:', result);
       res.json(result);
     } catch (err) {
-      console.error("Stripe webhook error:", err.message);
+      console.error("[WEBHOOK] Stripe webhook error:", err.message);
+      console.error("[WEBHOOK] Stack:", err.stack);
       res.status(400).json({ error: err.message });
     }
   },
