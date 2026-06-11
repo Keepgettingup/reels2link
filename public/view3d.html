@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Model Viewer – KUNST Studio</title>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #080810;
+      color: #d4d4e8;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .logo {
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: #7c6fff;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .viewer-wrap {
+      width: 100%;
+      max-width: 700px;
+      background: #111;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #1a1a2e;
+    }
+    model-viewer {
+      width: 100%;
+      height: 70vh;
+      background: #0d0d1a;
+    }
+    .actions {
+      padding: 16px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: #1a1a2e;
+      color: #d4d4e8;
+      border: 1px solid #2a2a4e;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: all 0.15s;
+    }
+    .btn:hover { border-color: #7c6fff; color: #fff; }
+    .btn.primary { background: linear-gradient(135deg,#7c6fff,#ec4899); border: none; color: #fff; }
+    .error {
+      color: #ff6b6b;
+      text-align: center;
+      padding: 40px;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 0.65rem;
+      color: #333;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">✦ KUNST STUDIO</div>
+  <div class="viewer-wrap" id="viewerWrap">
+    <div class="error" id="errorMsg" style="display:none">No model URL provided.</div>
+    <model-viewer id="mv"
+      auto-rotate
+      camera-controls
+      shadow-intensity="1"
+      exposure="1"
+      style="display:none"
+    ></model-viewer>
+    <div class="actions" id="actions" style="display:none">
+      <a id="downloadBtn" class="btn" download>⬇️ Download GLB</a>
+      <button class="btn" onclick="copyLink()">🔗 Copy Share Link</button>
+      <button class="btn primary" onclick="window.open('http://192.168.2.120:3001','_blank')">Open Studio</button>
+    </div>
+  </div>
+  <div class="footer">reels2link.link • powered by KUNST</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const modelUrl = params.get('model');
+
+    if (modelUrl) {
+      const mv = document.getElementById('mv');
+      mv.src = modelUrl;
+      mv.style.display = 'block';
+      document.getElementById('actions').style.display = 'flex';
+      document.getElementById('downloadBtn').href = modelUrl;
+    } else {
+      document.getElementById('errorMsg').style.display = 'block';
+    }
+
+    function copyLink() {
+      const shareUrl = `https://reels2link.link/view3d.html?model=${encodeURIComponent(modelUrl)}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        const btn = event.target;
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = '🔗 Copy Share Link', 2000);
+      });
+    }
+  </script>
+</body>
+</html>
