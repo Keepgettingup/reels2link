@@ -12,7 +12,7 @@ function getCookie(name) {
 }
 
 function isValidInstagramUrl(url) {
-  return /instagram\.com\/(reel|p|tv)\/[A-Za-z0-9_-]+/.test(url);
+  return /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(url);
 }
 
 export default function Home() {
