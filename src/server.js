@@ -574,7 +574,7 @@ app.delete("/api/keys", requireApiKey, (req, res) => {
   res.json({ message: "Key revoked" });
 });
 
-app.get("/v/:id", async (req, res) => {
+app.get("/raw/:id", async (req, res) => {
   const link = await getLink(req.params.id);
   if (!link) return res.status(404).json({ error: "Link not found or expired" });
   trackView(req.params.id, req);
@@ -668,6 +668,11 @@ function isValidInstagramUrl(url) {
     return false;
   }
 }
+
+// Serve React app for all non-API routes (client-side routing)
+app.get("*", (req, res) => {
+  res.sendFile("index.html", { root: "public" });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
