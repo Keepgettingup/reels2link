@@ -1,5 +1,6 @@
 import { execFile } from "child_process";
 import { promisify } from "util";
+import { writeFileSync } from "fs";
 import { createWriteStream, statSync, unlinkSync } from "fs";
 import { tmpdir } from "os";
 import path from "path";
@@ -80,14 +81,30 @@ async function doConvertReel(instagramUrl, ttl = "30d") {
 
 async function downloadWithYtDlp(url, outputPath) {
   try {
-    const { stdout, stderr } = await exec(YTDLP, [
+    const args = [
       "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
       "--merge-output-format", "mp4",
       "--output", outputPath,
       "--no-playlist",
-      url,
-    ]);
+    ];
+
+    // If we have Facebook cookies in env, write them to a temp file and use it
+    let cookiePath = null;
+    if (url.includes('facebook.com') || url.includes('fb.watch')) {
+      if (process.env.FB_COOKIES) {
+        cookiePath = path.join(tmpdir(), `cookies_${randomUUID()}.txt`);
+        writeFileSync(cookiePath, process.env.FB_COOKIES);
+        args.push("--cookies", cookiePath);
+      }
+    }
+
+    args.push(url);
+
+    const { stdout, stderr } = await exec(YTDLP, args);
     if (stderr) console.error("yt-dlp stderr:", stderr);
+
+    // Clean up cookie file
+    if (cookiePath) safeUnlink(cookiePath);
   } catch (err) {
     console.error("yt-dlp failed:", err.message);
     throw new Error(`Failed to download video: ${err.message}`);
