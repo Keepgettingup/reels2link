@@ -6,6 +6,40 @@ const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+const ADSENSE_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT || '';
+const ADSENSE_SLOT_LEFT = import.meta.env.VITE_ADSENSE_SLOT_LEFT || '';
+const ADSENSE_SLOT_RIGHT = import.meta.env.VITE_ADSENSE_SLOT_RIGHT || '';
+const CUSTOM_AD_LEFT_URL = import.meta.env.VITE_CUSTOM_AD_LEFT_URL || '';
+const CUSTOM_AD_LEFT_IMG = import.meta.env.VITE_CUSTOM_AD_LEFT_IMG || '';
+const CUSTOM_AD_RIGHT_URL = import.meta.env.VITE_CUSTOM_AD_RIGHT_URL || '';
+const CUSTOM_AD_RIGHT_IMG = import.meta.env.VITE_CUSTOM_AD_RIGHT_IMG || '';
+
+function AdSlot({ slot, format, className, customUrl, customImg, fallbackLabel }) {
+  if (customUrl && customImg) {
+    return (
+      <a href={customUrl} target="_blank" rel="noopener noreferrer sponsored" className={`block rounded-lg overflow-hidden ${className}`}>
+        <img src={customImg} alt="Advertisement" className="w-full h-full object-cover" />
+      </a>
+    );
+  }
+  if (ADSENSE_CLIENT && slot) {
+    return (
+      <ins className={`adsbygoogle ${className}`}
+        style={{ display: 'block' }}
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={slot}
+        data-ad-format={format || 'auto'}
+        data-full-width-responsive="true"
+      />
+    );
+  }
+  return (
+    <div className={`${className} bg-gray-900/50 border border-gray-800 rounded-lg flex items-center justify-center text-gray-600 text-xs`}>
+      <span>{fallbackLabel || 'Ad'}</span>
+    </div>
+  );
+}
+
 export default function VideoViewer() {
   const { id } = useParams();
   const [data, setData] = useState(null);
@@ -128,9 +162,19 @@ export default function VideoViewer() {
         </div>
         {/* Left ad slot — only on wide desktop */}
         <div className="hidden xl:flex flex-col items-center mt-4">
-          <div className="w-full max-w-[160px] h-[600px] bg-gray-900/50 border border-gray-800 rounded-lg flex items-center justify-center text-gray-600 text-xs">
-            <span>Ad</span>
+          <div className="w-full max-w-[160px] h-[600px]">
+            <AdSlot
+              slot={ADSENSE_SLOT_LEFT}
+              format="vertical"
+              className="w-full h-full"
+              customUrl={CUSTOM_AD_LEFT_URL}
+              customImg={CUSTOM_AD_LEFT_IMG}
+              fallbackLabel="Ad"
+            />
           </div>
+          {ADSENSE_CLIENT && ADSENSE_SLOT_LEFT && !CUSTOM_AD_LEFT_URL && (
+            <span className="text-[10px] text-gray-700 mt-1">Advertisement</span>
+          )}
         </div>
         <p className="md:text-xs lg:text-sm text-gray-600 truncate mt-4">
           Converted with{' '}
@@ -208,8 +252,15 @@ export default function VideoViewer() {
 
         {/* Right ad slot — inside video area, inner from Instagram button, only on xl+ */}
         <div className="absolute right-12 top-1/2 -translate-y-1/2 hidden xl:flex flex-col items-center z-0">
-          <div className="w-[120px] h-[400px] bg-gray-900/30 border border-gray-800/50 rounded-lg flex items-center justify-center text-gray-600 text-xs">
-            <span>Ad</span>
+          <div className="w-[120px] h-[400px]">
+            <AdSlot
+              slot={ADSENSE_SLOT_RIGHT}
+              format="vertical"
+              className="w-full h-full"
+              customUrl={CUSTOM_AD_RIGHT_URL}
+              customImg={CUSTOM_AD_RIGHT_IMG}
+              fallbackLabel="Ad"
+            />
           </div>
         </div>
 
