@@ -7,7 +7,7 @@
     "dev": "node --watch src/server.js",
     "dev:ui": "vite",
     "build": "vite build",
-    "render-build": "npm install && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ./yt-dlp && chmod a+rx ./yt-dlp"
+    "render-build": "npm install && npm run build && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ./yt-dlp && chmod a+rx ./yt-dlp"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.600.0",
