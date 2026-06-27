@@ -11,8 +11,8 @@ function getCookie(name) {
   }, null);
 }
 
-function isValidReelUrl(url) {
-  return /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(url);
+function isValidInstagramUrl(url) {
+  return /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(url);
 }
 
 export default function Home() {
@@ -58,7 +58,7 @@ export default function Home() {
 
   const handleConvert = async (e) => {
     e.preventDefault();
-    if (!isValidReelUrl(url)) { setError('Invalid Instagram or Facebook Reel URL'); return; }
+    if (!isValidInstagramUrl(url)) { setError('Invalid Instagram URL'); return; }
     setLoading(true);
     setError(null);
     setResult(null);
@@ -172,8 +172,8 @@ export default function Home() {
                     const delta = trimmed.length - url.trim().length;
                     if (delta > 5) {
                       const clean = trimmed.replace(/[\r\n\t\u200B\u00A0]/g, '');
-                      const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(clean);
-                      if (!isReel || trimmed.length >= 200) {
+                      const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(clean);
+                      if (!isInstagram || trimmed.length >= 200) {
                         setUrl(val);
                         setTimeout(() => { setUrl(''); setWrongPasteUrl(true); setTimeout(() => setWrongPasteUrl(false), 2500); }, 0);
                         return;
@@ -183,14 +183,14 @@ export default function Home() {
                   }}
                   onPaste={(e) => {
                     const pasted = e.clipboardData.getData('text').trim();
-                    const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(pasted);
-                    if (!isReel || pasted.length >= 200) {
+                    const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(pasted);
+                    if (!isInstagram || pasted.length >= 200) {
                       e.preventDefault();
                       setWrongPasteUrl(true);
                       setTimeout(() => setWrongPasteUrl(false), 2500);
                     }
                   }}
-                  placeholder="https://www.instagram.com/reel/... or https://www.facebook.com/reel/..."
+                  placeholder="https://www.instagram.com/reel/..."
                   required
                   className="w-full bg-transparent pl-10 pr-28 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none"
                 />
@@ -201,8 +201,8 @@ export default function Home() {
                       try {
                         const text = await navigator.clipboard.readText();
                         const trimmed = text.trim();
-                        const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(trimmed);
-                        if (isReel && trimmed.length < 200) { setUrl(trimmed); setWrongPasteUrl(false); }
+                        const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(trimmed);
+                        if (isInstagram && trimmed.length < 200) { setUrl(trimmed); setWrongPasteUrl(false); }
                         else { setWrongPasteUrl(true); setTimeout(() => setWrongPasteUrl(false), 2500); }
                       } catch {}
                     }}

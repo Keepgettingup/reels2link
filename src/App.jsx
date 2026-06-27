@@ -774,8 +774,8 @@ function App() {
                         // Looks like a paste: jumped by more than 5 chars at once
                         if (delta > 5) {
                           const clean = trimmed.replace(/[\r\n\t\u200B\u00A0]/g, '');
-                          const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(clean);
-                          if (!isReel || trimmed.length >= 200) {
+                          const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(clean);
+                          if (!isInstagram || trimmed.length >= 200) {
                             // Let React render the invalid value briefly, then clear it
                             setUrl(val);
                             setTimeout(() => {
@@ -790,14 +790,14 @@ function App() {
                       }}
                       onPaste={(e) => {
                         const pasted = e.clipboardData.getData('text').trim();
-                        const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(pasted);
-                        if (!isReel || pasted.length >= 200) {
+                        const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(pasted);
+                        if (!isInstagram || pasted.length >= 200) {
                           e.preventDefault();
                           setWrongPasteUrl(true);
                           setTimeout(() => setWrongPasteUrl(false), 2500);
                         }
                       }}
-                      placeholder="https://www.instagram.com/reel/... or https://www.facebook.com/reel/..."
+                      placeholder="https://www.instagram.com/reel/..."
                       required
                       className="w-full bg-transparent pl-10 pr-12 py-3 text-sm text-gray-700 placeholder-gray-400 focus:outline-none"
                     />
@@ -808,8 +808,8 @@ function App() {
                           try {
                             const text = await navigator.clipboard.readText();
                             const trimmed = text.trim();
-                            const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(trimmed);
-                            if (isReel && trimmed.length < 200) {
+                            const isInstagram = /^https?:\/\/(www\.)?instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+/i.test(trimmed);
+                            if (isInstagram && trimmed.length < 200) {
                               setUrl(trimmed);
                               setWrongPasteUrl(false);
                             } else {
