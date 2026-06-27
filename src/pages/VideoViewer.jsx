@@ -48,6 +48,7 @@ export default function VideoViewer() {
   const [countdown, setCountdown] = useState('');
   const [muted, setMuted] = useState(isMobile);
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [isSmallScreen, setIsSmallScreen] = useState(typeof window !== 'undefined' && window.innerWidth < 1280);
   const videoRef = useRef(null);
@@ -73,6 +74,31 @@ export default function VideoViewer() {
     if (!shouldAutoHide) return;
     clearTimeout(hideTimerRef.current);
     hideTimerRef.current = setTimeout(() => setControlsVisible(false), 2000);
+  };
+
+  const handleDownload = async (e) => {
+    e.preventDefault();
+    if (downloading) return;
+    setDownloading(true);
+    try {
+      const response = await fetch(data.cdn_url);
+      if (!response.ok) throw new Error('Network response was not ok');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `reels2link_${id}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+      // Fallback: open in new tab if fetch fails (e.g. CORS block without proper headers)
+      window.open(data.cdn_url, '_blank');
+    } finally {
+      setDownloading(false);
+    }
   };
 
   useEffect(() => {
@@ -248,14 +274,14 @@ export default function VideoViewer() {
               <RotateCcw className="w-5 h-5" />
             </button>
             {/* Download button */}
-            <a
-              href={data.cdn_url}
-              download
+            <button
+              onClick={handleDownload}
+              disabled={downloading}
               className={`absolute top-4 left-40 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white z-10 transition-opacity duration-300 ${!controlsVisible && shouldAutoHide ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
               title="Download"
             >
-              <Download className="w-5 h-5" />
-            </a>
+              {downloading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+            </button>
           </>
         )}
 
@@ -326,13 +352,14 @@ export default function VideoViewer() {
           {data.size_mb && <span className="flex items-center gap-1"><HardDrive className="w-3.5 h-3.5" /> {data.size_mb}MB</span>}
         </div>
         <div className="flex items-center gap-2">
-          <a
-            href={data.cdn_url}
-            download
-            className="flex items-center gap-1.5 px-3 py-1.5 text-white text-xs font-semibold rounded-xl bg-gray-800 hover:bg-gray-700"
+          <button
+            onClick={handleDownload}
+            disabled={downloading}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-white text-xs font-semibold rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-50"
           >
-            <Download className="w-3.5 h-3.5" /> Save
-          </a>
+            {downloading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />} 
+            {downloading ? 'Saving...' : 'Save'}
+          </button>
           <a
             href={data.instagram_url}
             target="_blank"
