@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX, Copy, Check, RotateCcw, Download } from 'lucide-react';
+import { Instagram, Facebook, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX, Copy, Check, RotateCcw, Download } from 'lucide-react';
 
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -273,47 +273,53 @@ export default function VideoViewer() {
           </div>
         </div>
 
-        {/* Arc Instagram button — right edge of video */}
-        <a
-          href={data.instagram_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute right-0 top-1/2 -translate-y-1/2 group hidden md:flex z-10"
-          style={{ height: '85%' }}
-        >
-          {/* Arc shape: wide rounded-left pill, very narrow at rest, expands on hover */}
-          <div
-            className="h-full flex flex-col items-center justify-center gap-3 transition-all duration-500 ease-out"
-            style={{
-              width: '28px',
-              borderRadius: '40px 0 0 40px',
-              background: 'linear-gradient(180deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
-              opacity: 0.25,
-              paddingLeft: '6px',
-              overflow: 'hidden',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.width = '110px';
-              e.currentTarget.style.opacity = '1';
-              e.currentTarget.style.paddingLeft = '16px';
-              e.currentTarget.style.paddingRight = '12px';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.width = '28px';
-              e.currentTarget.style.opacity = '0.25';
-              e.currentTarget.style.paddingLeft = '6px';
-              e.currentTarget.style.paddingRight = '0';
-            }}
-          >
-            <Instagram className="w-5 h-5 text-white flex-shrink-0" />
-            <span
-              className="text-white font-semibold text-xs text-center leading-tight"
-              style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', whiteSpace: 'nowrap', opacity: 1 }}
+        {/* Arc origin button — right edge of video */}
+        {(() => {
+          const isFb = /facebook\.com|fb\.watch/i.test(data.instagram_url || '');
+          return (
+            <a
+              href={data.instagram_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute right-0 top-1/2 -translate-y-1/2 group hidden md:flex z-10"
+              style={{ height: '85%' }}
             >
-              Original on Instagram
-            </span>
-          </div>
-        </a>
+              <div
+                className="h-full flex flex-col items-center justify-center gap-3 transition-all duration-500 ease-out"
+                style={{
+                  width: '28px',
+                  borderRadius: '40px 0 0 40px',
+                  background: isFb
+                    ? 'linear-gradient(180deg, #1877F2, #0A5BC4)'
+                    : 'linear-gradient(180deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)',
+                  opacity: 0.25,
+                  paddingLeft: '6px',
+                  overflow: 'hidden',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.width = '110px';
+                  e.currentTarget.style.opacity = '1';
+                  e.currentTarget.style.paddingLeft = '16px';
+                  e.currentTarget.style.paddingRight = '12px';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.width = '28px';
+                  e.currentTarget.style.opacity = '0.25';
+                  e.currentTarget.style.paddingLeft = '6px';
+                  e.currentTarget.style.paddingRight = '0';
+                }}
+              >
+                {isFb ? <Facebook className="w-5 h-5 text-white flex-shrink-0" /> : <Instagram className="w-5 h-5 text-white flex-shrink-0" />}
+                <span
+                  className="text-white font-semibold text-xs text-center leading-tight"
+                  style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', whiteSpace: 'nowrap', opacity: 1 }}
+                >
+                  {isFb ? 'Original on Facebook' : 'Original on Instagram'}
+                </span>
+              </div>
+            </a>
+          );
+        })()}
       </div>
 
       {/* Mobile bottom bar */}
@@ -338,9 +344,9 @@ export default function VideoViewer() {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-1.5 text-white text-xs font-semibold rounded-xl"
-            style={{ background: 'linear-gradient(135deg, #f09433, #dc2743, #bc1888)' }}
+            style={{ background: /facebook\.com|fb\.watch/i.test(data.instagram_url || '') ? 'linear-gradient(135deg, #1877F2, #0A5BC4)' : 'linear-gradient(135deg, #f09433, #dc2743, #bc1888)' }}
           >
-            <Instagram className="w-3.5 h-3.5" /> Original
+            {/facebook\.com|fb\.watch/i.test(data.instagram_url || '') ? <Facebook className="w-3.5 h-3.5" /> : <Instagram className="w-3.5 h-3.5" />} Original
           </a>
         </div>
       </div>
