@@ -363,8 +363,8 @@ app.post("/api/billing/cancel", async (req, res) => {
 
 app.post("/api/convert", async (req, res) => {
   const { url, ttl = "30d" } = req.body;
-  if (!url || !isValidInstagramUrl(url)) {
-    return res.status(400).json({ error: "Invalid Instagram URL" });
+  if (!url || !isValidReelUrl(url)) {
+    return res.status(400).json({ error: "Invalid URL. Only Instagram and Facebook Reel URLs are supported." });
   }
   
   // Get API key from header
@@ -437,9 +437,9 @@ app.post("/api/convert/bulk", async (req, res) => {
   }
   
   // Validate all URLs
-  const validUrls = urls.filter(url => url && isValidInstagramUrl(url));
+  const validUrls = urls.filter(url => url && isValidReelUrl(url));
   if (validUrls.length === 0) {
-    return res.status(400).json({ error: "No valid Instagram URLs provided" });
+    return res.status(400).json({ error: "No valid Instagram or Facebook Reel URLs provided" });
   }
   
   // Get API key from header
@@ -657,13 +657,17 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-function isValidInstagramUrl(url) {
+function isValidReelUrl(url) {
   try {
     const u = new URL(url);
     const hostname = u.hostname.replace(/^www\./, '');
-    if (hostname !== "instagram.com") return false;
-    // Accept /reel/, /reels/, /p/, /tv/ or anything containing "reel"
-    return u.pathname.includes('/reel') || u.pathname.includes('/p/') || u.pathname.includes('/tv/');
+    if (hostname === "instagram.com") {
+      return u.pathname.includes('/reel') || u.pathname.includes('/p/') || u.pathname.includes('/tv/');
+    }
+    if (hostname === "facebook.com" || hostname === "fb.watch" || hostname === "web.facebook.com") {
+      return u.pathname.includes('/reel') || u.pathname.includes('/watch') || u.pathname.includes('/videos/') || hostname === "fb.watch";
+    }
+    return false;
   } catch {
     return false;
   }
