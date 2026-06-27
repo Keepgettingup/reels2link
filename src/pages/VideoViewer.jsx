@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX, Copy, Check, RotateCcw } from 'lucide-react';
+import { Instagram, Eye, Clock, HardDrive, ArrowLeft, Loader2, AlertCircle, Volume2, VolumeX, Copy, Check, RotateCcw, Download } from 'lucide-react';
 
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
@@ -247,6 +247,15 @@ export default function VideoViewer() {
             >
               <RotateCcw className="w-5 h-5" />
             </button>
+            {/* Download button */}
+            <a
+              href={data.cdn_url}
+              download
+              className={`absolute top-4 left-40 bg-black/60 hover:bg-black/80 backdrop-blur rounded-full p-2.5 text-white z-10 transition-opacity duration-300 ${!controlsVisible && shouldAutoHide ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+              title="Download"
+            >
+              <Download className="w-5 h-5" />
+            </a>
           </>
         )}
 
@@ -316,15 +325,24 @@ export default function VideoViewer() {
           <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" /> {data.views.toLocaleString()}</span>
           {data.size_mb && <span className="flex items-center gap-1"><HardDrive className="w-3.5 h-3.5" /> {data.size_mb}MB</span>}
         </div>
-        <a
-          href={data.instagram_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1.5 text-white text-xs font-semibold rounded-xl"
-          style={{ background: 'linear-gradient(135deg, #f09433, #dc2743, #bc1888)' }}
-        >
-          <Instagram className="w-3.5 h-3.5" /> Original
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={data.cdn_url}
+            download
+            className="flex items-center gap-1.5 px-3 py-1.5 text-white text-xs font-semibold rounded-xl bg-gray-800 hover:bg-gray-700"
+          >
+            <Download className="w-3.5 h-3.5" /> Save
+          </a>
+          <a
+            href={data.instagram_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-white text-xs font-semibold rounded-xl"
+            style={{ background: 'linear-gradient(135deg, #f09433, #dc2743, #bc1888)' }}
+          >
+            <Instagram className="w-3.5 h-3.5" /> Original
+          </a>
+        </div>
       </div>
     </div>
   );
