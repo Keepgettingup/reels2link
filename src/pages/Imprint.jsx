@@ -5,8 +5,8 @@ export default function Imprint() {
   return (
     <div className="min-h-screen bg-white">
       <nav className="border-b border-gray-100 px-6 h-16 flex items-center">
-        <Link to="/" className="flex items-center gap-2">
-          <Instagram className="w-6 h-6 text-pink-600" />
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <img src="/logo.png" alt="Reels2Link" className="w-7 h-7 object-contain" />
           <span className="font-bold text-xl">Reels2Link</span>
         </Link>
       </nav>

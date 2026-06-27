@@ -85,7 +85,7 @@ export default function Home() {
       <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 z-50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Instagram className="w-6 h-6 text-pink-600" />
+            <img src="/logo.png" alt="Reels2Link" className="w-7 h-7 object-contain" />
             <span className="font-bold text-xl">Reels2Link</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-600">
@@ -564,7 +564,7 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Instagram className="w-5 h-5 text-pink-500" />
+                <img src="/logo.png" alt="Reels2Link" className="w-6 h-6 object-contain" />
                 <span className="font-bold text-white">Reels2Link</span>
               </div>
               <p className="text-sm leading-relaxed">Instagram Reel Converter & hosting service. Fast, reliable, developer-friendly.</p>

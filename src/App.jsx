@@ -270,7 +270,7 @@ function App() {
         {/* Header */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center justify-center gap-3 mb-4 hover:opacity-80 transition-opacity">
-            <Instagram className="w-12 h-12 text-pink-600" />
+            <img src="/logo.png" alt="Reels2Link Logo" className="w-14 h-14 object-contain drop-shadow-lg" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
               Reels2Link
             </h1>
