@@ -673,6 +673,11 @@ function isValidReelUrl(url) {
   }
 }
 
+// Clean URL for secret download page
+app.get("/secret-dl/cards-against-the-chef", (req, res) => {
+  res.sendFile("secret-dl/cards-against-the-chef.html", { root: "public" });
+});
+
 // Serve React app for all non-API routes (client-side routing)
 app.get("*", (req, res) => {
   res.sendFile("index.html", { root: "public" });
