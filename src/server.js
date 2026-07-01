@@ -45,6 +45,7 @@ function lookupGeo() {
 const app = express();
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({ origin: '*', exposedHeaders: ['Cross-Origin-Resource-Policy'] }));
+app.use(express.static("dist"));
 app.use(express.static("public"));
 
 const oauthLimiter = rateLimit({
@@ -680,7 +681,7 @@ app.get("/secret-dl/cards-against-the-chef", (req, res) => {
 
 // Serve React app for all non-API routes (client-side routing)
 app.get("*", (req, res) => {
-  res.sendFile("index.html", { root: "public" });
+  res.sendFile("index.html", { root: "dist" });
 });
 
 const PORT = process.env.PORT || 3000;
