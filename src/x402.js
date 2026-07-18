@@ -22,20 +22,16 @@ export function applyX402(app) {
       network: "base-sepolia",
       facilitator: { url: "https://x402.org/facilitator" },
       skip: (req) => {
-        const shouldSkip = !!req.headers.authorization?.startsWith("Bearer spool_");
-        console.log('[x402] skip check:', req.method, req.path, 'auth:', req.headers.authorization?.substring(0, 30), 'skip:', shouldSkip);
+        const shouldSkip = !!req.headers.authorization || req.headers.origin;
         return shouldSkip;
       },
     },
   );
-  // Wrap x402 so authenticated spool_ users bypass it entirely
+  // Wrap x402 so normal users and browser requests bypass it
   app.use((req, res, next) => {
-    const auth = req.headers.authorization;
-    if (auth?.startsWith("Bearer spool_")) {
-      console.log('[x402] Bypassing x402 — spool_ token:', auth.substring(0, 30));
+    if (req.headers.authorization || req.headers.origin) {
       return next();
     }
-    console.log('[x402] Running x402 middleware for:', req.method, req.path, 'auth:', auth?.substring(0, 30) || 'NONE');
     x402Mw(req, res, next);
   });
 }
