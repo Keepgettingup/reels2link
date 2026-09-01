@@ -12,7 +12,7 @@ import { requireApiKey, createApiKey, revokeApiKey, listKeys } from "./keys.js";
 import { requestMagicLink, verifyMagicLink } from "./auth.js";
 import { createCheckoutSession, handleStripeWebhook, cancelSubscription } from "./billing.js";
 import Stripe from "stripe";
-import { applyX402, x402Discovery } from "./x402.js";
+
 import { trackView, getLinkStats, getGlobalStats } from "./analytics.js";
 import { checkRequest, recordOutcome, getThreatStats } from "./trust.js";
 import { getQueueStats, clearQueue } from "./queue.js";
@@ -102,7 +102,7 @@ app.post(
 );
 
 app.use(express.json());
-applyX402(app);
+
 
 app.get("/", (req, res) => {
   res.json({
@@ -110,12 +110,12 @@ app.get("/", (req, res) => {
     docs: `${process.env.BASE_URL}/docs`,
     auth: {
       humans: "POST /api/auth/request-link with { email }",
-      agents: "GET /.well-known/x402 for pay-per-call pricing",
+
     },
   });
 });
 
-app.get("/.well-known/x402", x402Discovery);
+
 
 app.post("/api/auth/request-link", async (req, res) => {
   try {
@@ -666,7 +666,7 @@ function isValidReelUrl(url) {
       return u.pathname.includes('/reel') || u.pathname.includes('/p/') || u.pathname.includes('/tv/');
     }
     if (hostname === "facebook.com" || hostname === "fb.watch" || hostname === "web.facebook.com") {
-      return u.pathname.includes('/reel') || u.pathname.includes('/watch') || u.pathname.includes('/videos/') || hostname === "fb.watch";
+      return u.pathname.includes('/reel') || u.pathname.includes('/watch') || u.pathname.includes('/videos/') || u.pathname.includes('/share/v/') || hostname === "fb.watch";
     }
     return false;
   } catch {
@@ -689,7 +689,7 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`SPOOL running on :${PORT}`);
   console.log(`  humans:  POST /api/auth/request-link`);
   console.log(`  bots:    Authorization: Bearer spool_live_...`);
-  console.log(`  agents:  GET /.well-known/x402`);
+
   // Cleanup expired tokens every 5 minutes
   setInterval(() => cleanupExpiredTokens().catch(() => {}), 5 * 60 * 1000);
 });

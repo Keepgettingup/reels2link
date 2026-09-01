@@ -12,7 +12,7 @@ function getCookie(name) {
 }
 
 function isValidReelUrl(url) {
-  return /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(url);
+  return /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos|share\/v)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos|share\/v)\/[A-Za-z0-9_-]+)/i.test(url);
 }
 
 export default function Home() {
@@ -172,7 +172,7 @@ export default function Home() {
                     const delta = trimmed.length - url.trim().length;
                     if (delta > 5) {
                       const clean = trimmed.replace(/[\r\n\t\u200B\u00A0]/g, '');
-                      const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(clean);
+                      const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos|share\/v)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos|share\/v)\/[A-Za-z0-9_-]+)/i.test(clean);
                       if (!isReel || trimmed.length >= 200) {
                         setUrl(val);
                         setTimeout(() => { setUrl(''); setWrongPasteUrl(true); setTimeout(() => setWrongPasteUrl(false), 2500); }, 0);
@@ -183,7 +183,7 @@ export default function Home() {
                   }}
                   onPaste={(e) => {
                     const pasted = e.clipboardData.getData('text').trim();
-                    const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(pasted);
+                    const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos|share\/v)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos|share\/v)\/[A-Za-z0-9_-]+)/i.test(pasted);
                     if (!isReel || pasted.length >= 200) {
                       e.preventDefault();
                       setWrongPasteUrl(true);
@@ -201,7 +201,7 @@ export default function Home() {
                       try {
                         const text = await navigator.clipboard.readText();
                         const trimmed = text.trim();
-                        const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos)\/[A-Za-z0-9_-]+)/i.test(trimmed);
+                        const isReel = /^https?:\/\/(www\.)?(instagram\.com\/([A-Za-z0-9_.]+\/)?(reel|reels|p|tv)\/[A-Za-z0-9_-]+|facebook\.com\/(reel|watch|videos|share\/v)\/[A-Za-z0-9_-]+|fb\.watch\/[A-Za-z0-9_-]+|web\.facebook\.com\/(reel|watch|videos|share\/v)\/[A-Za-z0-9_-]+)/i.test(trimmed);
                         if (isReel && trimmed.length < 200) { setUrl(trimmed); setWrongPasteUrl(false); }
                         else { setWrongPasteUrl(true); setTimeout(() => setWrongPasteUrl(false), 2500); }
                       } catch {}
@@ -299,11 +299,7 @@ export default function Home() {
                 title: "Developer API",
                 desc: "RESTful JSON API with Bearer auth. One endpoint, one response. Simple."
               },
-              {
-                icon: <Play className="w-6 h-6 text-red-600" />,
-                title: "AI Agent Ready",
-                desc: "x402 protocol support — AI agents can discover and pay for conversions autonomously."
-              }
+
             ].map((f) => (
               <div key={f.title} className="p-6 rounded-xl border border-gray-100 hover:border-purple-200 hover:shadow-md transition">
                 <div className="mb-4">{f.icon}</div>
@@ -388,37 +384,9 @@ export default function Home() {
                 <span className="relative">Upgrade to Ultra</span>
               </Link>
             </div>
-
-            {/* X402 Pay-per-Call */}
-            <div className="bg-gradient-to-b from-blue-600 to-blue-700 rounded-2xl p-8 flex flex-col relative shadow-xl shadow-blue-200">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-3 py-1 rounded-full font-semibold">AI Agents</span>
-              <p className="text-sm font-semibold text-blue-200 uppercase tracking-wide mb-2">X402</p>
-              <p className="text-4xl font-black text-white mb-1">$0.01</p>
-              <p className="text-blue-300 text-sm mb-8">per conversion</p>
-              <ul className="space-y-3 flex-1 mb-8">
-                {["Pay per conversion", "No subscription needed", "USDC on Base network", "AI agent ready", "Automatic payment", "Usage tracking"].map(f => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-white">
-                    <Check className="w-4 h-4 text-blue-300 flex-shrink-0" /> {f}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="/.well-known/x402"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative overflow-hidden block text-center py-2.5 text-blue-700 text-sm font-semibold rounded-xl transition-all duration-100 active:translate-y-0.5"
-                style={{ background: 'linear-gradient(145deg, #ffffff, #e0f2fe)', boxShadow: '0 4px 0 #93c5fd, 0 6px 10px rgba(37,99,235,0.2)', border: '1px solid #bfdbfe' }}
-              >
-                <span className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 55%)' }} />
-                <span className="relative">View X402 Info</span>
-              </a>
-            </div>
-
           </div>
         </div>
       </section>
-
-      {/* API Section */}
       <section id="api" className="py-24 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12">
@@ -434,9 +402,6 @@ export default function Home() {
                 </li>
                 <li className="flex items-center gap-2 text-sm text-gray-600">
                   <Check className="w-4 h-4 text-purple-500" /> Usage statistics
-                </li>
-                <li className="flex items-center gap-2 text-sm text-gray-400">
-                  <span className="text-xs font-semibold px-1.5 py-0.5 bg-yellow-100 text-yellow-600 rounded">Soon</span> x402 AI agent payments
                 </li>
               </ul>
 
