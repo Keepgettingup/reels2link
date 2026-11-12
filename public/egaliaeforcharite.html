@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bildgebung als Phänotyp-Motor</title>
+<meta name="description" content="cobrä cb1.IX: CT und MRT als Phänotyp-Motor für die Genetik der 12 Hallmarks of Aging, Organuhren als Endpunkt-Engpass und eigene Daten zur nächtlichen CT/MRT-Verfügbarkeit in Deutschland.">
+<style>
+  :root {
+    --ground: #f6f6f3; --surface: #ffffff; --surface-2: #eeeee9; --line: #d9d9d2;
+    --ink: #1a1b1e; --ink-soft: #44464d; --ink-faint: #6b6e76;
+    --accent: #2f5fb3; --accent-soft: #e5ecf8;
+    --crit: #b8323a; --crit-soft: #f9e3e4; --warn: #8f5a00; --warn-soft: #f8edd6;
+    --ok: #2a7a4f; --ok-soft: #e0f1e7; --assist: #4b6a86; --assist-soft: #e3ebf2;
+    --c-ct: #c0682a; --c-mr: #2f5fb3; --grid: #dcdcd5;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #111317; --surface: #181b20; --surface-2: #20242b; --line: #2d323a;
+      --ink: #e9ebef; --ink-soft: #b3b8c2; --ink-faint: #858b96;
+      --accent: #86a8ff; --accent-soft: #1e2840;
+      --crit: #f0737a; --crit-soft: #351a1c; --warn: #e5ab4a; --warn-soft: #30260f;
+      --ok: #5cc48d; --ok-soft: #15301f; --assist: #93b2cd; --assist-soft: #1a2530;
+      --c-ct: #f0995a; --c-mr: #86a8ff; --grid: #2d323a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #111317; --surface: #181b20; --surface-2: #20242b; --line: #2d323a;
+    --ink: #e9ebef; --ink-soft: #b3b8c2; --ink-faint: #858b96;
+    --accent: #86a8ff; --accent-soft: #1e2840;
+    --crit: #f0737a; --crit-soft: #351a1c; --warn: #e5ab4a; --warn-soft: #30260f;
+    --ok: #5cc48d; --ok-soft: #15301f; --assist: #93b2cd; --assist-soft: #1a2530;
+    --c-ct: #f0995a; --c-mr: #86a8ff; --grid: #2d323a;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--serif); font-size: 17px; line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 96px; }
+  @media (min-width: 720px) { .wrap { padding: 36px 28px 110px; } }
+  p { margin: 0 0 12px; }
+  h1 { font-size: clamp(26px, 5vw, 38px); line-height: 1.15; letter-spacing: -0.01em; margin: 26px 0 12px; font-weight: 700; text-wrap: balance; }
+  h2 { font-family: var(--sans); font-size: 21px; margin: 52px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); scroll-margin-top: 16px; }
+  h3 { font-family: var(--sans); font-size: 17px; margin: 30px 0 10px; scroll-margin-top: 16px; }
+  h4 { font-family: var(--sans); font-size: 15px; margin: 20px 0 8px; color: var(--ink-soft); }
+  .byline { font-family: var(--sans); font-size: 13.5px; color: var(--ink-faint); margin: 0 0 6px; }
+  .kicker { font-family: var(--mono); font-size: 11.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin: 26px 0 0; }
+
+  section#head-point { background: var(--accent-soft); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 18px 20px; font-family: var(--sans); }
+  #head-point .hp-label { font-family: var(--mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 0 0 10px; }
+  #head-point .hp-purpose { margin: 0 0 12px; font-size: 16px; font-weight: 600; color: var(--ink); line-height: 1.45; }
+  #head-point .hp-reqs { margin: 0; padding-left: 22px; display: grid; gap: 5px; font-size: 14.5px; color: var(--ink-soft); }
+
+  .abstract { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin: 22px 0; }
+  .abstract h2 { margin-top: 0; border: 0; padding: 0; font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .abstract p { font-size: 15.5px; }
+  .abstract b { font-family: var(--sans); font-size: 13.5px; color: var(--ink); }
+  .kw { font-family: var(--sans); font-size: 13px; color: var(--ink-faint); margin: 0; }
+
+  nav.toc { font-family: var(--sans); font-size: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 18px; }
+  nav.toc ol { margin: 6px 0 0; padding-left: 20px; columns: 2 220px; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+
+  a { color: var(--accent); }
+  a.gl { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-style: dotted; text-underline-offset: 2px; }
+  a.gl:hover { color: var(--accent); }
+  a.cite { text-decoration: none; font-family: var(--sans); font-size: .82em; vertical-align: .05em; white-space: nowrap; }
+  a.ext { overflow-wrap: anywhere; }
+
+  .tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; font-weight: 700; padding: 0 5px; border-radius: 4px; vertical-align: 1px; letter-spacing: .03em; }
+  .tF { background: var(--ok-soft); color: var(--ok); }
+  .tE { background: var(--accent-soft); color: var(--accent); }
+  .tP { background: var(--warn-soft); color: var(--warn); }
+  .tH { background: var(--crit-soft); color: var(--crit); }
+  .tM { background: var(--assist-soft); color: var(--assist); }
+  .tU { background: var(--surface-2); color: var(--ink-faint); border: 1px dashed var(--ink-faint); }
+
+  .box { border-radius: 8px; padding: 12px 16px; margin: 14px 0; font-size: 15.5px; }
+  .box p:last-child { margin-bottom: 0; }
+  .b-acc { background: var(--accent-soft); }
+  .b-warn { background: var(--warn-soft); }
+  .b-ok { background: var(--ok-soft); }
+  .b-crit { background: var(--crit-soft); }
+
+  .tw { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 10px 0 6px; }
+  table.t { border-collapse: collapse; width: 100%; font-family: var(--sans); font-size: 13px; min-width: 560px; }
+  table.t th, table.t td { padding: 6px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  table.t th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); border-bottom: 1px solid var(--ink-faint); }
+  table.t td { color: var(--ink-soft); }
+  table.t td:first-child { color: var(--ink); font-weight: 600; }
+  table.num-t td:not(:first-child) { font-variant-numeric: tabular-nums; text-align: right; }
+  table.num-t th:not(:first-child) { text-align: right; }
+  table.t tr.tot td { background: var(--accent-soft); color: var(--ink); }
+  table.t tr.hi td { background: var(--warn-soft); }
+  .wide { min-width: 820px !important; }
+  .cap { font-family: var(--sans); font-size: 13px; color: var(--ink-faint); margin: 4px 0 18px; }
+  .cap b { color: var(--ink-soft); }
+
+  .formula { font-family: var(--mono); font-size: 14.5px; background: var(--surface-2); border-radius: 6px; padding: 10px 12px; overflow-x: auto; white-space: nowrap; margin: 10px 0; }
+  code { font-family: var(--mono); font-size: .88em; background: var(--surface-2); padding: 0 4px; border-radius: 3px; }
+
+  figure { margin: 18px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 12px 8px; }
+  svg.chart { width: 100%; height: auto; display: block; font-family: var(--sans); }
+  svg.chart .grid { stroke: var(--grid); stroke-width: 1; }
+  svg.chart .ax { fill: var(--ink-faint); font-size: 10.5px; }
+  svg.chart .lab { fill: var(--ink-soft); font-size: 11.5px; }
+  svg.chart .lab.tot { fill: var(--ink); font-weight: 700; }
+  svg.chart .val { fill: var(--ink-faint); font-size: 10px; }
+  svg.chart .b-ct { fill: var(--c-ct); }
+  svg.chart .b-mr { fill: var(--c-mr); }
+  .leg { font-family: var(--sans); font-size: 13px; color: var(--ink-soft); display: flex; gap: 18px; flex-wrap: wrap; margin: 4px 6px 6px; }
+  .leg i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: -1px; margin-right: 6px; }
+
+  .calc { font-family: var(--sans); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 14px 0; font-size: 14px; }
+  .calc .row { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: end; }
+  .calc label { display: grid; gap: 3px; font-size: 12.5px; color: var(--ink-faint); }
+  .calc input, .calc select { font: inherit; font-size: 14px; padding: 5px 7px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-2); color: var(--ink); width: 120px; }
+  .calc output { display: block; margin-top: 12px; font-size: 15px; color: var(--ink); }
+
+  ul, ol { padding-left: 22px; }
+  li { margin: 3px 0; }
+  .gloss { margin: 0; font-family: var(--sans); }
+  .gloss dt { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--ink); margin-top: 14px; scroll-margin-top: 20px; }
+  .gloss dd { margin: 3px 0 0; font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+  .gloss dt:target { color: var(--accent); }
+  .gloss dt:target + dd { background: var(--accent-soft); border-radius: 6px; padding: 6px 8px; }
+  ol.refs { font-family: var(--sans); font-size: 13.5px; color: var(--ink-soft); padding-left: 34px; }
+  ol.refs li { margin: 5px 0; scroll-margin-top: 20px; }
+  ol.refs li:target { background: var(--accent-soft); border-radius: 4px; }
+  .rb { font-family: var(--sans); font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin: 18px 0 4px; }
+  .fl { font-family: var(--mono); font-size: 10.5px; font-weight: 700; padding: 0 4px; border-radius: 3px; }
+  .fl.old { background: var(--surface-2); color: var(--ink-faint); }
+  .fl.pre { background: var(--warn-soft); color: var(--warn); }
+  .fl.unv { background: var(--crit-soft); color: var(--crit); }
+  .fl.own { background: var(--ok-soft); color: var(--ok); }
+  .yearbars { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; white-space: pre; overflow-x: auto; background: var(--surface-2); border-radius: 6px; padding: 10px 12px; }
+  footer { margin-top: 60px; font-family: var(--sans); font-size: 12.5px; color: var(--ink-faint); border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section id="head-point">
+  <p class="hp-label">Head point · north-star · wofür das hier wirklich ist</p>
+  <p class="hp-purpose">Zeigen, wie <a class="gl" href="#g-ct">CT</a> und <a class="gl" href="#g-mrt">MRT</a> als „Phänotyp-Motor“ für die genetische Analyse dienen können, damit die 12 <a class="gl" href="#g-hallmarks">Hallmarks of Aging</a> (López-Otín et al., Cell 2023) besser verstanden und Kombinationstherapien schneller getestet werden.</p>
+  <ol class="hp-reqs">
+    <li>Jede Zahl hat eine Quelle mit Jahr (und, wo sinnvoll, eine Spanne).</li>
+    <li>Fakten werden getrennt von Einzelstudien, Preprints und Hype.</li>
+    <li>Quellen bevorzugt aus 2022–2026, damit der Stand aktuell ist.</li>
+    <li>Den echten Engpass benennen.</li>
+  </ol>
+</section>
+
+<p class="kicker">cobrä cb1.IX · Übersichtsarbeit mit eigener Datenerhebung</p>
+<h1>Bildgebung als Phänotyp-Motor für die Genetik des Alterns: Hallmarks, Organuhren und die nächtliche MRT-Kapazität in Deutschland</h1>
+<p class="byline">cobrä cb1.IX · MAIN-Q-Redaktion (Opus) auf Basis der Äste cb2.IX.1 – cb5.IX.4 · Stand: 07.11.2026</p>
+<p class="byline">Kein medizinischer Rat. Alle Kostenzahlen aus dem eigenen Modell sind Modellwerte mit Annahmen, keine Marktpreise.</p>
+
+<div class="abstract" id="abstract">
+  <h2>Abstract</h2>
+  <p><b>Hintergrund.</b> Keine Einzelintervention (FOXO3-Genfix, <a class="gl" href="#g-senolytika">Senolytika</a>, ER-100-Teilreprogrammierung) dürfte allein ausreichen. Kombinationen brauchen schnelle, messbare Endpunkte in großen genotypisierten Kohorten. Wir prüfen, ob <a class="gl" href="#g-ct">CT</a> und <a class="gl" href="#g-mrt">MRT</a> als Phänotyp-Motor diese Lücke schließen.</p>
+  <p><b>Methoden.</b> Literaturübersicht in vier Ästen (Quellen bevorzugt 2022–2026, Evidenz getrennt nach Fakt, Einzelstudie, Preprint und Hype) und eigene Erhebung der 24-h-Notfallverfügbarkeit von <a class="gl" href="#g-ct">CT</a>/<a class="gl" href="#g-mrt">MRT</a> an 2.204 Krankenhausstandorten (<a class="gl" href="#g-dkg">DKG-Verzeichnis</a>, 07.11.2026).</p>
+  <p><b>Ergebnisse.</b> Bildgebungsgenetik ist etabliert: 59 Genorte für das <a class="gl" href="#g-bag">Hirnalter</a>, 393 Genort-Treffer über neun <a class="gl" href="#g-organuhr">Organuhren</a> (n = 377.028). Direkt abbildbar sind nur 3 von 12 <a class="gl" href="#g-hallmarks">Hallmarks</a>, und zwar nur mit kaum skalierbaren Verfahren (<a class="gl" href="#g-pet">PET</a>, ³¹P-MRS). <a class="gl" href="#g-organuhr">Organuhren</a> erkennen beim Einzelnen erst Änderungen ab ≈4–5 Jahren; Interventionen verschieben sie um ≈0,5–1 Jahr, was 63 bis über 1.000 Personen pro Arm erfordert. Keine Behörde akzeptiert eine Altersuhr als <a class="gl" href="#g-surrogat">Surrogat</a>. 736 Standorte (56 % der MRT-Standorte) melden ein eigenes 24-h-MRT; ob nachts Personal vor Ort ist, gibt das Verzeichnis nicht her. Ein mittleres Nachtszenario ergibt ≈98.000 Scans pro Jahr zu ≈145 € pro Scan (Modell). KI-Rekonstruktion verkürzt die Messzeit unabhängig belegt um 27–53 %, <a class="gl" href="#g-remote">Remote-Scanning</a> senkt den MTR-Bedarf rechnerisch von ≈122 auf ≈39–49 Vollkräfte.</p>
+  <p><b>Schlussfolgerung.</b> Der Engpass ist nicht die Gerätezeit, sondern fehlende <a class="gl" href="#g-surrogat">Surrogat-Validierung</a>, fehlende Wiederholungsscans in genotypisierten Kohorten, nachts anwesendes Personal samt Freiwilligen sowie die <a class="gl" href="#g-harmonisierung">Harmonisierung</a> über Scanner. KI verschiebt den Personalengpass von der MTR-Kopfzahl zum <a class="gl" href="#g-vorbehalt">Berufsvorbehalt</a> (§ 5 <a class="gl" href="#g-mtbg">MTBG</a>), zur Präsenzpflicht vor Ort und zur radiologischen Befundung. Wir schlagen einen kleinen, standardisierten Nacht-MRT-Pilot mit Wiederholungsmessungen vor.</p>
+  <p class="kw">Schlagwörter: <a class="gl" href="#g-hallmarks">Hallmarks of Aging</a> · Bildgebungsgenetik · <a class="gl" href="#g-gwas">GWAS</a> · <a class="gl" href="#g-organuhr">Organuhr</a> · <a class="gl" href="#g-surrogat">Surrogat-Endpunkt</a> · Fallzahl · <a class="gl" href="#g-ukb">UK Biobank</a> · <a class="gl" href="#g-nako">NAKO</a> · MRT-Kapazität · <a class="gl" href="#g-ruf">Rufbereitschaft</a> · <a class="gl" href="#g-dlr">Deep-Learning-Rekonstruktion</a> · <a class="gl" href="#g-remote">Remote-Scanning</a></p>
+</div>
+
+<nav class="toc" aria-label="Inhalt">
+  <b>Inhalt</b>
+  <ol>
+    <li><a href="#s1">Einleitung</a></li>
+    <li><a href="#s2">Methoden</a></li>
+    <li><a href="#s3">Ergebnisse</a></li>
+    <li><a href="#s4">Diskussion: der echte Engpass</a></li>
+    <li><a href="#s5">Limitationen</a></li>
+    <li><a href="#s6">Schlussfolgerung und Vorschlag</a></li>
+    <li><a href="#s7">Ehrenwerte Erwähnungen / Sackgassen</a></li>
+    <li><a href="#s8">Widersprüche zwischen den Ästen</a></li>
+    <li><a href="#s9">Legende / Glossar</a></li>
+    <li><a href="#s10">Quellen</a></li>
+  </ol>
+</nav>
+
+<div class="box b-acc" id="kennzeichnung">
+  <p><b>Kennzeichnung der Evidenz</b> (gilt für den ganzen Text): <span class="tag tF">F</span> Fakt (große oder replizierte Studien, Metaanalyse, Gesetzestext) · <span class="tag tE">E</span> Einzelstudie · <span class="tag tP">P</span> Preprint, Konferenzbeitrag, Pressemitteilung oder Herstellerangabe · <span class="tag tH">H</span> Hype oder Spekulation · <span class="tag tM">M</span> eigenes Modell oder eigene Annahme · <span class="tag tU">unverifiziert</span> nicht gefunden oder nicht prüfbar. Quellennummern in eckigen Klammern verweisen auf die vereinheitlichte Quellenliste (<a href="#s10">Abschnitt 10</a>).</p>
+</div>
+
+<!-- ============================ 1 EINLEITUNG ============================ -->
+<h2 id="s1">1 Einleitung</h2>
+<p>López-Otín und Kollegen beschreiben in ihrer Aktualisierung von 2023 zwölf Kennzeichen des Alterns, die <a class="gl" href="#g-hallmarks">Hallmarks of Aging</a>, gegliedert in primäre (Schaden), antagonistische (Reaktion) und integrative (Folge) Kennzeichen <a class="cite" href="#r1">[1]</a>. Wer diese Mechanismen gezielt behandeln will, steht vor einem Messproblem: Welche Größe verändert sich schnell genug, um eine Therapie innerhalb von Monaten zu beurteilen, und ist zugleich in Zehntausenden genotypisierten Menschen messbar?</p>
+<p>Diese Arbeit geht von drei Prämissen des Users aus, die wir hier offenlegen und nicht als bewiesen behandeln:</p>
+<ol>
+  <li><b>Keine Einzelmaßnahme reicht allein.</b> Genannt wurden ein FOXO3-Genfix (der User schrieb „fox6“; gemeint ist <a class="gl" href="#g-foxo3">FOXO3</a>, vom User am 07.11.2026 bestätigt), <a class="gl" href="#g-senolytika">Senolytika</a> bzw. gezielte Regeneration und die partielle epigenetische Reprogrammierung <a class="gl" href="#g-osk">ER-100</a> (OSK-Faktoren).</li>
+  <li><b>Also braucht es Kombinationen.</b> Kombinationen vervielfachen die Zahl der Studienarme, und Wechselwirkungen sind statistisch teuer (<a href="#s3-3">Abschnitt 3.3</a>).</li>
+  <li><b>Der Engpass sind schnelle, messbare Endpunkte in großen genotypisierten Kohorten.</b> Bildgebung soll diese Phänotypen liefern, die Genetik soll sie den Mechanismen zuordnen.</li>
+</ol>
+<div class="box b-acc" id="s1-praemissen">
+<p><b>Sind die Prämissen richtig? Unsere Einschätzung.</b> Kurz: als Arbeitshypothesen vernünftig, aber keine davon ist bewiesen. Am besten belegt ist Prämisse 3.</p>
+<ul>
+  <li><b>Prämisse 1 (keine Einzelmaßnahme reicht): plausibel, aber unbewiesen.</b> Für <a class="gl" href="#g-senolytika">Senolytika</a> spricht die Datenlage dafür: In der größten randomisierten Studie (<a class="gl" href="#g-dq">D+Q</a>, Knochen) wurde der primäre Endpunkt verfehlt, ein Effekt zeigte sich nur bei Frauen mit hoher Seneszenzlast <a class="cite" href="#r39">[39]</a> <span class="tag tE">E</span>. <a class="gl" href="#g-osk">ER-100</a> ist eine lokale Augentherapie (n = 3, Pressemitteilung) <a class="cite" href="#r41">[41]</a> <span class="tag tP">P</span>; als systemischer Fix ist sie gar nicht angelegt, die Prämisse trifft hier also schon per Bauart zu. Für <a class="gl" href="#g-foxo3">FOXO3</a> ist nur der Langlebigkeits-Genotyp belegt <a class="cite" href="#r42">[42]</a>; einen Eingriff am Menschen gibt es nicht, „reicht nicht“ ist also weder belegt noch widerlegt. Wichtig: Dass eine Maßnahme <i>bisher nicht gezeigt</i> hat, dass sie reicht, ist nicht dasselbe wie <i>gezeigt, dass sie nicht reicht</i>.</li>
+  <li><b>Prämisse 2 (also Kombinationen): naheliegend, folgt aber nicht zwingend.</b> Die <a class="gl" href="#g-hallmarks">Hallmarks</a> hängen eng zusammen <a class="cite" href="#r1">[1]</a>. Das spricht für Kombinationen, lässt aber auch die Gegenhypothese offen: Ein Hebel weit oben in der Kette (z. B. epigenetische Reprogrammierung, Ziel von <a class="gl" href="#g-osk">OSK</a>) könnte mehrere <a class="gl" href="#g-hallmarks">Hallmarks</a> zugleich verschieben. Andere Wege wären bessere Einzelmittel oder Therapien nacheinander statt gleichzeitig. Kombinationen bringen außerdem eigene Kosten mit sich: ≈4-fache Fallzahl für Wechselwirkungen (<a href="#s3-3-3">3.3.3</a>) und neue Sicherheitsrisiken <span class="tag tM">M</span>.</li>
+  <li><b>Prämisse 3 (Engpass sind schnelle Endpunkte in großen genotypisierten Kohorten): gut gestützt, aber nicht der einzige Engpass.</b> Unsere Ergebnisse bestätigen sie. Keine Altersuhr ist als <a class="gl" href="#g-surrogat">Surrogat</a> anerkannt <a class="cite" href="#r74">[74]</a> <span class="tag tF">F</span>. Eine individuelle Änderung muss 4–5 Jahre übersteigen, Therapieeffekte liegen bei 0,5–1 Jahr (<a href="#s3-3">3.3</a>). Daneben bremsen aber auch die Zulassung (Altern ist keine anerkannte Indikation), die Finanzierung (<a class="gl" href="#g-tame">TAME</a> ist nicht gestartet) und die Sicherheit langer Gentherapie-Studien <span class="tag tM">M</span>.</li>
+</ul>
+<p><b>Folge für diese Arbeit:</b> Die Schlussfolgerungen ab Abschnitt 3 hängen vor allem an Prämisse 3. Sie gelten also auch dann, wenn sich eine Einzelmaßnahme doch als ausreichend erweisen sollte. Auch dann bräuchte man schnelle, validierte Endpunkte, um das zu zeigen.</p>
+</div>
+<p>Dazu kommt eine konkrete Idee des Users: <b>freie nächtliche MRT-Zeit in deutschen Krankenhäusern</b> für die Forschungsphänotypisierung zu nutzen. Wir prüfen diese Idee mit eigenen Daten (<a href="#s3-4">Abschnitt 3.4</a>) und einem Kapazitäts- und Kostenmodell (<a href="#s3-5">Abschnitt 3.5</a>).</p>
+<p><b>Fragestellung.</b> (a) Was leistet Bildgebungsgenetik heute? (b) Welche der 12 <a class="gl" href="#g-hallmarks">Hallmarks</a> sind im Bild sichtbar, wie direkt, mit welchen Genen verknüpft? (c) Taugen <a class="gl" href="#g-organuhr">Organuhren</a> als schneller Endpunkt, und welche Fallzahl folgt daraus? (d) Könnte die deutsche Krankenhaus-MRT-Infrastruktur nachts eine große genotypisierte Kohorte tragen, und was begrenzt sie wirklich?</p>
+
+<!-- ============================ 2 METHODEN ============================ -->
+<h2 id="s2">2 Methoden</h2>
+<h3 id="s2-1">2.1 Literaturübersicht in vier Ästen (cobrä)</h3>
+<p>Die Hauptfrage wurde zunächst in vier, später fünf unabhängige Teilfragen zerlegt und jeweils einem eigenen Agenten übergeben. Jeder Ast arbeitete mit Websuche und Abstracts (Volltexte nur teilweise), sollte jede Zahl mit Quelle und Jahr belegen, Evidenzgrade kennzeichnen und Unbelegtes als „unverifiziert“ markieren. Die Modellstufe wurde nach Schwierigkeit gewählt. Ein fünfter Ast (cb6.IX.5) wurde auf Wunsch des Users nachgereicht:</p>
+<div class="tw"><table class="t">
+<thead><tr><th>Ast</th><th>Teilfrage</th><th>Modellstufe</th><th>Quellen im Ast</th></tr></thead>
+<tbody>
+<tr><td>cb2.IX.1</td><td>Stand der Bildgebungsgenetik (<a class="gl" href="#g-ukb">UK Biobank</a>, <a class="gl" href="#g-wgs">WGS</a>, <a class="gl" href="#g-ct">CT</a>, andere Kohorten, Methoden)</td><td>Sonnet</td><td>29</td></tr>
+<tr><td>cb3.IX.2</td><td>12 <a class="gl" href="#g-hallmarks">Hallmarks</a> ↔ Bild-Readouts ↔ Gene ↔ Endpunkte</td><td>Opus</td><td>37</td></tr>
+<tr><td>cb4.IX.3</td><td><a class="gl" href="#g-organuhr">Organuhren</a>, Wiederholbarkeit, Fallzahl, Regulatorik</td><td>Opus</td><td>25 (davon 21 hier genutzt)</td></tr>
+<tr><td>cb5.IX.4</td><td>Kapazität in Deutschland, Nachtmodell, Kosten, Recht</td><td>Sonnet</td><td>23</td></tr>
+<tr><td>cb6.IX.5</td><td>KI-Beschleunigung in <a class="gl" href="#g-mrt">MRT</a>/<a class="gl" href="#g-ct">CT</a>; wer darf ein <a class="gl" href="#g-mrt">MRT</a> bedienen (<a class="gl" href="#g-mtr">MTR</a>, <a class="gl" href="#g-mtbg">MTBG</a>, <a class="gl" href="#g-strlschg">StrlSchG</a>, <a class="gl" href="#g-remote">Remote-Scanning</a>)</td><td>Sonnet</td><td>46</td></tr>
+<tr><td>cb1.IX (dieser Bericht)</td><td>Synthese, Widerspruchsprüfung, Quellenzusammenführung, Stichproben-Verifikation</td><td>Opus</td><td>144 nach Zusammenführung</td></tr>
+</tbody></table></div>
+<p>Die Redaktion hat die Quellen aller Äste zusammengeführt und doppelte Einträge vereinigt (z. B. Elliott 2018, Tian 2023, Jawinski 2025, van der Meer 2022). Sieben unvollständige Angaben wurden stichprobenartig per Websuche nachgeprüft und ergänzt (Zeitschrift bzw. Autoren bei <a class="cite" href="#r37">[37]</a>, <a class="cite" href="#r45">[45]</a>, <a class="cite" href="#r46">[46]</a>, <a class="cite" href="#r69">[69]</a>, <a class="cite" href="#r90">[90]</a>, <a class="cite" href="#r91">[91]</a>). Alle übrigen Flags der Äste bleiben sichtbar. Ein Abschnitt des Asts cb4 mit persönlichem Bezug wurde auf ausdrücklichen Wunsch nicht in diese Arbeit übernommen.</p>
+
+<h3 id="s2-2">2.2 Eigene Datenerhebung: DKG-Krankenhausverzeichnis</h3>
+<p><b>Quelle.</b> Deutsches Krankenhausverzeichnis der Deutschen Krankenhausgesellschaft (<a class="gl" href="#g-dkg">DKG</a>), englischsprachige Ansicht, Unterseite „Equipment“ je Standort mit dem Feld <i>24 <a class="gl" href="#g-hr">hr</a> emergency availability</i> <a class="cite" href="#r83">[83]</a>. Die Angaben stammen aus den Qualitätsberichten der Krankenhäuser, sind also Selbstangaben.</p>
+<p><b>Abruf.</b> Am 07.11.2026 wurde eine Liste von 2.210 Standort-IDs mit Bundesland erzeugt (<code>daten/ids.txt</code>) und je ID die Geräteseite abgerufen. Archiviert sind die ID-Liste, das Parse-Skript, das Ergebnis (<code>daten/ct_mrt_24h.csv</code>) und die Rohseiten (<code>daten/dkg_rohseiten_2026-11-07.tar.gz</code>: Geräteseiten <code>eq/</code>, Länderlisten <code>states/</code>, Freitext-Auswertung <code>expl.py</code>).</p>
+<p><b>Parsing</b> (<code>daten/parse.py</code>). Aus jeder Seite werden die Tabellenzeilen gelesen (Gerät, Erklärung, Verfügbarkeit). Ein Gerät gilt als <a class="gl" href="#g-ct">CT</a> bzw. <a class="gl" href="#g-mrt">MRT</a>, wenn die Gerätebezeichnung „(<a class="gl" href="#g-ct">CT</a>)“ bzw. „(<a class="gl" href="#g-mrt">MRT</a>)“ enthält. Klassen je Gerät:</p>
+<ul>
+  <li><code>24h</code>: Verfügbarkeit beginnt mit „yes“, keine Kooperation erwähnt (eigenes Gerät rund um die Uhr);</li>
+  <li><code>24h_koop</code>: Verfügbarkeit „yes“ und die Erklärung nennt „Kooperation“/„cooperat…“ (24 h über einen Partner);</li>
+  <li><code>vorhanden_nicht24h</code>: Gerät aufgeführt, aber keine 24-h-Verfügbarkeit;</li>
+  <li><code>nicht_angegeben</code>: keine passende Gerätezeile;</li>
+  <li><code>FEHLT</code>: Seite fehlt oder ist kleiner als 1.000 Byte (6 Standorte, ausgeschlossen).</li>
+</ul>
+<p>Standorte mit psychiatrischem Namen (Regex auf „psych|psychosom|seel|sucht|forensi|maßregel|nervenkl“) wurden als Sensitivitätsgruppe markiert (249 Standorte). Die Auswertung je Bundesland wurde für diese Arbeit unabhängig aus der CSV neu berechnet (Python, <code>-I</code>); alle Zahlen stimmen mit den Vorauswertungen der Äste überein.</p>
+<p><b>Definitionen und Nenner.</b> „Standorte“ = 2.204 auswertbare Einträge. „MRT-Standorte“ = Standorte, die ein <a class="gl" href="#g-mrt">MRT</a> angeben (eigen 24 h + Kooperation 24 h + vorhanden, nicht 24 h) = 1.324. Prozentangaben nennen immer den Nenner, weil sonst scheinbare Widersprüche entstehen (<a href="#s8">Abschnitt 8</a>).</p>
+<p><b>Grenze der Daten.</b> Das Verzeichnis unterscheidet <b>nicht</b> zwischen Nachtschicht vor Ort und <a class="gl" href="#g-ruf">Rufbereitschaft</a>. Nur 2 von 736 Standorten mit eigenem 24-h-MRT erwähnen „<a class="gl" href="#g-ruf">Rufbereitschaft</a>“ im Freitext, bei 450 ist die Erklärung leer (Zählung aus den archivierten Rohseiten mit <code>expl.py</code>, am 07.11.2026 erneut ausgeführt und reproduziert: von 736 Standorten 450 leer, 277 sonstiger Text, 7 mit Präsenz-Formulierung, 2 mit „<a class="gl" href="#g-ruf">Rufbereitschaft</a>“). Das ist kein Beleg dafür, dass <a class="gl" href="#g-ruf">Rufbereitschaft</a> selten ist, sondern nur dafür, dass das Feld kaum ausgefüllt wird.</p>
+
+<h3 id="s2-3">2.3 Modelle</h3>
+<p>Für die Fallzahl nutzen wir die Standardformel für den Vergleich der Veränderung zwischen zwei Armen (<a href="#s3-3">Abschnitt 3.3</a>). Für die Nachtkapazität und die Kosten nutzen wir ein deterministisches Szenariomodell mit drei Szenarien (vorsichtig, mittel, optimistisch); alle Parameter, die nicht aus einer Quelle stammen, sind als <span class="tag tM">M</span> gekennzeichnet.</p>
+
+<!-- ============================ 3 ERGEBNISSE ============================ -->
+<h2 id="s3">3 Ergebnisse</h2>
+
+<h3 id="s3-1">3.1 Bildgebungsgenetik heute</h3>
+<p><b>Die Datenbasis ist groß.</b> Die <a class="gl" href="#g-ukb">UK Biobank</a> (<a class="gl" href="#g-ukb">UKB</a>) hat im Juli 2025 die Bildgebung von 100.000 Freiwilligen abgeschlossen; ein Termin dauerte etwa 5 Stunden und erzeugte über 12.000 MR-Bilder pro Person (Gehirn, Herz, Bauch), dazu Ganzkörper-Scans und Karotis-Ultraschall. Die Förderung lag über 60 Mio. GBP, gemessen wurde an 4 Zentren <a class="cite" href="#r2">[2]</a> <span class="tag tF">F</span>. Wiederholungsscans: Ziel 60.000 (mindestens 2 Jahre nach dem Erstscan), Start 2022, Abschluss erwartet 2029 <a class="cite" href="#r2">[2]</a>. Belegt sind „mehr als 5.000“ auf einer undatierten UKB-Seite, also ≈8 % des Ziels <a class="cite" href="#r13">[13]</a> <span class="tag tU">unverifiziert, Untergrenze</span>.</p>
+<p><b><a class="gl" href="#g-gwas">Hirn-GWAS</a>.</b> Elliott et al. 2018 fanden bei 3.144 <a class="gl" href="#g-idp">Hirn-IDPs</a> (n = 8.428) 1.578 signifikant erbliche Merkmale; funktionelle Konnektivität war am wenigsten erblich (235 von 1.771) <a class="cite" href="#r3">[3]</a> <span class="tag tF">F</span>. Smith et al. 2021 erweiterten auf 3.935 Merkmale und 692 replizierte Genort-Cluster (22.138 Entdeckung + 11.086 Replikation = 33.224, <a class="gl" href="#g-big40">BIG40</a>) <a class="cite" href="#r4">[4]</a> <span class="tag tF">F</span>. Eine <a class="gl" href="#g-gwas">Hirn-GWAS</a> auf den vollen 100.000 Scans wurde nicht gefunden <span class="tag tU">unverifiziert</span>.</p>
+<p><b>Herz, Bauch, Muskel.</b> Linksventrikuläre Masse (n = 43.230): 12–14 Genorte (Zahl in der Quelle widersprüchlich) <a class="cite" href="#r6">[6]</a> <span class="tag tE">E</span>; Wanddicke (n = 42.194): 72 Genorte <a class="cite" href="#r7">[7]</a> <span class="tag tE">E</span>; 3D-Herzmodelle (n = 48.651): 40 neue Assoziationen <a class="cite" href="#r8">[8]</a> <span class="tag tE">E</span>. 14 MRT-Muskel- und Fettmaße (n = 33.588): 82 Genorte, davon 50 eigenständig, Heritabilität 18–34 %, stärkstes Signal Leberfett mit PNPLA3 (rs738409, p = 2,8·10⁻¹⁶¹) und TM6SF2 <a class="cite" href="#r15">[15]</a> <span class="tag tF">F</span>. Ein medRxiv-Preprint vom November 2025 meldet z. B. 116 Genorte für Gesamtmuskel <a class="cite" href="#r16">[16]</a> <span class="tag tP">P</span>.</p>
+<p><b>Sequenzierung statt <a class="gl" href="#g-array">Array</a>.</b> Die UKB-WGS (490.640 Genome, 2025) fand 18,8-mal mehr Varianten als <a class="gl" href="#g-imputation">imputierte</a> <a class="gl" href="#g-array">Arrays</a> und 3.991 von <a class="gl" href="#g-array">Arrays</a> verpasste Assoziationen, allerdings für Krankheits- und Blutmerkmale, nicht für Bildgebung <a class="cite" href="#r5">[5]</a> <span class="tag tF">F</span>. Für Bildgebung gibt es bisher Exom-Daten: 596 Multiorgan-MRT-Merkmale, über 50.000 Personen, 224 <a class="gl" href="#g-burden">Gen-Burden-Assoziationen</a> (z. B. PTEN ↔ Gesamthirnvolumen) <a class="cite" href="#r10">[10]</a> <span class="tag tE">E</span>. Dass <a class="gl" href="#g-wgs">WGS</a> für Bildgebungsmerkmale viel zusätzliche Erklärung bringt, ist nicht belegt <span class="tag tH">H</span> wenn behauptet.</p>
+<p><b><a class="gl" href="#g-ct">CT</a>.</b> Wegen der Strahlung kommt <a class="gl" href="#g-ct">CT</a> in gesunden Kohorten praktisch nicht vor. Der Ausweg ist <i><a class="gl" href="#g-oppct">opportunistisches CT</a></i>: vorhandene klinische Bilder per KI auswerten <a class="cite" href="#r17">[17]</a><a class="cite" href="#r18">[18]</a>. Die größte CT-Genetik betrifft <a class="gl" href="#g-cac">Koronarkalk</a>: 35.776 Personen, 11 Genorte, davon 8 neu <a class="cite" href="#r11">[11]</a> <span class="tag tE">E</span>. Eine CT-Muskel/Fett-GWAS (Penn Medicine BioBank, über 7.500 Patienten) ist nur als Kongressbeitrag belegt <a class="cite" href="#r12">[12]</a> <span class="tag tP">P</span>. CT-Genetik ist damit ein bis zwei Größenordnungen kleiner als MRT-Genetik.</p>
+<p><b>Deutschland.</b> Die <a class="gl" href="#g-nako">NAKO-Gesundheitsstudie</a> hat rund 205.000 Teilnehmende, über 30.000 Ganzkörper-MRT an 5 Zentren, die ganze Kohorte ist genotypisiert, <a class="gl" href="#g-wgs">WGS</a> für über 25.000 Personen; Datenzugang für <a class="gl" href="#g-wgs">WGS</a> über eine sichere Umgebung (GHGA) laut einer NAKO-Seite ab 2027 <a class="cite" href="#r19">[19]</a><a class="cite" href="#r20">[20]</a><a class="cite" href="#r21">[21]</a> <span class="tag tU">Termine unverifiziert</span>. Die Rhineland Study (Bonn) hat über 12.500 Teilnehmende <a class="cite" href="#r22">[22]</a>. Außerhalb Europas: China Kadoorie Biobank mit über 100.000 Genotypisierten, MRT-Teilstudie nicht gefunden <a class="cite" href="#r23">[23]</a>.</p>
+<p><b>KI-Phänotypen und Kausalität.</b> Ein 3D-Autoencoder auf 6.130 UKB-Hirn-MRTs lieferte 97 Genorte, davon 26 nicht aus früheren IDP-GWAS bekannt <a class="cite" href="#r26">[26]</a> <span class="tag tE">E</span>. <a class="gl" href="#g-mr">Mendelsche Randomisierung</a> verknüpft <a class="gl" href="#g-idp">Hirn-IDPs</a> mit Alzheimer, frontotemporaler Demenz und MS <a class="cite" href="#r25">[25]</a> <span class="tag tE">E</span> <a class="cite" href="#r14">[14]</a> <span class="tag tP">P</span>.</p>
+<p><b>Grenzen.</b> Fast nur europäische Abstammung (<a class="gl" href="#g-ukb">UKB</a> insgesamt ≈94 % weiß, Angabe von 2018) <a class="cite" href="#r27">[27]</a><a class="cite" href="#r28">[28]</a>; <a class="gl" href="#g-hvb">Healthy-Volunteer-Bias</a> im Bildgebungsteil <a class="cite" href="#r29">[29]</a><a class="cite" href="#r30">[30]</a>; Querschnitt statt Veränderung. Eine Cross-Ancestry-Hirn-GWAS (7.058 Han-Chinesen + 33.224 Briten, 2024) ist ein erster Gegenschritt <a class="cite" href="#r24">[24]</a>.</p>
+
+<h3 id="s3-2">3.2 Hallmarks × Bildgebung</h3>
+<p>Tabelle 1 ordnet jedem <a class="gl" href="#g-hallmarks">Hallmark</a> die wichtigsten Bild-Readouts, deren Direktheit, eine Gen-Bild-Brücke und den besten schnellen Endpunkt für die drei Prämissen-Interventionen zu. <b>Direktheit:</b> D = misst den Mechanismus, I = misst eine Folge, – = nicht sichtbar. <b>Reife:</b> E = etabliert, R = Forschung, S = spekulativ.</p>
+<div class="tw"><table class="t wide">
+<thead><tr><th>#</th><th><a class="gl" href="#g-hallmarks">Hallmark</a> (Klasse nach [1])</th><th>Bild-Readouts</th><th>Direkt</th><th>Gen-/GWAS-Brücke</th><th>Reife</th><th>Bester schneller Endpunkt (<a class="gl" href="#g-foxo3">FOXO3</a> / <a class="gl" href="#g-senolytika">Senolytika</a> / <a class="gl" href="#g-osk">OSK</a>)</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Genomische Instabilität (primär)</td><td>CT-Koronarkalk, 3D-Gefäßultraschall-Plaques, Herz-MRT-Fibrose als Folge von <a class="gl" href="#g-chip">CHIP</a> und <a class="gl" href="#g-mloy">mLOY</a></td><td>I</td><td><a class="gl" href="#g-chip">CHIP</a> → neue femorale Plaques ≈1,5-fach (≥2 % VAF: ≈2,1-fach; n = 2.347) <a class="cite" href="#r36">[36]</a>; <a class="gl" href="#g-mloy">mLOY</a> → Herzfibrose (Maus kausal), Männer ≈30 % mehr CV-Tod <a class="cite" href="#r38">[38]</a>; IL6R dämpft CHIP-KHK-Risiko (n = 451.180) <a class="cite" href="#r51">[51]</a></td><td>R</td><td>Kein schneller Endpunkt; Plaque-Neubildung dauert 3–6 Jahre <a class="cite" href="#r36">[36]</a>. Nützlich zur Stratifizierung.</td></tr>
+<tr><td>2</td><td>Telomerverkürzung (primär)</td><td>Keiner direkt; indirekt graue Substanz, <a class="gl" href="#g-wmh">WMH</a>, Basalganglien-Eisen (<a class="gl" href="#g-qsm">QSM</a>)</td><td>– / I</td><td>Längere Leukozyten-Telomere ↔ mehr graue Substanz, Demenz-HR 0,93 (0,91–0,96), n = 31.661, partielles R² nur 0,05 <a class="cite" href="#r34">[34]</a></td><td>E (Assoz.)</td><td>Ungeeignet; Blut-Telomerlänge bleibt nötig.</td></tr>
+<tr><td>3</td><td>Epigenetische Veränderungen (primär)</td><td>Keiner direkt; <a class="gl" href="#g-bag">Brain Age Gap</a> nur als grobe „Bild-Uhr“</td><td>– / I</td><td>Hannum-Uhr ↔ Hippocampusvolumen in 2 Kohorten, andere Uhren inkonsistent, longitudinal nichts <a class="cite" href="#r46">[46]</a>; klinisches Bio-Alter (nicht epigenetisch) ↔ kleinere graue Substanz <a class="cite" href="#r56">[56]</a></td><td>S</td><td><a class="gl" href="#g-osk">OSK</a>: kein Bild-Endpunkt für das Epigenom; nur Zielorgan (Auge: Gesichtsfeld, <a class="gl" href="#g-oct">OCT</a>) <a class="cite" href="#r40">[40]</a><a class="cite" href="#r41">[41]</a>.</td></tr>
+<tr><td>4</td><td>Verlust der Proteostase (primär)</td><td>Amyloid-PET, Tau-PET; Atrophie-MRT</td><td>D (Gehirn)</td><td>Amyloid-Positivität 10 % → 44 % zwischen 50 und 90 J.; APOE ε4 2–3-fach <a class="cite" href="#r47">[47]</a>; MAPT Top-Locus der Hirnalter-GWAS (p = 9,4·10⁻⁸³) <a class="cite" href="#r33">[33]</a></td><td>E</td><td>Reagiert langsam (Monate bis Jahre); eher Selektionsmarker.</td></tr>
+<tr><td>5</td><td>Gestörte Makroautophagie (primär)</td><td>Kein Human-Tracer bekannt; nur Blut-PBMC (LC3) <a class="cite" href="#r57">[57]</a>; Zelltod-PET misst anderes <a class="cite" href="#r58">[58]</a></td><td>–</td><td>Keine Imaging-GWAS bekannt <span class="tag tU">unverifiziert</span></td><td>S</td><td>Keiner; ersatzweise Proteostase- oder Mitochondrien-Readouts.</td></tr>
+<tr><td>6</td><td>Deregulierte Nährstoffsensorik (antagonistisch)</td><td><a class="gl" href="#g-pdff">Leber-PDFF</a>, viszerales Fett (<a class="gl" href="#g-vat">VAT</a>), <a class="gl" href="#g-mfi">MFI</a>, FDG-PET</td><td>I</td><td><a class="gl" href="#g-pdff">PDFF</a>: PNPLA3, TM6SF2, MBOAT7 <a class="cite" href="#r15">[15]</a>; MFI-GWAS 26 Loci (n = 33.300) <a class="cite" href="#r49">[49]</a>. Kein klarer mTOR-/IGF-Treffer bekannt.</td><td>E / R</td><td><a class="gl" href="#g-foxo3">FOXO3</a>: <a class="gl" href="#g-pdff">Leber-PDFF</a>; Reaktion „innerhalb von Wochen“ ist im Ast ohne Quelle <span class="tag tU">unverifiziert</span>.</td></tr>
+<tr><td>7</td><td>Mitochondriale Dysfunktion (antagonistisch)</td><td>³¹P-MRS-PCr-Erholung (τ), CrCEST-MRT, [¹⁸F]BCPP-EF-PET (Komplex I)</td><td>D (funktionell)</td><td>Alter ↔ längeres τ (ρ = 0,387); Metaanalyse über 128 Studien, τ im Mittel 38,7 s (SD 21) <a class="cite" href="#r37">[37]</a>; keine τ-GWAS bekannt</td><td>E (<a class="gl" href="#g-mrs">MRS</a>) / R</td><td><b>Bester Kandidat für alle drei.</b> CrCEST-Variationskoeffizient 7–16 % bei 7 T (n = 5) <a class="cite" href="#r50">[50]</a>; BCPP-EF Test-Retest 2–7 % <a class="cite" href="#r61">[61]</a>; <a class="gl" href="#g-crcest">CrCEST</a> + ¹H-MRS als muskelspezifische OXPHOS-Messung <a class="cite" href="#r60">[60]</a>. τ-Streuung „20–30 %“: ohne Quelle <span class="tag tU">unverifiziert</span>.</td></tr>
+<tr><td>8</td><td>Zelluläre Seneszenz (antagonistisch)</td><td>[¹⁸F]FPyGal-PET (β-Gal), <a class="gl" href="#g-fapi">FAPI-PET</a>, MRT-ECV; Knochen-DXA/<a class="gl" href="#g-dxa">HR-pQCT</a> als Folge</td><td>D (<a class="gl" href="#g-pet">PET</a>, Forschung) / I</td><td>Seneszenzlast (T-Zell-p16) bestimmt das Ansprechen auf D+Q <a class="cite" href="#r39">[39]</a></td><td>R (<a class="gl" href="#g-fpygal">FPyGal</a>: First-in-Human)</td><td><a class="gl" href="#g-senolytika">Senolytika</a>: Radius-BMD +2,7 % nach 20 Wochen, nur in der p16-Top-Tertile, explorativ <a class="cite" href="#r39">[39]</a>. <a class="gl" href="#g-fpygal">FPyGal</a> wäre der Target-Engagement-Marker <a class="cite" href="#r43">[43]</a><a class="cite" href="#r44">[44]</a>; Tiermodelle in Gelenken <a class="cite" href="#r62">[62]</a>.</td></tr>
+<tr><td>9</td><td>Stammzellerschöpfung (integrativ)</td><td><a class="gl" href="#g-pdff">Knochenmark-PDFF</a>, Muskelvolumen/<a class="gl" href="#g-mfi">MFI</a>; <a class="gl" href="#g-chip">CHIP</a> über Gefäßbilder</td><td>I</td><td><a class="gl" href="#g-pdff">Knochenmark-PDFF</a> Frauen ≈27 % → ≈49 %, Männer ≈32 % → ≈42 % (n = 156) <a class="cite" href="#r48">[48]</a><a class="cite" href="#r63">[63]</a></td><td>R</td><td>Messzeit ≈1–2 min, CV 0,7–1,7 % <a class="cite" href="#r48">[48]</a>; Reaktion auf Interventionen <span class="tag tU">unverifiziert</span>.</td></tr>
+<tr><td>10</td><td>Veränderte interzelluläre Kommunikation (integrativ)</td><td><a class="gl" href="#g-ecv">T1-Mapping</a>/<a class="gl" href="#g-ecv">ECV</a>, MR-Elastographie, <a class="gl" href="#g-asl">ASL</a>; Multi-Organ-„Alter“</td><td>I</td><td>Organalter-Netzwerk aus 3 Hirn- und 7 Körpersystemen <a class="cite" href="#r32">[32]</a>; <a class="gl" href="#g-mloy">mLOY</a> → TGF-β → Fibrose <a class="cite" href="#r38">[38]</a></td><td>R</td><td><a class="gl" href="#g-senolytika">Senolytika</a>: <a class="gl" href="#g-ecv">ECV</a>/T1 in Herz oder Leber; Zeitrahmen Monate <span class="tag tU">unverifiziert</span>.</td></tr>
+<tr><td>11</td><td>Chronische Entzündung (integrativ)</td><td><a class="gl" href="#g-tspo">TSPO-PET</a>, FDG-Gefäß-PET, QSM-Eisen <a class="cite" href="#r31">[31]</a></td><td>D (<a class="gl" href="#g-pet">PET</a>) / I</td><td>TSPO-Variante rs6971 ändert die Bindung um ≈25–35 % <a class="cite" href="#r52">[52]</a><a class="cite" href="#r45">[45]</a>; muss genotypisiert werden</td><td>E / R</td><td><a class="gl" href="#g-senolytika">Senolytika</a>: FDG-Gefäß-PET. <a class="gl" href="#g-tspo">TSPO</a> bei Gesunden nicht altersabhängig (n = 33) <a class="cite" href="#r45">[45]</a>, mit anderem Tracer doch (n = 21) <a class="cite" href="#r64">[64]</a>.</td></tr>
+<tr><td>12</td><td>Dysbiose (integrativ)</td><td>Keiner direkt; indirekt <a class="gl" href="#g-vat">VAT</a>, <a class="gl" href="#g-pdff">Leber-PDFF</a>, <a class="gl" href="#g-qsm">QSM</a></td><td>– / I</td><td>MR-Studien Mikrobiom → <a class="gl" href="#g-qsm">QSM</a>/Kortex, schwache Instrumente (MiBioGen n = 18.340) <a class="cite" href="#r53">[53]</a><a class="cite" href="#r54">[54]</a></td><td>S</td><td>Ungeeignet; Stuhl-Metagenomik bleibt nötig.</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 1.</b> Die 12 <a class="gl" href="#g-hallmarks">Hallmarks of Aging</a> <a class="cite" href="#r1">[1]</a> und ihre Abbildbarkeit. Quelle: Ast cb3.IX.2, Quellennummern vereinheitlicht. Klassenzuordnung (primär/antagonistisch/integrativ) nach López-Otín 2023.</p>
+<p><b>Kernbefunde.</b></p>
+<ul>
+  <li><b>Direkt sichtbar sind nur 3 von 12 <a class="gl" href="#g-hallmarks">Hallmarks</a></b>: Proteostase (Amyloid-/Tau-PET), Mitochondrien (³¹P-MRS, <a class="gl" href="#g-crcest">CrCEST</a>, Komplex-I-PET) und Entzündung (TSPO-, FDG-PET). Seneszenz-PET ([¹⁸F]<a class="gl" href="#g-fpygal">FPyGal</a>) läuft erst als First-in-Human-Studie an Krebspatienten (NCT04536454) <a class="cite" href="#r43">[43]</a><a class="cite" href="#r44">[44]</a> <span class="tag tE">E</span>.</li>
+  <li><b>Blind ist die Bildgebung bei 4 der 5 primären <a class="gl" href="#g-hallmarks">Hallmarks</a></b> (Genom, Telomere, Epigenetik, Autophagie) – ausgerechnet den Zielen der FOXO3- und OSK-Ansätze. Ast cb3 schrieb „4 der 4“; López-Otín 2023 zählt aber 5 primäre <a class="gl" href="#g-hallmarks">Hallmarks</a>, und die Proteostase ist direkt abbildbar (<a href="#s8">Abschnitt 8</a>).</li>
+  <li><b>Genetik ist schon für die Messung nötig</b>: Ohne rs6971-Genotyp ist <a class="gl" href="#g-tspo">TSPO-PET</a> nicht interpretierbar <a class="cite" href="#r52">[52]</a>.</li>
+  <li><b><a class="gl" href="#g-foxo3">FOXO3</a> hat keine belegte Imaging-GWAS-Verknüpfung.</b> Der FOXO3-Langlebigkeitsgenotyp ist robust belegt <a class="cite" href="#r42">[42]</a> <span class="tag tF">F</span> (Quelle von 2008), eine Bildassoziation nicht. Ein polygener Langlebigkeits-Score zeigte bei 70-Jährigen insgesamt keine MRT-Assoziation (n = 675) <a class="cite" href="#r59">[59]</a> <span class="tag tE">E</span>.</li>
+  <li><b><a class="gl" href="#g-osk">ER-100</a></b>: Zwischenergebnis per Pressemitteilung, 3 Patienten mit Glaukom, Tag 56; bei 2 von 3 verbesserten sich ≥28 % der Gesichtsfeldpunkte um mehr als 4 dB <a class="cite" href="#r41">[41]</a> <span class="tag tP">P</span>. Offen, ohne Kontrolle; ob <a class="gl" href="#g-oct">OCT</a> in NCT07290244 erhoben wird, ist <span class="tag tU">unverifiziert</span> <a class="cite" href="#r35">[35]</a>.</li>
+</ul>
+
+<h3 id="s3-3">3.3 Organuhren als Endpunkt-Engpass</h3>
+<p>Eine <b><a class="gl" href="#g-organuhr">Organuhr</a></b> ist ein Modell, das an gesunden Menschen lernt, wie ein Organ in welchem Alter aussieht. Die Differenz aus vorhergesagtem Organalter und Kalenderalter heißt <a class="gl" href="#g-bag">Altersabstand</a> (<a class="gl" href="#g-bag">Brain Age Gap</a>, <a class="gl" href="#g-bag">BAG</a>, <a class="gl" href="#g-bag">brain-PAD</a>). Uhren der ersten Generation sind auf das Kalenderalter trainiert; ein perfektes Modell (<a class="gl" href="#g-mae">MAE</a> = 0) hätte keinen <a class="gl" href="#g-bag">Altersabstand</a> mehr und damit keine biologische Information <a class="cite" href="#r74">[74]</a> <span class="tag tF">F</span>.</p>
+<p><b>Methodengeschichte.</b> Das <a class="gl" href="#g-bag">Hirnalter</a> aus der <a class="gl" href="#g-mrt">MRT</a> haben Franke et al. 2010 erstmals beschrieben, mit Kernel-Methoden auf T1-gewichteten Bildern <a class="cite" href="#r105">[105]</a>; Deep Learning wird dafür seit Cole et al. 2017 eingesetzt <a class="cite" href="#r68">[68]</a>.</p>
+<div class="formula" id="f-bag"><a class="gl" href="#g-bag">BAG</a> = Alter<sub>vorhergesagt</sub> − Alter<sub>chronologisch</sub> &nbsp;&nbsp;→ <a class="gl" href="#g-f-bag">Legende</a></div>
+
+<h4>3.3.1 Bildgebende und proteomische <a class="gl" href="#g-organuhr">Organuhren</a> 2022–2026</h4>
+<div class="tw"><table class="t wide">
+<thead><tr><th>Organ / System</th><th>Quelle</th><th>Kohorte</th><th>Genauigkeit</th><th>Genetik</th><th>Evidenz</th></tr></thead>
+<tbody>
+<tr><td>Gehirn (T1-MRT, CNN)</td><td>Leonardsen 2023 <a class="cite" href="#r77">[77]</a></td><td>53.542 Scans, <a class="gl" href="#g-gwas">GWAS</a> n = 28.104</td><td><a class="gl" href="#g-mae">MAE</a> &lt; 2,5 J.</td><td>SNP-h² 0,27; 8 Genorte</td><td><span class="tag tE">E</span></td></tr>
+<tr><td>Gehirn (GM/WM)</td><td>Jawinski 2025 <a class="cite" href="#r33">[33]</a></td><td>bis 56.348</td><td>–</td><td>SNP-h² 23–29 %, 59 Genorte (39 neu), Top MAPT; MR: Bluthochdruck, Typ-2-Diabetes beschleunigen</td><td><span class="tag tF">F</span></td></tr>
+<tr><td>Herz-Kreislauf (Herz-MRT + EKG)</td><td>Shah 2023 <a class="cite" href="#r78">[78]</a></td><td>39.559 <a class="gl" href="#g-ukb">UKB</a></td><td>–</td><td><a class="gl" href="#g-gwas">GWAS</a> + seltene Varianten</td><td><span class="tag tE">E</span></td></tr>
+<tr><td>Bauch (Leber, Pankreas)</td><td>Le Goallec 2022 <a class="cite" href="#r79">[79]</a></td><td>45.552 / 36.784 <a class="gl" href="#g-mrt">MRT</a></td><td><a class="gl" href="#g-mae">MAE</a> 2,94 J., R² 0,73</td><td>h² 26,3 %, 16 Genorte</td><td><span class="tag tE">E</span></td></tr>
+<tr><td>Muskel/Fett/Knochen (Bauch-CT L3)</td><td>Rule 2024 <a class="cite" href="#r80">[80]</a></td><td>4.900</td><td>–</td><td>–</td><td><span class="tag tE">E</span>; „älteres“ Gewebe <a class="gl" href="#g-hr">HR</a> 1,56 (1,33–1,84) Tod</td></tr>
+<tr><td>3 Hirn- + 7 Körpersysteme</td><td>Tian 2023 <a class="cite" href="#r32">[32]</a></td><td>Körper ≈135.000, Gehirn ≈36.600</td><td>–</td><td>–</td><td><span class="tag tF">F</span>; Körperalter sagt Überleben voraus (<a class="gl" href="#g-auc">AUC</a> 0,77), <a class="gl" href="#g-bag">Hirnalter</a> nicht</td></tr>
+<tr><td>9 Organsysteme</td><td>Wen 2024, <i>Nature Aging</i> <a class="cite" href="#r65">[65]</a></td><td>377.028 <a class="gl" href="#g-ukb">UKB</a></td><td>–</td><td>393 Genort–BAG-Paare</td><td><span class="tag tF">F</span></td></tr>
+<tr><td>11 Organe, Plasma (SomaScan)</td><td>Oh 2023 <a class="cite" href="#r66">[66]</a></td><td>5.676, 5 Kohorten</td><td>–</td><td>–</td><td><span class="tag tF">F</span>/<span class="tag tE">E</span>; beschleunigtes Organ: 20–50 % höheres Sterberisiko</td></tr>
+<tr><td>11 Organe, Plasma (Olink)</td><td>Oh 2025 <a class="cite" href="#r67">[67]</a></td><td>44.498 <a class="gl" href="#g-ukb">UKB</a>, 17 J.</td><td>–</td><td>–</td><td><span class="tag tF">F</span>; „altes Gehirn“ Alzheimer-HR 3,1; 8+ gealterte Organe Tod-HR 8,3</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 2.</b> <a class="gl" href="#g-organuhr">Organuhren</a> aus Bildgebung und <a class="gl" href="#g-proteomik">Blut-Proteomik</a>. Quelle: Ast cb4.IX.3.</p>
+<p>Bildgebung und <a class="gl" href="#g-proteomik">Proteomik</a> ergänzen sich: Bildgebung zeigt, <i>wo</i> im Organ etwas passiert, ist aber teuer und langsam (Monate bis Jahre); <a class="gl" href="#g-proteomik">Proteomik</a> ist billig, häufig wiederholbar und misst 11 Organe aus einer Probe, verortet aber nichts <a class="cite" href="#r66">[66]</a><a class="cite" href="#r67">[67]</a>. Daraus folgt ein zweistufiger Endpunkt: <a class="gl" href="#g-proteomik">Proteomik</a> als Frühindikator, Bildgebung als Bestätigung der Gewebeveränderung nach 12–24 Monaten <span class="tag tM">Interpretation</span>.</p>
+
+<h4>3.3.2 Wiederholbarkeit und gemessene Effekte</h4>
+<ul>
+  <li><b>Test-Retest am selben Gerät</b>: <a class="gl" href="#g-icc">ICC</a> 0,90–0,99; zwischen zwei Scannern verschiedener Hersteller fällt er auf 0,51–0,96 <a class="cite" href="#r68">[68]</a> <span class="tag tE">E</span> (2017). Die Software entscheidet mit: pyment, brainageR und mccqrnn „exzellent“, DeepBrainNet und ENIGMA „schlecht bis mäßig“ <a class="cite" href="#r81">[81]</a> <span class="tag tE">E</span>.</li>
+  <li><b>ASPREE</b> (n = 487 Ältere): <a class="gl" href="#g-icc">ICC</a> 0,94 (1 J.) bzw. 0,91 (3 J.), <a class="gl" href="#g-sem">SEM</a> 1,47–1,80 J., <b><a class="gl" href="#g-mdc">MDC</a> 4,07–4,99 J.</b> <a class="cite" href="#r69">[69]</a> <span class="tag tE">E</span>. Das <a class="gl" href="#g-bag">Hirnalter</a> stieg nach 1 J. um 1,4 J., nach 3 J. um 3,4 J.</li>
+  <li><b>Randomisierte Effekte</b>: Ausdauertraining 12 Monate (n = 130): −0,95 J. (95 %-KI −1,72 bis −0,17) <a class="cite" href="#r70">[70]</a> <span class="tag tE">E</span>; Bewegung bei Älteren (n = 485): kein Effekt <a class="cite" href="#r71">[71]</a> <span class="tag tE">E</span>; FIT4BRAIN (n = 69): β = 1,10, p = 0,041, Veränderungs-SD 6,4–7,4 J. <a class="cite" href="#r72">[72]</a> <span class="tag tE">E</span>; DIRECT-PLUS (n = 102, 18 Monate): 1 % Gewichtsverlust ≈ 8,9 Monate weniger Hirnalterung, Korrelationsanalyse <a class="cite" href="#r73">[73]</a> <span class="tag tE">E</span>.</li>
+  <li><b>Folge</b>: Die <a class="gl" href="#g-mdc">MDC</a> beim Einzelnen (≈4–5 J.) ist vier- bis zehnmal größer als jeder gemessene Interventionseffekt (≈0,5–1 J.). <a class="gl" href="#g-organuhr">Organuhren</a> sind <b>Gruppen-Endpunkte</b>, keine Einzelpersonen-Endpunkte.</li>
+</ul>
+<div class="formula" id="f-sem"><a class="gl" href="#g-sem">SEM</a> = SD · √(1 − <a class="gl" href="#g-icc">ICC</a>) &nbsp;&nbsp;&nbsp; <a class="gl" href="#g-mdc">MDC</a><sub>95</sub> = 1,96 · √2 · <a class="gl" href="#g-sem">SEM</a> &nbsp;&nbsp;→ <a class="gl" href="#g-f-sem">SEM</a> · <a class="gl" href="#g-f-mdc">MDC</a></div>
+
+<h4 id="s3-3-3">3.3.3 Fallzahl</h4>
+<p>Zwei Arme, Vergleich der <i>Veränderung</i> von Baseline zu Ende, gleiche Armgröße, Normalverteilung:</p>
+<div class="formula" id="f-n">n pro Arm ≈ 2 · (z<sub>1−α/2</sub> + z<sub>1−β</sub>)² · σ² / Δ² &nbsp;&nbsp;→ <a class="gl" href="#g-f-n">Legende</a></div>
+<p>mit α = 0,05 zweiseitig (z = 1,96), Power 80 % (z = 0,84) bzw. 90 % (z = 1,28); σ = Standardabweichung der Veränderung des Altersabstands innerhalb einer Gruppe; Δ = wahrer Gruppenunterschied in Jahren. <b>Herleitung von σ</b> <span class="tag tM">M</span>: Aus dem Konfidenzintervall des Trainingsarms bei Wan 2025 folgt SE ≈ 0,28 und bei ≈60 Personen σ ≈ 0,28·√60 ≈ 2,2 J. <a class="cite" href="#r70">[70]</a>; aus der ASPREE-SEM folgt σ ≈ 1,47·√2 ≈ 2,1 J. <a class="cite" href="#r69">[69]</a>; FIT4BRAIN berichtet 6,4–7,4 J. <a class="cite" href="#r72">[72]</a>. Daraus drei Szenarien: σ = 2 (ein Scanner, gute Software), σ = 4 (mehrere Standorte, Schätzwert <span class="tag tU">unverifiziert</span>), σ = 7.</p>
+<div class="tw"><table class="t num-t">
+<thead><tr><th>σ (J.)</th><th>Δ (J.)</th><th>n/Arm (80 %)</th><th>n/Arm (90 %)</th></tr></thead>
+<tbody>
+<tr><td>2</td><td>2,0</td><td>16</td><td>21</td></tr>
+<tr class="hi"><td>2</td><td>1,0</td><td>63</td><td>84</td></tr>
+<tr><td>2</td><td>0,5</td><td>251</td><td>336</td></tr>
+<tr><td>2,2</td><td>0,95 (Wan-Effekt)</td><td>84</td><td>113</td></tr>
+<tr class="hi"><td>4</td><td>1,0</td><td>251</td><td>336</td></tr>
+<tr><td>4</td><td>0,5</td><td>1.005</td><td>1.345</td></tr>
+<tr><td>7</td><td>1,0</td><td>769</td><td>1.030</td></tr>
+<tr><td>7</td><td>0,5</td><td>3.077</td><td>4.119</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 3.</b> Fallzahl pro Arm für den <a class="gl" href="#g-bag">Altersabstand</a> des Gehirns. Rechnung von Ast cb4 <span class="tag tM">M</span>, von der Redaktion nachgerechnet (z. B. σ = 2, Δ = 1: 2 · 2,80² · 4 / 1 = 62,8 → 63). Plausibilitätsprüfung: Wan 2025 hatte ≈65 pro Arm und fand Δ = 0,95 bei p = 0,019, passend zu σ ≈ 2 und Power ≈70–80 %.</p>
+
+<div class="calc" id="rechner" aria-label="Fallzahlrechner">
+  <b>Fallzahlrechner</b> (läuft lokal im Browser, gleiche Formel)
+  <div class="row" style="margin-top:8px">
+    <label>σ der Veränderung (J.)<input id="c-sd" type="number" step="0.1" min="0.1" value="4"></label>
+    <label>Δ Effekt (J.)<input id="c-d" type="number" step="0.05" min="0.05" value="1"></label>
+    <label>Power<select id="c-pw"><option value="0.8416">80 %</option><option value="1.2816">90 %</option></select></label>
+    <label>Design<select id="c-ds"><option value="2">2 Arme</option><option value="4">2×2 (Interaktion)</option></select></label>
+    <label>Ausfälle<select id="c-do"><option value="0">0 %</option><option value="0.15" selected>15 %</option><option value="0.2">20 %</option></select></label>
+  </div>
+  <output id="c-out">–</output>
+</div>
+
+<p><b>Kombinationen</b> <span class="tag tM">M</span>: In einem 2×2-faktoriellen Design (A, B, A+B, Placebo) wird die Interaktion („wirkt A+B mehr als A plus B?“) mit der Präzision eines Haupteffekts bei vierfacher Varianz geschätzt. Bei gleichem Δ braucht man pro Zelle etwa so viele Personen wie oben pro Arm, insgesamt also ≈4-mal so viele. Bei Δ = 0,5 J. landet man schnell bei <b>mehreren Tausend</b> Teilnehmenden mit je zwei standardisierten MRT-Scans. Für Herz-, Leber-, Muskel- und CT-Uhren fehlen publizierte Test-Retest- und MDC-Werte, dort ist gar keine Fallzahlplanung möglich.</p>
+
+<h4>3.3.4 Regulatorik</h4>
+<p>Bisher hat keine Behörde eine biologische Altersuhr als <a class="gl" href="#g-surrogat">Surrogat-Endpunkt</a> anerkannt; FDA und EMA haben dafür nicht einmal Validierungsleitlinien <a class="cite" href="#r74">[74]</a> <span class="tag tF">F</span>. <a class="gl" href="#g-tame">TAME</a> (Metformin) plant deshalb einen klinischen Mehrfach-Endpunkt und ist Stand 09/2026 weder registriert noch gestartet <a class="cite" href="#r75">[75]</a><a class="cite" href="#r76">[76]</a> <span class="tag tP">Interview / Sekundärquelle</span>. Bildgebung <i>kann</i> <a class="gl" href="#g-surrogat">Surrogat</a> werden, wenn sie eng an eine Krankheit gebunden ist (Amyloid-PET bei Anti-Amyloid-Antikörpern, MRT-Läsionen bei MS); „Altern“ ist aber keine anerkannte Indikation (Ast cb4, ohne eigene Primärquelle).</p>
+
+<h3 id="s3-4">3.4 Eigene Daten: CT/MRT-Nachtverfügbarkeit in Deutschland</h3>
+<p>Von 2.204 auswertbaren Krankenhausstandorten <a class="cite" href="#r83">[83]</a> <span class="tag tF">eigene Daten</span>:</p>
+<div class="tw"><table class="t num-t">
+<thead><tr><th>Angabe</th><th><a class="gl" href="#g-ct">CT</a></th><th><a class="gl" href="#g-mrt">MRT</a></th></tr></thead>
+<tbody>
+<tr><td>24 h, eigenes Gerät</td><td>1.079</td><td>736</td></tr>
+<tr><td>24 h über Kooperationspartner</td><td>303</td><td>246</td></tr>
+<tr><td>vorhanden, nicht 24 h</td><td>165</td><td>342</td></tr>
+<tr><td>nicht angegeben</td><td>657</td><td>880</td></tr>
+<tr class="tot"><td>24 h gesamt / alle 2.204 Standorte</td><td>1.382 = 63 %</td><td>982 = 45 %</td></tr>
+<tr><td>Standorte, die ein Gerät angeben</td><td>1.547</td><td>1.324</td></tr>
+<tr><td>davon eigenes Gerät 24 h</td><td>70 %</td><td>56 %</td></tr>
+<tr><td>davon 24 h über Partner</td><td>20 %</td><td>19 %</td></tr>
+<tr><td>davon vorhanden, nicht 24 h</td><td>11 %</td><td>26 %</td></tr>
+<tr><td>ohne psychiatrische Standorte (<a class="gl" href="#g-mrt">MRT</a>, n = 1.264)</td><td>–</td><td>57 % / 18 % / 25 %</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 4.</b> CT- und MRT-Verfügbarkeit an deutschen Krankenhausstandorten, <a class="gl" href="#g-dkg">DKG-Verzeichnis</a>, abgerufen 07.11.2026. 719 Standorte haben sowohl <a class="gl" href="#g-ct">CT</a> als auch <a class="gl" href="#g-mrt">MRT</a> eigen rund um die Uhr; nur 7 Standorte haben ein eigenes 24-h-MRT ohne 24-h-CT.</p>
+<p><b>Plausibilität.</b> Standorte mit eigenem <a class="gl" href="#g-mrt">MRT</a> (736 + 342 = 1.078) passen zu rund 1.100 MRT-Geräten in deutschen Krankenhäusern (Destatis 2022, zitiert nach <a class="cite" href="#r85">[85]</a>). Dazu kommen etwa 1.900 <a class="gl" href="#g-mrt">MRT</a> in Praxen, die im Verzeichnis fehlen <a class="cite" href="#r85">[85]</a>. Psychiatrische Standorte zu entfernen verschiebt die Anteile kaum (56 % → 57 %).</p>
+
+<figure id="fig1">
+<svg class="chart" viewBox="0 0 660 548" role="img" aria-labelledby="fig1-t"><title id="fig1-t">Anteil der Krankenhausstandorte mit 24-Stunden-Notfallverfügbarkeit von CT und MRT je Bundesland</title>
+<line x1="168.0" y1="6" x2="168.0" y2="518" class="grid"/>
+<text x="168.0" y="534" class="ax" text-anchor="middle">0 %</text>
+<line x1="275.5" y1="6" x2="275.5" y2="518" class="grid"/>
+<text x="275.5" y="534" class="ax" text-anchor="middle">25 %</text>
+<line x1="383.0" y1="6" x2="383.0" y2="518" class="grid"/>
+<text x="383.0" y="534" class="ax" text-anchor="middle">50 %</text>
+<line x1="490.5" y1="6" x2="490.5" y2="518" class="grid"/>
+<text x="490.5" y="534" class="ax" text-anchor="middle">75 %</text>
+<line x1="598.0" y1="6" x2="598.0" y2="518" class="grid"/>
+<text x="598.0" y="534" class="ax" text-anchor="middle">100 %</text>
+<text x="160" y="25" class="lab" text-anchor="end">Thüringen (n=66)</text>
+<rect x="168" y="12" width="305.3" height="10" rx="2" class="b-ct"/>
+<text x="477.3" y="21" class="val">71</text>
+<rect x="168" y="24" width="253.7" height="10" rx="2" class="b-mr"/>
+<text x="425.7" y="33" class="val">59</text>
+<text x="160" y="55" class="lab" text-anchor="end">Nordrhein-Westfalen (n=457)</text>
+<rect x="168" y="42" width="296.7" height="10" rx="2" class="b-ct"/>
+<text x="468.7" y="51" class="val">69</text>
+<rect x="168" y="54" width="227.9" height="10" rx="2" class="b-mr"/>
+<text x="399.9" y="63" class="val">53</text>
+<text x="160" y="85" class="lab" text-anchor="end">Brandenburg (n=100)</text>
+<rect x="168" y="72" width="318.2" height="10" rx="2" class="b-ct"/>
+<text x="490.2" y="81" class="val">74</text>
+<rect x="168" y="84" width="223.6" height="10" rx="2" class="b-mr"/>
+<text x="395.6" y="93" class="val">52</text>
+<text x="160" y="115" class="lab" text-anchor="end">Sachsen (n=106)</text>
+<rect x="168" y="102" width="331.1" height="10" rx="2" class="b-ct"/>
+<text x="503.1" y="111" class="val">77</text>
+<rect x="168" y="114" width="219.3" height="10" rx="2" class="b-mr"/>
+<text x="391.3" y="123" class="val">51</text>
+<text x="160" y="145" class="lab" text-anchor="end">Berlin (n=72)</text>
+<rect x="168" y="132" width="249.4" height="10" rx="2" class="b-ct"/>
+<text x="421.4" y="141" class="val">58</text>
+<rect x="168" y="144" width="215.0" height="10" rx="2" class="b-mr"/>
+<text x="387.0" y="153" class="val">50</text>
+<text x="160" y="175" class="lab" text-anchor="end">Sachsen-Anhalt (n=69)</text>
+<rect x="168" y="162" width="262.3" height="10" rx="2" class="b-ct"/>
+<text x="434.3" y="171" class="val">61</text>
+<rect x="168" y="174" width="210.7" height="10" rx="2" class="b-mr"/>
+<text x="382.7" y="183" class="val">49</text>
+<text x="160" y="205" class="lab" text-anchor="end">Saarland (n=23)</text>
+<rect x="168" y="192" width="279.5" height="10" rx="2" class="b-ct"/>
+<text x="451.5" y="201" class="val">65</text>
+<rect x="168" y="204" width="206.4" height="10" rx="2" class="b-mr"/>
+<text x="378.4" y="213" class="val">48</text>
+<text x="160" y="235" class="lab tot" text-anchor="end">Deutschland (n=2204)</text>
+<rect x="168" y="222" width="270.9" height="10" rx="2" class="b-ct"/>
+<text x="442.9" y="231" class="val">63</text>
+<rect x="168" y="234" width="193.5" height="10" rx="2" class="b-mr"/>
+<text x="365.5" y="243" class="val">45</text>
+<text x="160" y="265" class="lab" text-anchor="end">Hessen (n=158)</text>
+<rect x="168" y="252" width="275.2" height="10" rx="2" class="b-ct"/>
+<text x="447.2" y="261" class="val">64</text>
+<rect x="168" y="264" width="189.2" height="10" rx="2" class="b-mr"/>
+<text x="361.2" y="273" class="val">44</text>
+<text x="160" y="295" class="lab" text-anchor="end">Rheinland-Pfalz (n=102)</text>
+<rect x="168" y="282" width="296.7" height="10" rx="2" class="b-ct"/>
+<text x="468.7" y="291" class="val">69</text>
+<rect x="168" y="294" width="184.9" height="10" rx="2" class="b-mr"/>
+<text x="356.9" y="303" class="val">43</text>
+<text x="160" y="325" class="lab" text-anchor="end">Niedersachsen (n=195)</text>
+<rect x="168" y="312" width="275.2" height="10" rx="2" class="b-ct"/>
+<text x="447.2" y="321" class="val">64</text>
+<rect x="168" y="324" width="180.6" height="10" rx="2" class="b-mr"/>
+<text x="352.6" y="333" class="val">42</text>
+<text x="160" y="355" class="lab" text-anchor="end">Bayern (n=374)</text>
+<rect x="168" y="342" width="262.3" height="10" rx="2" class="b-ct"/>
+<text x="434.3" y="351" class="val">61</text>
+<rect x="168" y="354" width="176.3" height="10" rx="2" class="b-mr"/>
+<text x="348.3" y="363" class="val">41</text>
+<text x="160" y="385" class="lab" text-anchor="end">Hamburg (n=51)</text>
+<rect x="168" y="372" width="159.1" height="10" rx="2" class="b-ct"/>
+<text x="331.1" y="381" class="val">37</text>
+<rect x="168" y="384" width="167.7" height="10" rx="2" class="b-mr"/>
+<text x="339.7" y="393" class="val">39</text>
+<text x="160" y="415" class="lab" text-anchor="end">Baden-Württemberg (n=254)</text>
+<rect x="168" y="402" width="232.2" height="10" rx="2" class="b-ct"/>
+<text x="404.2" y="411" class="val">54</text>
+<rect x="168" y="414" width="163.4" height="10" rx="2" class="b-mr"/>
+<text x="335.4" y="423" class="val">38</text>
+<text x="160" y="445" class="lab" text-anchor="end">Mecklenburg-Vorpommern (n=59)</text>
+<rect x="168" y="432" width="283.8" height="10" rx="2" class="b-ct"/>
+<text x="455.8" y="441" class="val">66</text>
+<rect x="168" y="444" width="159.1" height="10" rx="2" class="b-mr"/>
+<text x="331.1" y="453" class="val">37</text>
+<text x="160" y="475" class="lab" text-anchor="end">Schleswig-Holstein (n=104)</text>
+<rect x="168" y="462" width="146.2" height="10" rx="2" class="b-ct"/>
+<text x="318.2" y="471" class="val">34</text>
+<rect x="168" y="474" width="94.6" height="10" rx="2" class="b-mr"/>
+<text x="266.6" y="483" class="val">22</text>
+<text x="160" y="505" class="lab" text-anchor="end">Bremen (n=14)</text>
+<rect x="168" y="492" width="339.7" height="10" rx="2" class="b-ct"/>
+<text x="511.7" y="501" class="val">79</text>
+<rect x="168" y="504" width="90.3" height="10" rx="2" class="b-mr"/>
+<text x="262.3" y="513" class="val">21</text>
+</svg>
+<div class="leg"><span><i style="background:var(--c-ct)"></i><a class="gl" href="#g-ct">CT</a> 24 h (eigen + Kooperation)</span><span><i style="background:var(--c-mr)"></i><a class="gl" href="#g-mrt">MRT</a> 24 h (eigen + Kooperation)</span></div>
+</figure>
+<p class="cap"><b>Abbildung 1.</b> Anteil aller Krankenhausstandorte je Bundesland mit 24-h-Notfallverfügbarkeit (Nenner: alle Standorte des Landes), sortiert nach MRT-Anteil. Eigene Auswertung der DKG-Daten <a class="cite" href="#r83">[83]</a>. Kleine Länder (Bremen n = 14, Saarland n = 23) sind statistisch wackelig.</p>
+
+<div class="tw"><table class="t num-t"><thead><tr><th>Land</th><th>Standorte</th><th><a class="gl" href="#g-ct">CT</a> eigen 24h</th><th><a class="gl" href="#g-ct">CT</a> 24h Koop.</th><th><a class="gl" href="#g-ct">CT</a> 24h gesamt</th><th>MRT-Standorte</th><th><a class="gl" href="#g-mrt">MRT</a> eigen 24h</th><th><a class="gl" href="#g-mrt">MRT</a> 24h Koop.</th><th><a class="gl" href="#g-mrt">MRT</a> nicht 24h</th><th><a class="gl" href="#g-mrt">MRT</a> 24h gesamt</th><th>Eigen 24h / MRT-Standorte</th><th>Nicht 24h / MRT-Standorte</th><th>Nicht 24h / alle Standorte</th></tr></thead><tbody>
+<tr><td>Baden-Württemberg</td><td>254</td><td>110</td><td>27</td><td>54 %</td><td>149</td><td>70</td><td>26</td><td>53</td><td>38 %</td><td>47 %</td><td>36 %</td><td>21 %</td></tr>
+<tr><td>Bayern</td><td>374</td><td>169</td><td>58</td><td>61 %</td><td>223</td><td>105</td><td>48</td><td>70</td><td>41 %</td><td>47 %</td><td>31 %</td><td>19 %</td></tr>
+<tr><td>Berlin</td><td>72</td><td>34</td><td>8</td><td>58 %</td><td>46</td><td>30</td><td>6</td><td>10</td><td>50 %</td><td>65 %</td><td>22 %</td><td>14 %</td></tr>
+<tr><td>Brandenburg</td><td>100</td><td>56</td><td>18</td><td>74 %</td><td>59</td><td>36</td><td>16</td><td>7</td><td>52 %</td><td>61 %</td><td>12 %</td><td>7 %</td></tr>
+<tr><td>Bremen</td><td>14</td><td>10</td><td>1</td><td>79 %</td><td>11</td><td>3</td><td>0</td><td>8</td><td>21 %</td><td>27 %</td><td>73 %</td><td>57 %</td></tr>
+<tr><td>Hamburg</td><td>51</td><td>18</td><td>1</td><td>37 %</td><td>26</td><td>19</td><td>1</td><td>6</td><td>39 %</td><td>73 %</td><td>23 %</td><td>12 %</td></tr>
+<tr><td>Hessen</td><td>158</td><td>79</td><td>22</td><td>64 %</td><td>88</td><td>45</td><td>24</td><td>19</td><td>44 %</td><td>51 %</td><td>22 %</td><td>12 %</td></tr>
+<tr><td>Mecklenburg-Vorpommern</td><td>59</td><td>34</td><td>5</td><td>66 %</td><td>27</td><td>20</td><td>2</td><td>5</td><td>37 %</td><td>74 %</td><td>19 %</td><td>8 %</td></tr>
+<tr><td>Niedersachsen</td><td>195</td><td>90</td><td>34</td><td>64 %</td><td>121</td><td>61</td><td>21</td><td>39</td><td>42 %</td><td>50 %</td><td>32 %</td><td>20 %</td></tr>
+<tr><td>Nordrhein-Westfalen</td><td>457</td><td>238</td><td>79</td><td>69 %</td><td>297</td><td>182</td><td>62</td><td>53</td><td>53 %</td><td>61 %</td><td>18 %</td><td>12 %</td></tr>
+<tr><td>Rheinland-Pfalz</td><td>102</td><td>52</td><td>18</td><td>69 %</td><td>62</td><td>36</td><td>8</td><td>18</td><td>43 %</td><td>58 %</td><td>29 %</td><td>18 %</td></tr>
+<tr><td>Saarland</td><td>23</td><td>14</td><td>1</td><td>65 %</td><td>13</td><td>11</td><td>0</td><td>2</td><td>48 %</td><td>85 %</td><td>15 %</td><td>9 %</td></tr>
+<tr><td>Sachsen</td><td>106</td><td>72</td><td>10</td><td>77 %</td><td>80</td><td>45</td><td>9</td><td>26</td><td>51 %</td><td>56 %</td><td>32 %</td><td>25 %</td></tr>
+<tr><td>Sachsen-Anhalt</td><td>69</td><td>35</td><td>7</td><td>61 %</td><td>48</td><td>27</td><td>7</td><td>14</td><td>49 %</td><td>56 %</td><td>29 %</td><td>20 %</td></tr>
+<tr><td>Schleswig-Holstein</td><td>104</td><td>30</td><td>5</td><td>34 %</td><td>31</td><td>17</td><td>6</td><td>8</td><td>22 %</td><td>55 %</td><td>26 %</td><td>8 %</td></tr>
+<tr><td>Thüringen</td><td>66</td><td>38</td><td>9</td><td>71 %</td><td>43</td><td>29</td><td>10</td><td>4</td><td>59 %</td><td>67 %</td><td>9 %</td><td>6 %</td></tr>
+<tr class="tot"><td><b>Deutschland</b></td><td>2.204</td><td>1.079</td><td>303</td><td>63 %</td><td>1.324</td><td>736</td><td>246</td><td>342</td><td>45 %</td><td>56 %</td><td>26 %</td><td>16 %</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 5.</b> CT- und MRT-Verfügbarkeit je Bundesland. Die drei rechten Spalten haben verschiedene Nenner: „Eigen 24h / MRT-Standorte“ und „Nicht 24h / MRT-Standorte“ beziehen sich auf Standorte mit MRT-Angabe, „Nicht 24h / alle Standorte“ auf alle Standorte des Landes. Eigene Auswertung, aus der CSV neu berechnet.</p>
+<p><b>Lesart.</b> Den höchsten Anteil MRT-Standorte <i>ohne</i> Nachtbetrieb haben Bremen (73 %, n = 11), Baden-Württemberg (36 %), Niedersachsen und Sachsen (je 32 %) sowie Bayern (31 %); den niedrigsten Thüringen (9 %), Brandenburg (12 %), Saarland (15 %) und Nordrhein-Westfalen (18 %). Ast cb5 hatte in der Lesehilfe nur „BW, Bayern und Bremen“ genannt; Niedersachsen und Sachsen liegen aber knapp über Bayern (<a href="#s8">Abschnitt 8</a>).</p>
+<div class="box b-warn">
+  <p><b>Was „24 h verfügbar“ nicht heißt.</b> Das Feld bedeutet „für Notfälle erreichbar“, nicht „nachts leer“ und nicht „nachts Personal vor Ort“. Die Vermutung des Users, 70–80 % der 24-h-MRT liefen nachts nur auf Abruf, ist <b>plausibel, aber unverifiziert</b>: Weder DRG, DVTA, Marburger Bund noch das DKI-Krankenhaus-Barometer liefern dazu Zahlen (Suche ohne Treffer, Ast cb5). Stellenanzeigen zeigen, dass MTR-Rufbereitschaft verbreitet ist (Anekdote).</p>
+</div>
+
+<h3 id="s3-5">3.5 Nachtkapazitätsmodell und Kosten</h3>
+<h4>3.5.1 Randdaten</h4>
+<ul>
+  <li>Deutschland hatte 2021 knapp 3.000 MRT-Geräte und 13,3 Mio. MRT-Untersuchungen (OECD, zitiert nach <a class="cite" href="#r85">[85]</a>; die OECD-Ausgabe 2025 zeigt neuere Werte nur als Grafik <a class="cite" href="#r84">[84]</a>), also ≈4.400 Untersuchungen pro Gerät und Jahr oder ≈18 pro Werktag <span class="tag tM">eigene Rechnung</span>.</li>
+  <li>Auslastung in Stunden für Deutschland: <span class="tag tU">unverifiziert</span>. Referenz Irland: Ein werktags 8–17 Uhr betriebenes Gerät nutzt 2.250 von 8.760 Jahresstunden (26 %) <a class="cite" href="#r88">[88]</a> <span class="tag tE">E, anderes Land</span>.</li>
+  <li>Abendpilot London (20–24 Uhr): 270 zusätzliche Patienten in einem Monat, Nichterscheinen unter 2 % statt 5–7 %, 88 % von 102 Befragten wären zu Randzeiten bereit <a class="cite" href="#r89">[89]</a> <span class="tag tP">gesponsert vom Hersteller</span>.</li>
+  <li>MTR-Mangel: 2019 hatten 46 % der Krankenhäuser Probleme, MTRA-Stellen zu besetzen; hochgerechnet 1.170 unbesetzte Vollkraftstellen in MTA-Berufen (2011: 425) <a class="cite" href="#r86">[86]</a> <span class="tag tE">E</span>. 2026 berichten 62 % von 227 befragten Praxen/Abteilungen personalbedingte MRT-Stillstände <a class="cite" href="#r87">[87]</a> <span class="tag tP">Anbieter von <a class="gl" href="#g-remote">Remote-Scanning</a>, nicht neutral</span>.</li>
+</ul>
+<h4>3.5.2 Modell</h4>
+<div class="formula" id="f-p">P = floor( Fenster<sub>min</sub> / (Protokoll<sub>min</sub> + Wechsel<sub>min</sub>) ) &nbsp;&nbsp;→ <a class="gl" href="#g-f-p">Legende</a></div>
+<div class="formula" id="f-s">Scans/Jahr = Standorte × Nächte/Woche × Wochen × P × Erfolgsquote &nbsp;&nbsp;→ <a class="gl" href="#g-f-s">Legende</a></div>
+<div class="tw"><table class="t num-t">
+<thead><tr><th>Parameter</th><th>vorsichtig</th><th>mittel</th><th>optimistisch</th></tr></thead>
+<tbody>
+<tr><td>Beteiligung an 1.324 MRT-Standorten <span class="tag tM">M</span></td><td>3 % (40)</td><td>10 % (132)</td><td>20 % (265)</td></tr>
+<tr><td>Nächte pro Woche <span class="tag tM">M</span></td><td>1</td><td>3</td><td>5</td></tr>
+<tr><td>Wochen pro Jahr <span class="tag tM">M</span></td><td>40</td><td>46</td><td>48</td></tr>
+<tr><td>nutzbares Nachtfenster <span class="tag tM">M</span></td><td>4 h</td><td>6 h</td><td>8 h</td></tr>
+<tr><td>Protokoll</td><td>60 min (NAKO-Länge <a class="cite" href="#r19">[19]</a>)</td><td>40 min</td><td>30 min</td></tr>
+<tr><td>Wechselzeit <span class="tag tM">M</span></td><td>15 min</td><td>15 min</td><td>15 min</td></tr>
+<tr><td>Plätze pro Gerät und Nacht</td><td>3</td><td>6</td><td>10</td></tr>
+<tr><td>Erfolgsquote <span class="tag tM">M</span></td><td>85 %</td><td>90 %</td><td>95 %</td></tr>
+<tr class="tot"><td>Scans pro Jahr</td><td>≈4.100</td><td>≈98.000</td><td>≈604.000</td></tr>
+<tr><td>Jahre bis 100.000 Scans</td><td>≈25</td><td>≈1,0</td><td>≈0,17</td></tr>
+<tr><td>Personal (2 Personen/Nacht; optimistisch 1 + Fernunterstützung) in Vollkräften à 39 h</td><td>≈8</td><td>≈122</td><td>≈272</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 6.</b> Nachtkapazitätsmodell (Ast cb5, von der Redaktion nachgerechnet: 132 × 3 × 46 × 6 × 0,9 = 98.366). Die früher genannte Überschlagszahl <b>325.000</b> (130 Standorte × 10 Plätze × 250 Nächte) ist ein theoretisches Maximum ohne Ausfälle, kein Erwartungswert; das mittlere Szenario liegt bei ≈30 % davon. Der optimistische Fall zeigt nur die Geräte-Obergrenze bei unbegrenztem Personal und unbegrenzten Freiwilligen.</p>
+<p><b>Sanity-Checks.</b> <a class="gl" href="#g-nako">NAKO</a>: über 30.000 Ganzkörper-MRT in rund fünf Jahren an 5 Zentren, je ≈1 h, also grob 6.000 pro Jahr <a class="cite" href="#r19">[19]</a>; „mittel“ wäre das 16-Fache. <a class="gl" href="#g-ukb">UKB</a>: 100.000 in ≈11 Jahren (2014 bis Juli 2025), unter 10.000 pro Jahr <a class="cite" href="#r2">[2]</a>. Personal: „mittel“ bräuchte ≈122 zusätzliche Vollkräfte, rund 10 % der 2019 hochgerechneten MTA-Lücke <a class="cite" href="#r86">[86]</a>, in der unattraktivsten Arbeitszeit.</p>
+<p><b>Rufbereitschafts-Faktor</b> <span class="tag tM">M</span>. Hat nur ein Anteil r der 736 eigenen 24-h-Standorte echte Nachtschicht vor Ort, schrumpft der Pool „freie Nachtkapazität ohne Neueinstellung“ auf r × 736. Bei r = 25 % (die User-Vermutung gespiegelt) wären das ≈184 Standorte, nicht 1.324. Deshalb rechnet das Kostenmodell das Personal voll ein.</p>
+
+<h4>3.5.3 Kosten</h4>
+<div class="formula" id="f-k">Kosten/Scan = (Personal<sub>€/h</sub> × Fenster<sub>h</sub>) / (P × Erfolg) + Befundung + Strom + Geräteanteil &nbsp;&nbsp;→ <a class="gl" href="#g-f-k">Legende</a></div>
+<div class="tw"><table class="t num-t">
+<thead><tr><th>Baustein (€)</th><th>vorsichtig</th><th>mittel</th><th>optimistisch</th></tr></thead>
+<tbody>
+<tr><td>Personal pro Scan</td><td>≈188</td><td>≈111</td><td>≈38</td></tr>
+<tr><td>Befundung pro Scan</td><td>≈29</td><td>≈19</td><td>≈9</td></tr>
+<tr><td>Strom pro Scan</td><td>7</td><td>5</td><td>4</td></tr>
+<tr><td>Geräteanteil pro Scan</td><td>30</td><td>10</td><td>0</td></tr>
+<tr class="tot"><td>Kosten pro Scan</td><td>≈255</td><td>≈145</td><td>≈51</td></tr>
+<tr><td>Studienorganisation pro Teilnehmer</td><td>400</td><td>250</td><td>150</td></tr>
+<tr><td>Genom pro Teilnehmer</td><td>700</td><td>300</td><td>120</td></tr>
+<tr class="tot"><td>Kosten pro Teilnehmer</td><td>≈1.355</td><td>≈695</td><td>≈321</td></tr>
+<tr><td>Jahreskosten des Programms</td><td>≈5,5 Mio.</td><td>≈68 Mio.</td><td>≈194 Mio.</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 7.</b> Kostenmodell (alle Zeilen <span class="tag tM">M</span>). Belegte Bausteine: TVöD EG 9a Stufe 6 = 4.979,97 €/Monat ab 01.05.2026, Nachtzuschlag 20 % <a class="cite" href="#r104">[104]</a> (Eingruppierung von <a class="gl" href="#g-mtr">MTR</a> in 9a <span class="tag tU">unverifiziert</span>); 19,9 kWh pro MRT-Untersuchung <a class="cite" href="#r90">[90]</a> <span class="tag tE">E</span>; 72–91 % der MRT-Jahresenergie nicht produktiv, 12 h Abschalten nachts spart 25–33 % <a class="cite" href="#r91">[91]</a> <span class="tag tE">E</span>. Strom (0,20–0,35 €/kWh) ist mit 4–7 € pro Scan unerheblich.</p>
+<p><b>Kalibrierung.</b> Die <a class="gl" href="#g-nako">NAKO</a> wurde mit bis zu 256 Mio. € für 2013–2023 gefördert, bei ≈200.000 Teilnehmenden ≈1.280 € pro Kopf für <i>alles</i> <a class="cite" href="#r93">[93]</a> <span class="tag tU">Zuordnung der Quelle unsicher; andere Meldung ≈210 Mio. €</span>. Das mittlere Szenario (≈695 €) liegt darunter, weil Biobank, Nachverfolgung und Befragungen fehlen. Größenordnung passt, ist aber kein Beweis.</p>
+<p><b>Das Genom ist nicht mehr der Kostentreiber.</b> Ultima Genomics nennt 60 US-$ pro Genom (Herstellerangabe, nur Reagenzien) <a class="cite" href="#r101">[101]</a> <span class="tag tP">P</span>; Illumina NovaSeq X ≈200 US-$ <a class="cite" href="#r102">[102]</a> <span class="tag tP">Sekundärquelle</span>; ein <a class="gl" href="#g-array">SNP-Array</a> kostet 78 US-$ pro Probe (Universität Iowa, ab 01.07.2026) <a class="cite" href="#r103">[103]</a> <span class="tag tF">F</span>. Die einzige deutsche WGS-Kostenanalyse (3.858 € bzw. 1.411 € pro Genom) stammt von 2017 und ist veraltet <a class="cite" href="#r100">[100]</a>.</p>
+
+<h3 id="s3-6">3.6 Recht und Organisation</h3>
+<div class="tw"><table class="t">
+<thead><tr><th>Thema</th><th>Befund</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td><a class="gl" href="#g-gendg">GenDG</a></td><td>Gilt nicht für genetische Untersuchungen zu Forschungszwecken (§ 2 Abs. 2 Nr. 1); für Forschung gelten DSGVO, Berufsrecht, Ethikvotum und Einwilligung; Zusatzbefunde bleiben Auslegungssache <a class="cite" href="#r97">[97]</a></td><td><span class="tag tF">F</span> Gesetzestext</td></tr>
+<tr><td><a class="gl" href="#g-gdng">GDNG</a> (seit 2024)</td><td>Forschungsdatenzentrum Gesundheit beim BfArM, ePA-Daten mit Opt-out <a class="cite" href="#r98">[98]</a>. Betrifft Abrechnungs- und ePA-Daten, nicht neu erhobene Forschungsbilder und Genome</td><td><span class="tag tF">F</span> / Auslegung</td></tr>
+<tr><td>Modellvorhaben Genomsequenzierung (§ 64e SGB V), genomDE</td><td>Seit 2024/25 für seltene und onkologische Erkrankungen an Unikliniken (Genomdatenverordnung vom 08.07.2024) <a class="cite" href="#r99">[99]</a>. Versorgung Kranker, kein Rahmen für gesunde Kohorten</td><td><span class="tag tF">F</span></td></tr>
+<tr><td>MII <a class="gl" href="#g-broad">Broad Consent</a></td><td>Gängiger Weg zur breiten Einwilligung; in dieser Recherche nicht geprüft</td><td><span class="tag tU">unverifiziert</span></td></tr>
+<tr><td><a class="gl" href="#g-zufall">Zufallsbefunde</a></td><td>SHIP (Ganzkörper-MRT, 2.500 Erwachsene): potenziell relevante Befunde bei 36,2 %, sofortige Überweisung bei 0,4 % <a class="cite" href="#r94">[94]</a>; KORA (400 Personen): ≈22 % <a class="cite" href="#r95">[95]</a>; Literaturspanne ≈1–47 % je Region</td><td><span class="tag tE">E</span></td></tr>
+<tr><td>Strahlenschutz (<a class="gl" href="#g-strlschg">StrlSchG</a> § 31)</td><td>Strahlenanwendung zu Forschungszwecken ist anzeige- oder genehmigungspflichtig; seit 01.07.2025 Anzeige über BfArM/PEI, Genehmigung beim BfS. <a class="gl" href="#g-mrt">MRT</a> und Ultraschall sind ausgenommen <a class="cite" href="#r96">[96]</a></td><td><span class="tag tF">F</span></td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 8.</b> Rechtlicher Rahmen (Ast cb5). Keine Rechtsberatung.</p>
+<p><b>Warum <a class="gl" href="#g-ct">CT</a> für gesunde Kohorten ausscheidet:</b> rechtlich braucht eine reine Forschungsdosis Anzeige oder Genehmigung und eine Rechtfertigung, die bei Gesunden schwer fällt (Einordnung); fachlich ist der Dosisbeitrag hoch (10 % der Untersuchungen tragen 68 % der medizinischen Strahlenexposition, BfS nach <a class="cite" href="#r85">[85]</a>). <a class="gl" href="#g-ct">CT</a> bleibt über <i><a class="gl" href="#g-oppct">opportunistisches CT</a></i> nutzbar.</p>
+<p><b>Nachtmessung als Fehlerquelle</b> <span class="tag tM">Annahme, nicht recherchiert</span>: Tageszeit kann Messwerte verändern (Hydrierung, Schlafentzug, Flüssigkeitsverteilung). Eine reine Nachtkohorte könnte systematisch anders messen als eine Tageskohorte.</p>
+
+<h3 id="s3-7">3.7 KI-Beschleunigung und Personal: wer darf ein MRT bedienen?</h3>
+<p>Ast cb6.IX.5 prüft, ob KI die Kette „Scan → Phänotyp → <a class="gl" href="#g-gwas">GWAS</a>“ verkürzt und ob sie den Personalengpass der Nacht (<a href="#s3-5">3.5</a>) senkt.</p>
+<h4>3.7.1 Schnellere Aufnahme: <a class="gl" href="#g-dlr">Deep-Learning-Rekonstruktion</a></h4>
+<ul>
+  <li><b>Prinzip.</b> <a class="gl" href="#g-cs">Compressed Sensing</a> und <a class="gl" href="#g-dlr">Deep-Learning-Rekonstruktion</a> füllen fehlende Rohdaten mathematisch bzw. per Netz auf <a class="cite" href="#r114">[114]</a>.</li>
+  <li><b>Evidenzlage dünn.</b> Eine systematische Übersicht zu 14 kommerziellen Beschleunigungsprodukten fand zu 4 keinerlei Studie, nur 21 Artikel insgesamt, keinen mit mehr als 100 prospektiv untersuchten Personen und keinen, der KI-„Halluzinationen“ im Bild prüfte <a class="cite" href="#r106">[106]</a> <span class="tag tF">F</span>.</li>
+  <li><b>Unabhängige Zahlen.</b> 7.346 Untersuchungen an 10 Scannern: bildbasierte <a class="gl" href="#g-dlr">DLR</a> bis −53 % Messzeit und −41 % Raumzeit, k-Raum-basierte <a class="gl" href="#g-dlr">DLR</a> bis −27 % Messzeit ohne signifikante Raumzeit-Senkung <a class="cite" href="#r107">[107]</a> <span class="tag tE">E</span>. Siemens Deep Resolve, 26 Patienten, 113 Sequenzpaare: −51,6 % (95 %-KI 45,7–57,7 %), Bildqualität gleich bewertet, aber Leser kaum einig (<a class="gl" href="#g-icc">ICC</a> 0,06–0,33) <a class="cite" href="#r108">[108]</a> <span class="tag tE">E</span>. Prospektiv 200 Patienten (Bern): in 84,8 % neu eingeführte Artefakte, oft in Hirnstamm und Basalganglien <a class="cite" href="#r109">[109]</a> <span class="tag tE">E</span> <span class="tag tU">nur Suchzusammenfassung</span>.</li>
+  <li><b>Herstellerangaben.</b> „Bis 50 % kürzer“ (GE), „Routine-Hirn in 10 Sekunden“, „bis dreimal schneller“ (Philips, FDA-Freigabe 2025), 6 Hirnsequenzen in 6 min 21 s (Canon, 10 Freiwillige) <a class="cite" href="#r110">[110]</a><a class="cite" href="#r111">[111]</a><a class="cite" href="#r112">[112]</a> <span class="tag tP">P</span>. Peer-reviewed für Hirnprotokolle nicht gefunden.</li>
+  <li><b>Folge für das Protokoll</b> <span class="tag tM">M</span>: Lokalisierer, Atemanhalte-Sequenzen und DWI mit vielen Richtungen schrumpfen weniger. 40 min → <b>≈25–30 min</b> (Mitte ≈24–26 min), bestenfalls ≈20 min. Für Herz-Cine gibt es Einzelstudien mit 8- bis 12-facher Beschleunigung (16 Teilnehmende) <a class="cite" href="#r143">[143]</a>, ohne Übertragbarkeit auf ein Forschungsprotokoll. Zum Vergleich: das UK-Biobank-MRT dauert ≈65 min (Hirn ≈35, Herz ≈20, Bauch ≈10) <a class="cite" href="#r129">[129]</a>.</li>
+</ul>
+<div class="box b-warn"><p><b>Risiko für die Kohorte:</b> <a class="gl" href="#g-dlr">DLR</a> verändert Messwerte. Bei Bauch-MRT blieben unter SmartSpeed nur 50 von 86 radiomischen Merkmalen hoch korreliert (r ≥ 0,8), mit Super-Resolution nur 15 von 86, und die Wirkung unterschied sich je Organ (n = 17) <a class="cite" href="#r113">[113]</a> <span class="tag tE">E</span>. Eine Kohorte lebt von der Gleichheit der Messung: Die Rekonstruktion muss für die ganze Studie festgeschrieben werden, ein Wechsel braucht ein Brückenexperiment (gleiche Personen, alte gegen neue Rekonstruktion) <span class="tag tM">M</span>.</p></div>
+<h4>3.7.2 Workflow und <a class="gl" href="#g-remote">Remote-Scanning</a></h4>
+<ul>
+  <li><b>Automatische Schichtplanung</b> senkt die Varianz zwischen Bedienern (prospektiv, 2006) <a class="cite" href="#r142">[142]</a> <span class="tag tE">E</span>; Canon meldet −63 % Bedienzeit, getestet an 2 Freiwilligen <a class="cite" href="#r142">[142]</a> <span class="tag tP">P</span>. Für GE und Philips keine Zeitstudie gefunden.</li>
+  <li><b>Ein Experte, mehrere Scanner.</b> Hersteller nennen bis zu 3 Scanner pro Experte (Siemens syngo Virtual Cockpit) <a class="cite" href="#r115">[115]</a><a class="cite" href="#r116">[116]</a> <span class="tag tP">P</span>. In Deutschland läuft Philips ROCC bei Med 360° seit Mitte 2024 mit 15 angeschlossenen Standorten; die <a class="gl" href="#g-mtr">MTR</a> vor Ort muss die Fernsteuerung per Tablet freigeben <a class="cite" href="#r117">[117]</a> <span class="tag tP">P</span>. Ein GE-Pilot mit 5 Geräten hat noch keine Ergebnisse <a class="cite" href="#r118">[118]</a>.</li>
+  <li><b>Alle realen Einsätze behalten eine Person vor Ort.</b> Essen: Assistenten am Scanner, Spezialisten in der Zentrale <a class="cite" href="#r115">[115]</a>; Walker 2026 (3 Standorte): kein messbarer Zeitverlust, aber Verbindungsprobleme, und „ein MRT-Techniker vor Ort war weiterhin nötig“ <a class="cite" href="#r119">[119]</a> <span class="tag tE">E</span>; Befragungen von Radiographen: „eher Freund als Feind“; weitere Arbeiten zu Fachkräftemangel und geteilter Haftung beim Fern-MRT existieren, Inhalt ungeprüft <a class="cite" href="#r122">[122]</a><a class="cite" href="#r123">[123]</a>; <a class="cite" href="#r120">[120]</a><a class="cite" href="#r121">[121]</a> <span class="tag tE">E</span>.</li>
+  <li><b>Rechtsrahmen.</b> Für Fern-MRT gibt es keine eindeutige Norm; eine Magdeburger Übersicht hält es für machbar mit Vor-Ort-Konzept, IT-/Datenschutz und einheitlicher Schulung <a class="cite" href="#r124">[124]</a> <span class="tag tF">F</span>. <b>Reines Fern-CT ist nicht erlaubt</b>: <a class="gl" href="#g-telerad">Teleradiologie</a> verlangt eine Person mit <a class="gl" href="#g-fachkunde">Fachkunde</a> für die technische Durchführung und einen Arzt mit Strahlenschutzkenntnissen vor Ort, Genehmigung nur für Nacht, Wochenende, Feiertag und auf 5 Jahre befristet (§ 14 Abs. 2 <a class="gl" href="#g-strlschg">StrlSchG</a>) <a class="cite" href="#r126">[126]</a><a class="cite" href="#r124">[124]</a> <span class="tag tF">F</span>. Der DVTA sah 2022 für „Tele-MTRA“ keine Rechtsgrundlage <a class="cite" href="#r125">[125]</a>.</li>
+</ul>
+<h4>3.7.3 Wer darf ein <a class="gl" href="#g-mrt">MRT</a> bedienen?</h4>
+<ul>
+  <li><b>Vorbehalt.</b> Die technische Durchführung der radiologischen Diagnostik „und anderer bildgebender Verfahren“ (also auch <a class="gl" href="#g-mrt">MRT</a>) ist nach § 5 Abs. 2 Nr. 1 <a class="gl" href="#g-mtbg">MTBG</a> den <a class="gl" href="#g-mtr">MTR</a> vorbehalten, Kontrastmittelgabe nur nach ärztlicher Anordnung <a class="cite" href="#r127">[127]</a> <span class="tag tF">F</span>. Die Ausbildung dauert 3 Jahre mit mindestens 4.600 Stunden (§ 13 <a class="gl" href="#g-mtbg">MTBG</a>) <a class="cite" href="#r127">[127]</a>.</li>
+  <li><b>Ausnahmen</b> (§ 6 Abs. 1 <a class="gl" href="#g-mtbg">MTBG</a>): u. a. Personen mit passendem Hochschulabschluss, Auszubildende und Personen mit sonstiger abgeschlossener medizinischer Ausbildung <i>unter Aufsicht und Verantwortung</i> einer Person mit Hochschulabschluss (Nr. 5) <a class="cite" href="#r127">[127]</a>. Ob Nr. 5 für Studienassistenz an einem festen Forschungsprotokoll trägt, ist <b>nicht ausgetestet</b> <span class="tag tU">Rechtsgutachten nötig</span>.</li>
+  <li><b>Ärztliche Anforderung</b> (§ 5 Abs. 5 <a class="gl" href="#g-mtbg">MTBG</a>) gilt für Tätigkeiten zur Krankheitserkennung; ob Forschungs-MRT an Gesunden darunter fällt, ist Auslegung. Eine Pflicht zur ärztlichen Präsenz bei Nativ-MRT wurde nicht gefunden <span class="tag tU">unverifiziert</span>; Notfallkonzept, MR-Sicherheit (Implantate, <a class="gl" href="#g-quench">Quench</a>) und eine MR-Sicherheitsbeauftragte Person werden von ISMRM und EFOMP empfohlen <a class="cite" href="#r144">[144]</a>, eine gesetzliche MRSO-Pflicht in Deutschland ist <span class="tag tU">unbelegt</span>.</li>
+  <li><b>Fachkräftemangel</b>: 840 unbesetzte MTRA-Vollkraftstellen (1.170 für alle MTA-Berufe), ≈46 % der <a class="gl" href="#g-mtr">MTRA</a> in Teilzeit, Mehrbedarf an <a class="gl" href="#g-mtr">MTA</a> bis 2030 12.740 Vollkräfte <a class="cite" href="#r86">[86]</a> <span class="tag tE">E</span> (Stand 2019). Ob die Bundesagentur <a class="gl" href="#g-mtr">MTR</a> als Engpassberuf führt, wurde nicht gefunden <a class="cite" href="#r128">[128]</a>.</li>
+  <li><b>Vergleich <a class="gl" href="#g-ukb">UK Biobank</a></b>: je Zentrum 6 Radiographers, 3 Healthcare Assistants, 6 Wochen Schulung vor Start, Ziel 18 Teilnehmende pro 12-h-Tag (Ist ≈17) <a class="cite" href="#r129">[129]</a>. Britisches Berufsrecht kennt keinen MTBG-Vorbehalt, ist also nicht übertragbar. Wer bei der <a class="gl" href="#g-nako">NAKO</a> die Geräte bedient, ist <span class="tag tU">unbelegt</span> <a class="cite" href="#r134">[134]</a>.</li>
+</ul>
+<h4>3.7.4 KI in der Auswertung und <a class="gl" href="#g-ulf">Niedrigfeld-MRT</a></h4>
+<ul>
+  <li><b>Kontrastunabhängige Segmentierung</b> (<a class="gl" href="#g-synthseg">SynthSeg</a>, <a class="gl" href="#g-synthseg">SynthSeg</a>+) erschließt klinische Hirn-MRT jeder Gewichtung ohne Neutraining, erprobt an 14.752 Klinik-Scans <a class="cite" href="#r135">[135]</a><a class="cite" href="#r136">[136]</a> <span class="tag tF">F</span>. <b><a class="gl" href="#g-fm">Foundation Models</a></b> wie BrainIAC (48.519 MRTs) beschleunigen die Analyse, nicht die Aufnahme, und sind nicht klinisch validiert <a class="cite" href="#r139">[139]</a> <span class="tag tE">E</span>.</li>
+  <li><b>Automatische IDP-Pipelines</b> mit Qualitätskontrolle (<a class="gl" href="#g-ukb">UK Biobank</a>, Freigabe in Paketen von 5.000–10.000 Personen) <a class="cite" href="#r130">[130]</a><a class="cite" href="#r131">[131]</a> <span class="tag tF">F</span>; Super-Resolution macht Niedrigfeld-Bilder morphometrisch nutzbar (Hippocampus r = 0,85 zu 3 T, nur 11 Personen) <a class="cite" href="#r137">[137]</a> <span class="tag tE">E</span>.</li>
+  <li><b>Archiv statt Neuscan</b>: CT-Leberfett per Deep Learning aus klinischen CTs bei 10.283 Biobank-Teilnehmenden mit Exomen, zwei Treffer in <a class="gl" href="#g-ukb">UKB</a> repliziert <a class="cite" href="#r140">[140]</a> <span class="tag tE">E</span>; opportunistische CT-Aortenverkalkung sagte Ereignisse besser voraus als der Framingham-Score (n = 9.223) <a class="cite" href="#r18">[18]</a> <span class="tag tE">E</span>. Stark für Querschnitts-Genetik, schwach für Veränderung bei Gesunden.</li>
+  <li><b><a class="gl" href="#g-ulf">Ultra-Niedrigfeld-MRT</a> (0,064 T)</b>, ≈50-mal schwächer als 3 T, ohne Spezialraum <a class="cite" href="#r141">[141]</a>: <a class="gl" href="#g-bag">Hirnalter</a> mit <a class="gl" href="#g-mae">MAE</a> 6,49–8,21 J., <a class="gl" href="#g-icc">ICC</a> zu 3 T 0,72–0,92, Test-Retest zwischen zwei Swoop-Geräten 0,97–0,99 (23 Personen, 573 Scans) <a class="cite" href="#r138">[138]</a> <span class="tag tE">E</span>. Die <a class="gl" href="#g-mae">MAE</a> liegt über der <a class="gl" href="#g-mdc">MDC</a> von 4–5 J. <a class="cite" href="#r69">[69]</a>: für Einzelverläufe ungeeignet, für Bevölkerungsgenetik plausibel.</li>
+</ul>
+<h4>3.7.5 Zweiter Engpass: radiologische Befundung</h4>
+<p>Metaanalyse (32 Studien, 27.643 symptomfreie Erwachsene): potenziell ernste <a class="gl" href="#g-zufall">Zufallsbefunde</a> bei Hirn-MRT 1,4 % (95 %-KI 1,0–2,1 %), Hirn + Körper 3,9 % (0,4–27,1 %); nur 20,5 % davon wurden am Ende ernste Diagnosen <a class="cite" href="#r132">[132]</a> <span class="tag tF">F</span>. <a class="gl" href="#g-ukb">UK Biobank</a> (erste 1.000 Personen): Radiographer-Markierung fand 1,8 % potenziell ernste Befunde, systematische Radiologenlesung 17,9 %; die Markierung verpasste 16 von 21 ernsten Diagnosen <a class="cite" href="#r133">[133]</a> <span class="tag tE">E</span>. Die <a class="gl" href="#g-nako">NAKO</a> lässt alle Bilder radiologisch lesen <a class="cite" href="#r134">[134]</a>. Bei 98.000 Scans pro Jahr und angenommenen 10–20 min je Lesung wären das 16.300–32.700 Stunden, also <b>≈10–20 Radiologen-Vollkräfte</b> <span class="tag tM">M</span> <span class="tag tU">Lesezeit unbelegt</span>. Dass KI die ärztliche Befundung ersetzt, ist nicht belegt.</p>
+<h4>3.7.6 Neue Personalrechnung</h4>
+<div class="formula" id="f-remote">MTR-VK = N / (k · S) · (1 + Reserve), &nbsp; N = Standorte × Nächte/Woche × 52 &nbsp;&nbsp;→ <a class="gl" href="#g-f-remote">Legende</a></div>
+<div class="tw"><table class="t">
+<thead><tr><th>Szenario</th><th>MTR-Vollkräfte nachts</th><th>Zusätzliches Personal vor Ort</th><th>Rechtlich</th></tr></thead>
+<tbody>
+<tr><td>S0 Basis: <a class="gl" href="#g-mtr">MTR</a> vor Ort, 40-min-Protokoll</td><td>≈122 (≈100–150)</td><td>–</td><td>gesichert</td></tr>
+<tr><td>S1 kürzeres Protokoll (<a class="gl" href="#g-dlr">DLR</a>, 25–30 min)</td><td>≈90–122</td><td>–</td><td>gesichert; Messkonstanz-Risiko <a class="cite" href="#r113">[113]</a></td></tr>
+<tr><td>S2 Remote 1:3 + Assistenz vor Ort</td><td>≈49 (37–73 bei k = 4 bis 2)</td><td>≈122 Assistenz-VK (Nicht-MTR)</td><td>offen (§ 6 Abs. 1 Nr. 5 <a class="gl" href="#g-mtbg">MTBG</a>)</td></tr>
+<tr class="tot"><td>S3 = S1 + S2</td><td>≈39 (28–73)</td><td>≈90–122 Assistenz-VK</td><td>offen</td></tr>
+<tr><td>S4 Behörde/Ethik verlangt <a class="gl" href="#g-mtr">MTR</a> vor Ort</td><td>≈90–122</td><td>–</td><td>konservativ</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 8a.</b> Personalrechnung aus Ast cb6 <span class="tag tM">M</span>. Rückrechnung: 132 Standorte × 3 Nächte × 52 = 20.592 Standort-Nächte; 122 VK ↔ ≈169 Schichten je VK und Jahr, also eine <a class="gl" href="#g-mtr">MTR</a> je Standort-Nacht; Reserve 20 %. Plausibilität gegen <a class="gl" href="#g-ukb">UK Biobank</a>: 730–1.095 Teilnehmende je Personal- bzw. Radiographer-VK <a class="cite" href="#r129">[129]</a> gegen 98.000 / 122 = 803 Scans je MTR-VK im Modell. Das <i>Gesamt</i>personal steigt in S2/S3, weil Assistenz hinzukommt.</p>
+
+<!-- ============================ 4 DISKUSSION ============================ -->
+<h2 id="s4">4 Diskussion: der echte Engpass</h2>
+<h3 id="s4-1">4.1 Das Trilemma: schnell, direkt, skalierbar</h3>
+<p>Alle vier Äste kommen unabhängig zum selben Muster: <b>Keine Bildgebungsmethode ist zugleich schnell, direkt und skalierbar.</b></p>
+<div class="tw"><table class="t">
+<thead><tr><th>Methode</th><th>schnell (Wochen–Monate)</th><th>direkt (Mechanismus)</th><th>skalierbar (Biobank)</th><th>in genotypisierten Großkohorten</th></tr></thead>
+<tbody>
+<tr><td>Struktur-MRT, <a class="gl" href="#g-bag">Hirnalter</a>, Organvolumen</td><td>nein (12–24 Monate)</td><td>nein (Folgeschaden)</td><td>ja</td><td>ja (<a class="gl" href="#g-ukb">UKB</a>, <a class="gl" href="#g-nako">NAKO</a>)</td></tr>
+<tr><td>Ganzkörper-Fettkarten (<a class="gl" href="#g-pdff">PDFF</a>, <a class="gl" href="#g-vat">VAT</a>, <a class="gl" href="#g-mfi">MFI</a>)</td><td>vermutlich ja <span class="tag tU">unverifiziert</span></td><td>nein (Nährstoffsensorik indirekt)</td><td>ja</td><td>ja</td></tr>
+<tr><td>³¹P-MRS / <a class="gl" href="#g-crcest">CrCEST</a> (Mitochondrien)</td><td>ja (laut Ast cb3)</td><td>ja (funktionell)</td><td>eingeschränkt (Spezialhardware, 7 T bei <a class="gl" href="#g-crcest">CrCEST</a>)</td><td>nein</td></tr>
+<tr><td>Molekulares <a class="gl" href="#g-pet">PET</a> (Amyloid, <a class="gl" href="#g-tspo">TSPO</a>, <a class="gl" href="#g-fpygal">FPyGal</a>)</td><td>teils</td><td>ja</td><td>nein (Strahlung, Tracer, Kosten)</td><td>nein</td></tr>
+<tr><td>Blut-Proteomik-Organuhren (Vergleich)</td><td>ja</td><td>nein (keine Verortung)</td><td>ja</td><td>ja (UKB-PPP 44.498)</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 9.</b> Synthese aus den Ästen cb3 und cb4. Kein Verfahren erfüllt alle drei Eigenschaften.</p>
+
+<h3 id="s4-2">4.2 Rangfolge der Engpässe</h3>
+<ol>
+  <li><b><a class="gl" href="#g-surrogat">Surrogat-Validierung</a> fehlt.</b> Keine Studie zeigt, dass eine <i>behandlungsbedingte</i> Senkung eines Organ-Altersabstands Krankheit oder Tod senkt. Alle Risikozahlen (<a class="gl" href="#g-hr">HR</a> 1,56 <a class="cite" href="#r80">[80]</a>; <a class="gl" href="#g-hr">HR</a> 2,3–8,3 <a class="cite" href="#r67">[67]</a>; <a class="gl" href="#g-auc">AUC</a> 0,77 <a class="cite" href="#r32">[32]</a>) sind Beobachtungen; das MRT-Hirnalter sagte in <a class="gl" href="#g-ukb">UKB</a> die Sterblichkeit nicht einmal voraus <a class="cite" href="#r32">[32]</a>. Ohne Behördenpfad <a class="cite" href="#r74">[74]</a> bleibt jede <a class="gl" href="#g-organuhr">Organuhr</a> ein Phase-2-Auswahlwerkzeug.</li>
+  <li><b>Wiederholungsscans in genotypisierten Kohorten fehlen.</b> <a class="gl" href="#g-gwas">GWAS</a> im Querschnitt gibt es reichlich <a class="cite" href="#r33">[33]</a><a class="cite" href="#r65">[65]</a>; die interessante Größe für Interventionen ist aber die <i>Veränderungsrate</i>. In <a class="gl" href="#g-ukb">UKB</a> sind erst ≥5.000 von 60.000 geplanten Wiederholungsscans belegt <a class="cite" href="#r13">[13]</a>, Abschluss 2029 <a class="cite" href="#r2">[2]</a>; <a class="gl" href="#g-nako">NAKO</a> plant ≈18.000 <a class="gl" href="#g-mrt">MRT</a> in der zweiten Welle <a class="cite" href="#r92">[92]</a> <span class="tag tP">P</span>.</li>
+  <li><b>Nachts ist die bindende Grenze Personal plus Freiwillige, nicht das Gerät.</b> 736 Standorte haben ein eigenes 24-h-MRT, aber wie viele davon nachts nur per <a class="gl" href="#g-ruf">Rufbereitschaft</a> laufen, ist unbekannt (<a href="#s3-4">3.4</a>). Das mittlere Szenario bräuchte ≈122 zusätzliche Vollkräfte bei ohnehin fehlenden 1.170 <a class="cite" href="#r86">[86]</a> und ≈98.000 Freiwillige pro Jahr, das 16-Fache der NAKO-MRT-Rate. KI und <a class="gl" href="#g-remote">Remote-Scanning</a> senken die MTR-Zahl rechnerisch auf ≈39–49, verschieben den Engpass aber auf <a class="gl" href="#g-vorbehalt">Berufsvorbehalt</a>, Präsenz vor Ort und Befundung (<a href="#s4-4b">4.4.1</a>).</li>
+  <li><b><a class="gl" href="#g-harmonisierung">Harmonisierung</a> über Scanner.</b> Zwischen Scannern fällt der <a class="gl" href="#g-icc">ICC</a> bis auf 0,51 <a class="cite" href="#r68">[68]</a>; vortrainierte Modelle erreichen auf fremden Daten <a class="gl" href="#g-mae">MAE</a> 11–28 J. <a class="cite" href="#r82">[82]</a>. 130 heterogene Krankenhausgeräte erzeugen genau die Streuung, die σ von 2 auf 4–7 Jahre treibt, und damit die Fallzahl um das 4- bis 12-Fache.</li>
+  <li><b>Upstream-Hallmarks sind unsichtbar.</b> Für Genom, Telomere, Epigenetik und Autophagie gibt es keinen Human-Tracer; dort bleiben Blut und Omics nötig.</li>
+</ol>
+<div class="box b-ok"><p><b>Nicht der Engpass:</b> Genomkosten (≈60–700 € pro Person), Strom (≈5 € pro Scan), die Rechtslage für <a class="gl" href="#g-mrt">MRT</a> (<a class="gl" href="#g-gendg">GenDG</a> greift nicht, kein Strahlenschutzverfahren). Relevant bleiben Einwilligung und <a class="gl" href="#g-zufall">Zufallsbefunde</a> (36 % potenziell relevant <a class="cite" href="#r94">[94]</a>).</p></div>
+<div class="box b-crit"><p><b>Der echte Engpass in einem Satz:</b> Es fehlt nicht an Scannerzeit, sondern an <i>wiederholten, gleichartig gemessenen</i> Phänotypen in genotypisierten Menschen, die als <a class="gl" href="#g-surrogat">Surrogat</a> validiert sind – und nachts zusätzlich an den Menschen, die messen, und denen, die sich messen lassen. KI ändert daran vor allem, <i>wer</i> fehlt: weniger MTR-Köpfe, dafür rechtlich zulässige Präsenz vor Ort und Radiologen für die Befundung.</p></div>
+
+<h3 id="s4-3">4.3 Welche Bild-Endpunkte für die drei Prämissen-Interventionen?</h3>
+<div class="tw"><table class="t wide">
+<thead><tr><th>Intervention</th><th>Hauptziel-Hallmarks</th><th>Schneller Endpunkt (Wochen–Monate)</th><th>Bestätigender Endpunkt (12–24 Monate)</th><th>Stratifizierung / Messvoraussetzung</th><th>Lücke</th></tr></thead>
+<tbody>
+<tr><td>FOXO3-Genfix</td><td>Nährstoffsensorik, Autophagie, Proteostase</td><td><a class="gl" href="#g-pdff">Leber-PDFF</a>, <a class="gl" href="#g-vat">VAT</a>, <a class="gl" href="#g-mfi">MFI</a>; ³¹P-MRS-τ <a class="cite" href="#r37">[37]</a>; <a class="gl" href="#g-proteomik">Blut-Proteomik</a> <a class="cite" href="#r67">[67]</a></td><td>Hirn- und Körper-Altersabstand <a class="cite" href="#r32">[32]</a><a class="cite" href="#r33">[33]</a></td><td>Genotyp <a class="gl" href="#g-foxo3">FOXO3</a> <a class="cite" href="#r42">[42]</a>; PNPLA3/TM6SF2 als Kovariaten für <a class="gl" href="#g-pdff">PDFF</a> <a class="cite" href="#r15">[15]</a></td><td>Kein FOXO3-Bildphänotyp <a class="cite" href="#r59">[59]</a>; Autophagie im Bild blind</td></tr>
+<tr><td><a class="gl" href="#g-senolytika">Senolytika</a> (z. B. D+Q)</td><td>Seneszenz, Entzündung, Kommunikation</td><td><a class="gl" href="#g-dxa">DXA</a>/<a class="gl" href="#g-dxa">HR-pQCT</a> Knochen (20 Wochen) <a class="cite" href="#r39">[39]</a>; FDG-Gefäß-PET; <a class="gl" href="#g-ecv">ECV</a>/T1 <span class="tag tU">Zeitrahmen unverifiziert</span></td><td>Organ-Altersabstand, ECV-Verlauf</td><td><b>Seneszenzlast messen</b> (T-Zell-p16) <a class="cite" href="#r39">[39]</a>; FPyGal-PET als Target-Engagement <a class="cite" href="#r43">[43]</a></td><td><a class="gl" href="#g-fpygal">FPyGal</a> nur First-in-Human; ohne Stratifizierung verwässert das Signal</td></tr>
+<tr><td><a class="gl" href="#g-osk">ER-100</a> (OSK-Reprogrammierung)</td><td>Epigenetik (upstream)</td><td>Zielorgan Auge: Gesichtsfeld <a class="cite" href="#r41">[41]</a>, OCT-Schichtdicke <span class="tag tU">in der Studie unverifiziert</span></td><td>Systemisch: kein Bild-Endpunkt; <a class="gl" href="#g-bag">Altersabstand</a> als Grobmaß</td><td>Epigenetische Uhr im Blut (nicht Bildgebung)</td><td>Daten nur Pressemitteilung, n = 3 <a class="cite" href="#r41">[41]</a> <span class="tag tP">P</span></td></tr>
+<tr><td>Kombination (2×2)</td><td>mehrere</td><td><a class="gl" href="#g-proteomik">Proteomik</a> + ³¹P-MRS/<a class="gl" href="#g-pdff">PDFF</a></td><td>Bildgebende <a class="gl" href="#g-organuhr">Organuhr</a>, gleicher Scanner</td><td><a class="gl" href="#g-chip">CHIP</a>, APOE, rs6971 genotypisieren</td><td>Interaktion braucht ≈4× Fallzahl (<a href="#s3-3-3">3.3.3</a>)</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 10.</b> Endpunkt-Vorschlag pro Intervention (Synthese der Redaktion aus cb3 und cb4) <span class="tag tM">Interpretation</span>.</p>
+
+<h3 id="s4-4">4.4 Was die Nacht-MRT-Idee leisten kann</h3>
+<p>Die Idee ist rechnerisch nicht abwegig: Selbst das mittlere Szenario läge beim Zehnfachen des UK-Biobank-Durchschnitts. Für die Hallmark-Forschung ist „viele Scans“ aber weniger wertvoll als „gleichartige Scans mit sauberer Genetik und Nachverfolgung“. Ein verteiltes Netz aus Rufbereitschaftsrestzeit an 130 verschiedenen Geräten verschlechtert genau die Größe, an der die Fallzahl hängt (σ). Wenige Zentren mit eigenem Nachtbetrieb und identischen Geräten, wie <a class="gl" href="#g-nako">NAKO</a> und <a class="gl" href="#g-ukb">UKB</a> sie nutzen, liefern wahrscheinlich bessere Phänotypen (Einordnung von cb5, <span class="tag tM">nicht belegt</span>). Die Nacht kann damit ein <b>Hebel für Wiederholungsscans</b> sein, also für Engpass 2, nicht für die Masse an Erstscans.</p>
+
+<h3 id="s4-4b">4.4.1 KI-Beschleunigung und Remote-Scanning gegen den Personalengpass in der Nacht</h3>
+<p>KI wirkt an zwei Stellen der Nachtrechnung: Kürzere Protokolle erhöhen die Plätze pro Nacht (P), <a class="gl" href="#g-remote">Remote-Scanning</a> senkt die <a class="gl" href="#g-mtr">MTR</a> je Standort-Nacht. Rechnerisch fällt der MTR-Bedarf damit von ≈122 auf ≈39 Vollkräfte (<a href="#s3-7">3.7.6</a>). Das löst den Engpass aber nicht auf, es <b>verschiebt</b> ihn auf drei andere Stellen:</p>
+<ol>
+  <li><b><a class="gl" href="#g-vorbehalt">Berufsvorbehalt</a>.</b> § 5 <a class="gl" href="#g-mtbg">MTBG</a> reserviert die Bedienung den <a class="gl" href="#g-mtr">MTR</a>; ob die Ausnahme § 6 Abs. 1 Nr. 5 eine angeleitete Assistenz am festen Forschungsprotokoll deckt, ist ungeprüft <a class="cite" href="#r127">[127]</a>.</li>
+  <li><b>Präsenz vor Ort.</b> Jeder belegte Einsatz behält eine Person am Gerät <a class="cite" href="#r115">[115]</a><a class="cite" href="#r117">[117]</a><a class="cite" href="#r119">[119]</a>; Notfall, MR-Sicherheit und Panik der Teilnehmenden lassen sich nicht fernsteuern. Die Rechnung S2/S3 ersetzt <a class="gl" href="#g-mtr">MTR</a> durch ≈90–122 Assistenzkräfte, sie spart keine Köpfe.</li>
+  <li><b>Radiologische Befundung.</b> ≈10–20 Radiologen-Vollkräfte für <a class="gl" href="#g-zufall">Zufallsbefunde</a> <span class="tag tM">M</span> sinken durch KI nicht <a class="cite" href="#r132">[132]</a><a class="cite" href="#r133">[133]</a>.</li>
+</ol>
+<p>Dazu kommt ein Zielkonflikt: Dieselbe <a class="gl" href="#g-dlr">DLR</a>, die Zeit spart, verschiebt quantitative Merkmale <a class="cite" href="#r113">[113]</a> und erhöht damit das σ, an dem die Fallzahl hängt (<a href="#s3-3-3">3.3.3</a>). Für eine Phänotyp-Kohorte ist eine <i>festgeschriebene</i> Rekonstruktion wichtiger als die maximale Beschleunigung. Fern-CT bleibt ausgeschlossen <a class="cite" href="#r124">[124]</a><a class="cite" href="#r126">[126]</a>; <a class="gl" href="#g-ulf">Niedrigfeld-MRT</a> eignet sich nicht als Verlaufsendpunkt <a class="cite" href="#r138">[138]</a>.</p>
+
+<h3 id="s4-5">4.5 Evidenzlage der Kernaussagen</h3>
+<div class="tw"><table class="t">
+<thead><tr><th>Aussage</th><th>Grad</th></tr></thead>
+<tbody>
+<tr><td>Bildgebungsmerkmale sind erblich, <a class="gl" href="#g-gwas">GWAS</a> finden Hunderte Genorte <a class="cite" href="#r3">[3]</a><a class="cite" href="#r4">[4]</a><a class="cite" href="#r33">[33]</a><a class="cite" href="#r65">[65]</a></td><td><span class="tag tF">F</span></td></tr>
+<tr><td>Keine Behörde akzeptiert eine Altersuhr als <a class="gl" href="#g-surrogat">Surrogat</a> <a class="cite" href="#r74">[74]</a></td><td><span class="tag tF">F</span></td></tr>
+<tr><td><a class="gl" href="#g-mdc">MDC</a> des Hirnalters ≈4–5 J. beim Einzelnen <a class="cite" href="#r69">[69]</a></td><td><span class="tag tE">E</span> (große Stichprobe)</td></tr>
+<tr><td>Ausdauertraining verjüngt das <a class="gl" href="#g-bag">Hirnalter</a> um ≈1 J. <a class="cite" href="#r70">[70]</a></td><td><span class="tag tE">E</span>; Nullbefund daneben <a class="cite" href="#r71">[71]</a>; Pressemeldungen „Sport macht das Gehirn ein Jahr jünger“ <span class="tag tH">H</span></td></tr>
+<tr><td><a class="gl" href="#g-senolytika">Senolytika</a> verbessern Knochendichte <a class="cite" href="#r39">[39]</a></td><td><span class="tag tE">E</span>, nur Subgruppe, explorativ</td></tr>
+<tr><td><a class="gl" href="#g-osk">ER-100</a> verbessert das Gesichtsfeld <a class="cite" href="#r41">[41]</a></td><td><span class="tag tP">P</span> / <span class="tag tH">H</span> als Wirksamkeitsbeleg</td></tr>
+<tr><td>70–80 % der 24-h-MRT nachts nur auf Abruf</td><td><span class="tag tU">unverifiziert</span></td></tr>
+<tr><td>≈98.000 Nacht-Scans pro Jahr zu ≈145 €</td><td><span class="tag tM">M</span></td></tr>
+<tr><td><a class="gl" href="#g-dlr">DLR</a> halbiert die Scanzeit <a class="cite" href="#r107">[107]</a><a class="cite" href="#r108">[108]</a></td><td><span class="tag tE">E</span> für −27 bis −53 % Messzeit; „10-Sekunden-Gehirn“ <span class="tag tP">P</span>/<span class="tag tH">H</span> für Forschungsprotokolle</td></tr>
+<tr><td>Ein Experte steuert drei Scanner ohne Personal vor Ort</td><td><span class="tag tH">H</span>; in keinem belegten Einsatz <a class="cite" href="#r119">[119]</a></td></tr>
+<tr><td>„Mehr Genome = bessere Bildgebungsgenetik“</td><td><span class="tag tH">H</span> (für Bildgebung nicht gezeigt <a class="cite" href="#r5">[5]</a>)</td></tr>
+</tbody></table></div>
+
+<!-- ============================ 5 LIMITATIONEN ============================ -->
+<h2 id="s5">5 Limitationen</h2>
+<ul>
+  <li><b>Literatur über Suchzusammenfassungen.</b> Die Äste haben überwiegend Abstracts und Suchauszüge gelesen, Volltexte nur teilweise. Einzelne Zahlen können aus Sekundärdarstellungen stammen; die Redaktion hat nur sieben Angaben stichprobenartig nachgeprüft.</li>
+  <li><b>Unvollständige Referenzen</b> sind in der Quellenliste markiert (z. B. fehlende Autoren bei <a class="cite" href="#r8">[8]</a>, <a class="cite" href="#r18">[18]</a>, <a class="cite" href="#r24">[24]</a>, <a class="cite" href="#r27">[27]</a>, <a class="cite" href="#r94">[94]</a>, <a class="cite" href="#r95">[95]</a>).</li>
+  <li><b>DKG-Daten sind Selbstangaben</b> und unterscheiden nicht zwischen Vor-Ort-Nachtschicht und <a class="gl" href="#g-ruf">Rufbereitschaft</a>. Praxis-MRT (≈1.900) fehlen ganz. Die Rohseiten sind archiviert und die Rufbereitschafts-Zählung (2/736) ist reproduziert; das Abrufskript selbst liegt nicht vor.</li>
+  <li><b>Kostenmodell</b>: Personalkosten, Organisation, Wechselzeit und Beteiligungsquoten sind Annahmen. Remote-Scanning-Wirtschaftlichkeit ist nur durch Anbieterquellen belegt.</li>
+  <li><b>Fallzahl</b>: nur für das Gehirn; Normalverteilung angenommen; ANCOVA würde n etwas senken, Ausfälle (+15–20 %) erhöhen es.</li>
+  <li><b>Tageszeiteffekt</b> der Nachtmessung ist unbekannt.</li>
+  <li><b>KI- und Remote-Daten</b> stammen überwiegend aus Herstellerangaben und kleinen Einzelstudien; die Rechtslage zu § 6 Abs. 1 Nr. 5 <a class="gl" href="#g-mtbg">MTBG</a> ist ungeprüft, die Personalrechnung (cb6) beruht auf einer Rückrechnung der 122 Vollkräfte.</li>
+  <li><b>Prämissen</b>: Die Bewertung in <a href="#s1-praemissen">Abschnitt 1</a> stützt sich auf wenige Einzelstudien; ER-100-Daten stammen nur aus Pressemitteilungen; ein FOXO3-Eingriff am Menschen ist nirgends untersucht.</li>
+  <li><b>Modellgenerierte Synthese</b>: Alle Äste und die Redaktion sind KI-Agenten; die Arbeit ersetzt keine systematische Übersichtsarbeit mit Protokoll und Doppelbegutachtung.</li>
+</ul>
+
+<!-- ============================ 6 SCHLUSS ============================ -->
+<h2 id="s6">6 Schlussfolgerung und konkreter Vorschlag</h2>
+<p><a class="gl" href="#g-ct">CT</a> und <a class="gl" href="#g-mrt">MRT</a> funktionieren bereits als Phänotyp-Motor für die <i>Genetik</i>: Organvolumen, Fett, Fibrose und <a class="gl" href="#g-organuhr">Organuhren</a> sind erblich und liefern Genorte, die auf Mechanismen zurückzeigen. Als Phänotyp-Motor für <i>schnelle Kombinationsstudien</i> funktionieren sie noch nicht, weil die skalierbaren Maße langsam und indirekt sind, die schnellen und direkten Maße in den Biobanken fehlen und keine <a class="gl" href="#g-organuhr">Organuhr</a> als <a class="gl" href="#g-surrogat">Surrogat</a> validiert ist. Die Nacht-MRT-Idee löst den Geräte-Engpass, den es kaum gibt, und stößt auf den Personal- und Freiwilligen-Engpass, den es gibt. Ihr bester Einsatz ist daher klein, standardisiert und longitudinal.</p>
+
+<h3 id="s6-1">6.1 Vorschlag: Pilot „Nacht-Phänotyp-Kohorte“ (Design-Skizze)</h3>
+<div class="tw"><table class="t">
+<thead><tr><th>Baustein</th><th>Vorschlag</th><th>Begründung</th></tr></thead>
+<tbody>
+<tr><td>Phase 0 (≈3 Monate)</td><td>(a) Telefonstichprobe bei 30–50 Radiologieabteilungen zur Rufbereitschaftsquote; (b) Tag-Nacht-Vergleich: ≈40 Freiwillige je einmal tags und nachts gescannt</td><td>Schließt die zwei größten Datenlücken (<a href="#s3-4">3.4</a>, <a href="#s3-6">3.6</a>) und liefert Test-Retest-Werte</td></tr>
+<tr><td>Standorte</td><td>3–5 Unikliniken mit eigenem 24-h-MRT <b>und</b> Vor-Ort-Nachtbesetzung, möglichst gleiches Gerätemodell und gleiche Feldstärke</td><td>Hält σ nahe 2 statt 4–7 (<a href="#s3-3-3">3.3.3</a>)</td></tr>
+<tr><td>Protokoll (≈40 min)</td><td>Hirn <a class="gl" href="#g-mprage">3D-T1</a> (<a class="gl" href="#g-mprage">MPRAGE</a>) + FLAIR + <a class="gl" href="#g-qsm">QSM</a>; Ganzkörper-Dixon (<a class="gl" href="#g-pdff">Leber-PDFF</a>, <a class="gl" href="#g-vat">VAT</a>, <a class="gl" href="#g-mfi">MFI</a>, <a class="gl" href="#g-pdff">Knochenmark-PDFF</a>); Herz-Cine + natives <a class="gl" href="#g-ecv">T1-Mapping</a>; ³¹P-MRS der Wade nur an Standorten mit Mehrkern-Hardware</td><td>Deckt die indirekt messbaren <a class="gl" href="#g-hallmarks">Hallmarks</a> 2, 4, 6, 9, 10, 11 und den direkten Mitochondrien-Readout ab (Tabelle 1). <a class="gl" href="#g-ecv">ECV</a> braucht Kontrastmittel und bleibt Teilstudien vorbehalten (Einordnung)</td></tr>
+<tr><td>Rekonstruktion und Bedienung</td><td>DLR-Version vor Studienstart festschreiben, Brückenexperiment bei jedem Wechsel; Remote-Unterstützung nur mit <a class="gl" href="#g-mtr">MTR</a> oder geprüfter § 6-Lösung vor Ort; Zufallsbefund-Lesung nach festem Modell budgetieren</td><td>Messkonstanz <a class="cite" href="#r113">[113]</a>; <a class="gl" href="#g-mtbg">MTBG</a> <a class="cite" href="#r127">[127]</a>; Befundungslast <a class="cite" href="#r133">[133]</a></td></tr>
+<tr><td>Genetik und Blut</td><td><a class="gl" href="#g-array">SNP-Array</a> für alle (≈78 US-$ <a class="cite" href="#r103">[103]</a>), <a class="gl" href="#g-wgs">WGS</a> in Teilstichprobe; <a class="gl" href="#g-proteomik">Blut-Proteomik</a> bei jedem Termin; <a class="gl" href="#g-chip">CHIP</a>, APOE, rs6971 auslesen</td><td><a class="gl" href="#g-proteomik">Proteomik</a> als Frühindikator, Bild als Bestätigung (<a href="#s3-3">3.3</a>)</td></tr>
+<tr><td>Zeitpunkte</td><td>0, 12, 24 Monate, gleiches Gerät, gleiche Software-Version</td><td>Wiederholungsscans sind Engpass 2; drei Zeitpunkte senken die Fallzahl</td></tr>
+<tr><td>Größe</td><td>≈2.000 Teilnehmende</td><td>Reicht für Test-Retest/<a class="gl" href="#g-mdc">MDC</a> der Nicht-Hirn-Organe (bisher Lücke), Rekrutierungsraten nachts und als Plattform für eingebettete 2×2-Studien mit σ ≈ 2 (≈250 pro Zelle bei Δ = 0,5 J.); nicht für neue <a class="gl" href="#g-gwas">GWAS</a></td></tr>
+<tr><td>Kosten <span class="tag tM">M</span></td><td>3 Scans × ≈145 € + 250 € Organisation + ≈300 € Genetik ≈ 985 € pro Person, ≈2 Mio. € für 2.000 Personen, ohne <a class="gl" href="#g-proteomik">Proteomik</a></td><td>Mittleres Szenario aus Tabelle 7</td></tr>
+<tr><td>Recht und Ethik</td><td>Ethikvotum, <a class="gl" href="#g-broad">breite Einwilligung</a>, definierter Pfad für <a class="gl" href="#g-zufall">Zufallsbefunde</a> (≈36 % potenziell relevant <a class="cite" href="#r94">[94]</a>); <b>kein</b> Forschungs-CT, <a class="gl" href="#g-ct">CT</a> nur opportunistisch</td><td><a class="gl" href="#g-gendg">GenDG</a> greift nicht <a class="cite" href="#r97">[97]</a>; § 31 <a class="gl" href="#g-strlschg">StrlSchG</a> <a class="cite" href="#r96">[96]</a></td></tr>
+<tr><td>Anschluss</td><td><a class="gl" href="#g-nako">NAKO</a> als Replikationskohorte (WGS-Zugang laut <a class="gl" href="#g-nako">NAKO</a> ab 2027 <a class="cite" href="#r20">[20]</a>)</td><td>Gleiche Population, Ganzkörper-MRT, genotypisiert</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 11.</b> Pilot-Skizze der Redaktion <span class="tag tM">Vorschlag, nicht geprüft</span>. Erfolgskriterium: Wenn in Phase 0 weniger als ≈25 % der 24-h-Standorte eine Vor-Ort-Nachtbesetzung haben oder der Tag-Nacht-Vergleich systematische Abweichungen in <a class="gl" href="#g-pdff">PDFF</a>/Volumen zeigt, wird die Nachtkomponente zugunsten von Randzeiten (20–24 Uhr) umgeplant.</p>
+
+<!-- ============================ 7 SACKGASSEN ============================ -->
+<h2 id="s7">7 Ehrenwerte Erwähnungen / Sackgassen</h2>
+<p>Was geprüft wurde und nicht trägt, bleibt hier auf dem Protokoll (Norm 3).</p>
+<h4>Aus cb2.IX.1 (Bildgebungsgenetik)</h4>
+<ul>
+  <li><b>Funktionelle Hirnkonnektivität als Gen-Zielgröße</b>: schwach erblich, nur 235 von 1.771 Merkmalen signifikant <a class="cite" href="#r3">[3]</a>.</li>
+  <li><b>Nur den Bildgebungsteil auswerten</b>: verzerrt durch <a class="gl" href="#g-hvb">Healthy-Volunteer-Bias</a> <a class="cite" href="#r29">[29]</a><a class="cite" href="#r30">[30]</a>.</li>
+  <li><b>CT-Genetik im Gesundkollektiv</b>: wegen Strahlung nicht machbar, vorhandene Studien klein <a class="cite" href="#r11">[11]</a><a class="cite" href="#r12">[12]</a>.</li>
+  <li><b>Ungeprüfte Preprints als Beleg</b>: Organvolumen-GWAS 2025 <a class="cite" href="#r16">[16]</a> und MR-Preprint 2024 <a class="cite" href="#r14">[14]</a>.</li>
+  <li><b>„Mehr Genome = automatisch bessere Bildgebungsgenetik“</b>: WGS-Gewinne sind für Krankheitsmerkmale gezeigt, nicht für Bildgebung <a class="cite" href="#r5">[5]</a>.</li>
+</ul>
+<h4>Aus cb3.IX.2 (<a class="gl" href="#g-hallmarks">Hallmarks</a>)</h4>
+<ul>
+  <li><b><a class="gl" href="#g-tspo">TSPO-PET</a> als allgemeiner „Inflammaging-Zähler“</b>: Altersabhängigkeit widersprüchlich <a class="cite" href="#r45">[45]</a><a class="cite" href="#r64">[64]</a>, Bindung genotypabhängig <a class="cite" href="#r52">[52]</a>.</li>
+  <li><b>Mikrobiom-MR auf Bild-IDPs</b>: schwache Instrumente, Effekte unter klinischer Relevanz <a class="cite" href="#r53">[53]</a><a class="cite" href="#r54">[54]</a>.</li>
+  <li><b><a class="gl" href="#g-bag">Brain Age</a> als Ersatz für epigenetische Uhren</b>: misst Verschiedenes, Assoziationen schwach <a class="cite" href="#r46">[46]</a>.</li>
+  <li><b>Senolytika-Studien ohne Seneszenz-Stratifizierung</b>: primärer Endpunkt verfehlt (p = 0,611) <a class="cite" href="#r39">[39]</a>.</li>
+  <li><b>Ein direkter FOXO3-Bildphänotyp</b>: nicht belegt <a class="cite" href="#r59">[59]</a>.</li>
+  <li><b>ER-100-Gesichtsfeldsignal als Wirksamkeitsbeleg</b>: n = 3, offen, ohne Kontrolle; die Firma leitet selbst keine Wirksamkeit ab <a class="cite" href="#r41">[41]</a>.</li>
+  <li><b><a class="gl" href="#g-chip">CHIP</a> und FDG-Gefäßentzündung bei HIV</b>: kein Zusammenhang (n = 80, Preprint) <a class="cite" href="#r55">[55]</a>.</li>
+</ul>
+<h4>Aus cb4.IX.3 (<a class="gl" href="#g-organuhr">Organuhren</a>)</h4>
+<ul>
+  <li><b>„Kleinere <a class="gl" href="#g-mae">MAE</a> = bessere Alterungsuhr“</b>: falsch; gegen <a class="gl" href="#g-mae">MAE</a> zu optimieren kann das biologische Signal zerstören <a class="cite" href="#r74">[74]</a>.</li>
+  <li><b><a class="gl" href="#g-organuhr">Organuhr</a> als Einzelperson-Monitor im Jahresabstand</b>: <a class="gl" href="#g-mdc">MDC</a> ≈4 J. ist größer als jeder gemessene Effekt <a class="cite" href="#r69">[69]</a>.</li>
+  <li><b>Vortrainierte, sequenzspezifische Modelle ohne Nachtraining an fremden Kliniken</b>: <a class="gl" href="#g-mae">MAE</a> springt auf 11–28 J. <a class="cite" href="#r82">[82]</a>.</li>
+  <li><b>Scannerwechsel während einer Studie</b>: <a class="gl" href="#g-icc">ICC</a> fällt bis 0,51 <a class="cite" href="#r68">[68]</a>.</li>
+  <li><b>Darauf warten, dass die FDA „Altern“ als Indikation zulässt</b>: kein Fahrplan <a class="cite" href="#r74">[74]</a>; <a class="gl" href="#g-tame">TAME</a> ist seit ≈2015 „bald“ <a class="cite" href="#r76">[76]</a>.</li>
+  <li><b>Hype</b>: „Sport macht das Gehirn ein Jahr jünger“ beruht auf einem RCT (n = 130) mit einer Software <a class="cite" href="#r70">[70]</a>, daneben ein Nullbefund (n = 485) <a class="cite" href="#r71">[71]</a>.</li>
+  <li><b>CALERIE, Senolytika-Piloten, <a class="gl" href="#g-tame">TAME</a></b>: kein MRT-Organuhr-Endpunkt gefunden.</li>
+</ul>
+<h4>Aus cb5.IX.4 (Kapazität)</h4>
+<ul>
+  <li><b>DKG-Feld „24 <a class="gl" href="#g-hr">hr</a> emergency availability“ als Maß freier Nachtkapazität</b>: zeigt Notfallerreichbarkeit, nicht Leerstand.</li>
+  <li><b>Umfragedaten zur MRT-Rufbereitschaft</b> (DRG, DVTA, Marburger Bund, DKI): keine gefunden; nächster Weg: direkte Anfrage oder eigene Stichprobe.</li>
+  <li><b>Aktuelle OECD-Werte für Deutschland</b>: 2025 nur als Grafik <a class="cite" href="#r84">[84]</a>; Sekundärwerte (≈35 <a class="gl" href="#g-mrt">MRT</a> pro Mio. Einwohner, ≈158 Untersuchungen pro 1.000, 2021) <span class="tag tU">unverifiziert</span>.</li>
+  <li><b>Kosten der NAKO-MRT-Komponente allein</b>: nicht veröffentlicht gefunden <a class="cite" href="#r93">[93]</a>.</li>
+  <li><b>Helium, Betriebsstunden, Auslastung deutscher <a class="gl" href="#g-mrt">MRT</a></b>: keine deutsche Quelle.</li>
+  <li><b>Nacht-/Wochenendbetrieb als Wartelistenhebel</b> (Irland, London): Machbarkeit für Patienten gezeigt, nicht für Forschungsfreiwillige <a class="cite" href="#r88">[88]</a><a class="cite" href="#r89">[89]</a>.</li>
+</ul>
+
+<h4>Aus cb6.IX.5 (KI und Personal)</h4>
+<ul>
+  <li><b>„Das 10-Sekunden-Gehirn“ und „−50 %“</b>: gelten für klinische Kurzsequenzen, nicht für quantitative Forschungsprotokolle <a class="cite" href="#r111">[111]</a><a class="cite" href="#r112">[112]</a>.</li>
+  <li><b>„Ein Experte steuert drei Scanner“ ohne Personal vor Ort</b>: in keinem belegten Einsatz <a class="cite" href="#r115">[115]</a><a class="cite" href="#r117">[117]</a><a class="cite" href="#r119">[119]</a>; DVTA lehnt Tele-MTRA mit Ersatz durch andere Berufe ab <a class="cite" href="#r125">[125]</a>.</li>
+  <li><b>CT-Nachtkohorte</b>: BfS-Genehmigung, <a class="gl" href="#g-fachkunde">Fachkunde</a>, Arzt vor Ort <a class="cite" href="#r126">[126]</a>; nur retrospektiv sinnvoll.</li>
+  <li><b>Tragbares <a class="gl" href="#g-ulf">Niedrigfeld-MRT</a> für Organuhr-Verläufe</b>: <a class="gl" href="#g-mae">MAE</a> 6,5–8,2 J. über der <a class="gl" href="#g-mdc">MDC</a> <a class="cite" href="#r138">[138]</a>.</li>
+  <li><b><a class="gl" href="#g-fm">Foundation Models</a> als Zeitgewinn bei der Aufnahme</b>: helfen nur der Analyse <a class="cite" href="#r139">[139]</a>.</li>
+  <li><b>KI ersetzt Radiologen bei Zufallsbefunden</b>: nicht belegt.</li>
+  <li><b>Rekonstruktionswechsel mitten in der Kohorte</b>: verschiebt Messwerte <a class="cite" href="#r113">[113]</a>.</li>
+</ul>
+
+<!-- ============================ 8 WIDERSPRÜCHE ============================ -->
+<h2 id="s8">8 Widersprüche zwischen den Ästen</h2>
+<div class="tw"><table class="t wide">
+<thead><tr><th>#</th><th>Thema</th><th>Aussage A</th><th>Aussage B</th><th>Auflösung</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Zeitschrift von Wen et al. 2024</td><td>Auftrag/Vorannahme: „Nature 2024“</td><td>cb4 verifiziert: <i>Nature Aging</i> 4:1290–1307 (2024)</td><td><b>Nature Aging</b> <a class="cite" href="#r65">[65]</a>; eine Nature-Arbeit von Wen 2024 zu MRT-Organuhren wurde nicht gefunden.</td></tr>
+<tr><td>2</td><td>Bremen ohne MRT-Nachtbetrieb</td><td>Bundesland-Auswertung: 57 %</td><td>cb5: 73 %</td><td>Verschiedene Nenner: 8 von 14 <i>allen</i> Standorten vs. 8 von 11 <i>MRT-Standorten</i>. Beide korrekt; Tabelle 5 zeigt beide Spalten.</td></tr>
+<tr><td>3</td><td>Nacht-Scans pro Jahr</td><td>Frühere Überschlagsrechnung: 325.000</td><td>cb5 mittleres Szenario: ≈98.000; optimistisch ≈604.000</td><td>325.000 = theoretisches Maximum (100 % Auslastung, 250 Nächte, 10 Plätze); 98.000 = Erwartungswert im Modell; 604.000 = Geräte-Obergrenze.</td></tr>
+<tr><td>4</td><td>Primäre <a class="gl" href="#g-hallmarks">Hallmarks</a> ohne Bild-Readout</td><td>cb3: „4 der 4 primären <a class="gl" href="#g-hallmarks">Hallmarks</a>“</td><td>López-Otín 2023 <a class="cite" href="#r1">[1]</a>: 5 primäre <a class="gl" href="#g-hallmarks">Hallmarks</a> (inkl. Proteostase)</td><td>Korrigiert auf <b>4 der 5</b>; die Proteostase ist per Amyloid-/Tau-PET direkt abbildbar (Tabelle 1).</td></tr>
+<tr><td>5</td><td><a class="gl" href="#g-mrt">MRT</a> 24 h: 56 % oder 45 %?</td><td>cb5: 56 %</td><td>Bundesland-Auswertung: 45 %</td><td>56 % = eigenes 24-h-MRT / 1.324 MRT-Standorte; 45 % = 24 h inkl. Kooperation / 2.204 alle Standorte.</td></tr>
+<tr><td>6</td><td>Lesehilfe Bundesländer</td><td>cb5: höchster Anteil ohne Nachtbetrieb in „BW, Bayern, Bremen (31–73 %)“</td><td>Neu berechnet: Niedersachsen und Sachsen je 32 %, Bayern 31 %</td><td>Lesehilfe ergänzt (<a href="#s3-4">3.4</a>); die Zahlen der Tabelle selbst stimmen.</td></tr>
+<tr><td>7</td><td>Schnellster Endpunkt</td><td>cb3: ³¹P-MRS-τ (Wochen)</td><td>cb4: <a class="gl" href="#g-organuhr">Organuhr</a> 12–24 Monate, <a class="gl" href="#g-proteomik">Proteomik</a> als Frühindikator</td><td>Kein echter Widerspruch: verschiedene Ebenen (Funktion vs. Struktur). Synthese als gestufter Endpunkt-Satz (Tabelle 10).</td></tr>
+<tr><td>8</td><td><a class="gl" href="#g-bag">Hirnalter</a>: guter oder schwacher Phänotyp?</td><td>cb3/cb4: erblich (SNP-h² 23–29 %, 59 Genorte) <a class="cite" href="#r33">[33]</a></td><td>cb4: sagt in <a class="gl" href="#g-ukb">UKB</a> die Sterblichkeit nicht voraus <a class="cite" href="#r32">[32]</a></td><td>Erblichkeit ≠ prognostische Validität. Gut für Genetik, schwach als <a class="gl" href="#g-surrogat">Surrogat</a>.</td></tr>
+<tr><td>9</td><td>NAKO-Teilnehmerzahl</td><td>cb2: ≈205.000 <a class="cite" href="#r21">[21]</a></td><td>cb5: 200.000 (Kostenkalibrierung) <a class="cite" href="#r93">[93]</a></td><td>Rundung/verschiedene Quellen; 256 Mio. € / 205.000 = ≈1.250 € statt ≈1.280 € pro Kopf, ohne Folgen für die Aussage.</td></tr>
+<tr><td>10</td><td>Gleiche Studie, andere Angaben (van der Meer 2022)</td><td>cb2: 82 Genorte (50 eigenständig), Autoren genannt</td><td>cb3: „50 eigenständige Loci“, Autoren „nicht geprüft“</td><td>Dieselbe Arbeit, als <a class="cite" href="#r15">[15]</a> zusammengeführt; beide Zahlen konsistent.</td></tr>
+<tr><td>11</td><td>Test-Retest von τ</td><td>cb3 Tabelle: τ-Streuung „20–30 %“</td><td>cb3 Quellen: nur <a class="gl" href="#g-crcest">CrCEST</a> 7–16 % <a class="cite" href="#r50">[50]</a> belegt</td><td>„20–30 %“ hat keine Quelle → <span class="tag tU">unverifiziert</span>.</td></tr>
+<tr><td>12</td><td>Linksventrikuläre Masse</td><td>cb2: 12 Genorte</td><td>gleiche Quelle: 14 Genorte</td><td>Als Spanne 12–14 berichtet <a class="cite" href="#r6">[6]</a>.</td></tr>
+<tr><td>13</td><td>NAKO-Wiederholungs-MRT</td><td>cb2: „≈18.000 MRT-Wiederholungen geplant“</td><td>cb5: „2. Welle 135.000 Untersuchte, davon 18.000 mit <a class="gl" href="#g-mrt">MRT</a>“</td><td>Dieselbe Zahl, beide nur aus Suchauszügen <a class="cite" href="#r92">[92]</a> <span class="tag tP">P</span>.</td></tr>
+<tr><td>14</td><td>TSPO-Effekt von rs6971</td><td>cb3 Tabelle: ≈25–35 %</td><td>cb3 Text: SUV ≈30 % niedriger</td><td>Konsistent; Punktwert liegt in der Spanne <a class="cite" href="#r52">[52]</a>.</td></tr>
+<tr><td>15</td><td>Was ist der Personalengpass?</td><td>cb5: MTR-Kopfzahl nachts (≈122 VK)</td><td>cb6: mit KI + Remote ≈39–49 MTR-VK, aber +90–122 Assistenz-VK</td><td>Beides gilt: KI verschiebt den Engpass von der MTR-Zahl auf (a) <a class="gl" href="#g-vorbehalt">Berufsvorbehalt</a> § 5 <a class="gl" href="#g-mtbg">MTBG</a>, (b) Präsenz vor Ort, (c) Radiologen-Befundung (<a href="#s4-4b">4.4.1</a>).</td></tr>
+<tr><td>16</td><td>Unbesetzte Stellen</td><td>cb5: 1.170 Vollkraftstellen</td><td>cb6: 840 Vollkraftstellen</td><td>Gleiche Quelle <a class="cite" href="#r86">[86]</a>: 840 = nur <a class="gl" href="#g-mtr">MTRA</a>, 1.170 = alle MTA-Berufe.</td></tr>
+<tr><td>17</td><td>TVöD EG 9a Stufe 6</td><td>cb5: 4.979,97 €</td><td>cb6: 4.746,88 €</td><td>Verschiedene Tabellen: TVöD-VKA (Klinikum Braunschweig) vs. TVöD-Bund (Portal) <a class="cite" href="#r104">[104]</a>; Eingruppierung der <a class="gl" href="#g-mtr">MTR</a> in 9a ohnehin unverifiziert.</td></tr>
+<tr><td>18</td><td>Häufigkeit von Zufallsbefunden</td><td>cb5: 36,2 % potenziell relevant (SHIP) <a class="cite" href="#r94">[94]</a></td><td>cb6: 1,4–3,9 % potenziell ernst (Metaanalyse) <a class="cite" href="#r132">[132]</a>; <a class="gl" href="#g-ukb">UKB</a> 1,8 % vs. 17,9 % <a class="cite" href="#r133">[133]</a></td><td>Verschiedene Schwellen („relevant“ vs. „ernst“) und Lesemodelle; für die Befundungslast zählt das Lesemodell.</td></tr>
+<tr><td>19</td><td>UK-Biobank-Dauer</td><td>cb5: 100.000 Scans in ≈11 Jahren (2014–Juli 2025)</td><td>cb6: geplant „bis ca. 2023“ (≈9 Jahre) <a class="cite" href="#r129">[129]</a></td><td>Plan von 2020 gegen tatsächlichen Abschluss <a class="cite" href="#r2">[2]</a>: Verzögerung ≈2 Jahre.</td></tr>
+<tr><td>20</td><td>Unvollständige Referenzen aus cb2</td><td>cb2: Liu eLife „Jahr unverifiziert“, Lancet Digit Health 2020 „Autoren unverifiziert“</td><td>cb6: Liu et al. <i>eLife</i> 2021; Pickhardt et al. 2020</td><td>Durch cb6 aufgelöst <a class="cite" href="#r9">[9]</a><a class="cite" href="#r18">[18]</a>.</td></tr>
+</tbody></table></div>
+<p class="cap"><b>Tabelle 12.</b> Widersprüche und scheinbare Widersprüche. Geprüft und als konsistent befunden (keine eigene Zeile): Hirn-GWAS-Stichproben (22.138 + 11.086 = 33.224), UKB-Termindauer ≈5 h, Hirnalter-Heritabilität 23–29 % vs. 0,27 (Leonardsen).</p>
+
+<!-- ============================ 9 GLOSSAR ============================ -->
+<h2 id="s9">9 Legende / Glossar</h2>
+<h4>Begriffe</h4>
+<dl class="gloss">
+<dt id="g-hallmarks" data-aliases="Hallmarks of Aging|Hallmarks|Hallmark">Hallmarks of Aging</dt>
+<dd>Die 12 Kennzeichen des Alterns nach López-Otín 2023: primär (genomische Instabilität, Telomerverkürzung, epigenetische Veränderungen, Proteostaseverlust, gestörte Makroautophagie), antagonistisch (Nährstoffsensorik, Mitochondrien, Seneszenz), integrativ (Stammzellerschöpfung, interzelluläre Kommunikation, chronische Entzündung, Dysbiose) <a class="cite" href="#r1">[1]</a>.</dd>
+<dt id="g-phaenotyp" data-aliases="Phaenotyp-Motor">Phänotyp-Motor</dt>
+<dd>Bildgebung als Lieferant vieler messbarer Merkmale (Phänotypen), die man mit Genotypen verknüpfen kann.</dd>
+<dt id="g-ct" data-aliases="CT">CT (Computertomografie)</dt>
+<dd>Schichtbilder aus Röntgenstrahlung; erzeugt eine Strahlendosis.</dd>
+<dt id="g-mrt" data-aliases="MRT">MRT (Magnetresonanztomografie)</dt>
+<dd>Bildgebung mit Magnetfeld und Radiowellen, ohne Röntgenstrahlung.</dd>
+<dt id="g-oppct" data-aliases="opportunistisches CT|opportunistischen CT|Opportunistic CT">Opportunistisches CT</dt>
+<dd>Zusatzauswertung bereits vorhandener klinischer CT-Bilder (z. B. Muskel, Fett, Knochen, Kalk), ohne neue Strahlung.</dd>
+<dt id="g-pet" data-aliases="PET">PET (Positronen-Emissions-Tomographie)</dt>
+<dd>Bildgebung mit radioaktiv markierten Tracern, die an ein Zielmolekül binden. SUVR = Aufnahme im Zielgebiet geteilt durch Aufnahme in einer Referenzregion.</dd>
+<dt id="g-gwas" data-aliases="GWAS|Hirn-GWAS">GWAS (genomweite Assoziationsstudie)</dt>
+<dd>Testet Millionen Genvarianten auf Zusammenhang mit einem Merkmal; Signifikanzschwelle meist p &lt; 5·10⁻⁸.</dd>
+<dt id="g-idp" data-aliases="IDP|IDPs|Hirn-IDPs">IDP (Imaging-Derived Phenotype)</dt>
+<dd>Aus einem Bild berechnete Messzahl, z. B. das Hippocampusvolumen.</dd>
+<dt id="g-h2" data-aliases="SNP-h">SNP-Heritabilität (SNP-h²)</dt>
+<dd>Anteil der Merkmalsvarianz, den häufige Genvarianten zusammen erklären. Zwillings-Heritabilität liegt meist höher.</dd>
+<dt id="g-wgs" data-aliases="WGS|Whole Genome Sequencing">WGS / Exom</dt>
+<dd>Sequenzierung des ganzen Genoms (≈3 Mrd. Basen) bzw. nur der proteinkodierenden Teile (Exom, 2–3 %).</dd>
+<dt id="g-array" data-aliases="SNP-Array|Array|Arrays">SNP-Array</dt>
+<dd>Genotypisierungs-Chip, der Hunderttausende vorab bekannte Varianten abliest; der Rest wird imputiert. Deutlich billiger als WGS.</dd>
+<dt id="g-imputation" data-aliases="Imputation|imputierte|imputiert">Imputation</dt>
+<dd>Statistisches Auffüllen nicht gemessener Genvarianten anhand von Referenzdaten.</dd>
+<dt id="g-burden" data-aliases="Burden-Test|Gen-Burden-Assoziationen">Burden-Test</dt>
+<dd>Prüft, ob viele seltene Varianten in einem Gen zusammen ein Merkmal verschieben.</dd>
+<dt id="g-mr" data-aliases="Mendelsche Randomisierung|Mendelian Randomization">Mendelsche Randomisierung (MR)</dt>
+<dd>Nutzt Genvarianten als „natürliches Zufallsexperiment“, um Ursache und Wirkung abzuschätzen.</dd>
+<dt id="g-autoencoder" data-aliases="Autoencoder">Autoencoder</dt>
+<dd>Neuronales Netz, das Bilder ohne Beschriftung auf wenige Zahlen verdichtet.</dd>
+<dt id="g-hvb" data-aliases="Healthy-Volunteer-Bias">Healthy-Volunteer-Bias</dt>
+<dd>Teilnehmende sind gesünder als der Bevölkerungsdurchschnitt; Assoziationen werden unterschätzt.</dd>
+<dt id="g-ukb" data-aliases="UK Biobank|UKB">UK Biobank (UKB)</dt>
+<dd>Britische Kohorte mit 500.000 Teilnehmenden, davon 100.000 mit Bildgebung <a class="cite" href="#r2">[2]</a>.</dd>
+<dt id="g-nako" data-aliases="NAKO|NAKO-Gesundheitsstudie">NAKO</dt>
+<dd>Deutsche Nationale Kohorte (Gesundheitsstudie), ≈205.000 Teilnehmende, über 30.000 Ganzkörper-MRT.</dd>
+<dt id="g-big40" data-aliases="BIG40">BIG40</dt>
+<dd>Oxforder Server mit Hirn-GWAS-Ergebnissen zu fast 4.000 IDPs.</dd>
+<dt id="g-cac" data-aliases="CAC|Koronarkalk|CACS">CAC / CACS (Koronarkalk)</dt>
+<dd>Kalk in den Herzkranzgefäßen, im CT messbar (Agatston-Score).</dd>
+<dt id="g-chip" data-aliases="CHIP">CHIP</dt>
+<dd>Klonale Hämatopoese unbestimmten Potenzials: Blutstammzellen mit erworbenen Mutationen (z. B. DNMT3A, TET2) ab einem Varianten-Allelanteil (VAF) von 2 %.</dd>
+<dt id="g-mloy" data-aliases="mLOY">mLOY</dt>
+<dd>Mosaikartiger Verlust des Y-Chromosoms in einem Teil der Blutzellen.</dd>
+<dt id="g-wmh" data-aliases="WMH">WMH</dt>
+<dd>White-Matter-Hyperintensitäten: helle Flecken der weißen Substanz in der MRT (Kleingefäßschaden).</dd>
+<dt id="g-qsm" data-aliases="QSM">QSM</dt>
+<dd>Suszeptibilitätskartierung; misst die Magnetisierbarkeit des Gewebes, vor allem durch Eisen.</dd>
+<dt id="g-pdff" data-aliases="PDFF|Leber-PDFF|Knochenmark-PDFF">PDFF</dt>
+<dd>Protonendichte-Fettanteil eines Gewebes (Formel siehe unten).</dd>
+<dt id="g-vat" data-aliases="VAT">VAT</dt>
+<dd>Viszerales Fettgewebe (Bauchfett um die Organe).</dd>
+<dt id="g-mfi" data-aliases="MFI">MFI</dt>
+<dd>Muskelfettinfiltration, also Fett zwischen und in Muskelfasern.</dd>
+<dt id="g-dixon" data-aliases="Dixon|Ganzkoerper-Dixon">Dixon-MRT</dt>
+<dd>MRT-Technik, die Wasser- und Fettsignal trennt; Grundlage für PDFF-, VAT- und MFI-Karten.</dd>
+<dt id="g-ecv" data-aliases="ECV|T1-Mapping">T1-Mapping / ECV</dt>
+<dd>Messung der T1-Relaxationszeit; daraus der Extrazellulärraum als Fibrosemaß. ECV braucht Kontrastmittel und Hämatokrit (Formel unten).</dd>
+<dt id="g-mrs" data-aliases="MRS">³¹P-MRS</dt>
+<dd>Magnetresonanzspektroskopie am Phosphorkern; misst energiereiche Phosphate wie Phosphokreatin (PCr) und ATP im Muskel. Braucht Mehrkern-Hardware.</dd>
+<dt id="g-tau" data-aliases="PCr-Erholung">PCr-Erholung τ</dt>
+<dd>Zeitkonstante, mit der sich Phosphokreatin nach Belastung auffüllt; kleineres τ heißt bessere Mitochondrienfunktion (Formel unten).</dd>
+<dt id="g-crcest" data-aliases="CrCEST|CEST">CEST / CrCEST</dt>
+<dd>MRT-Kontrast, der den Protonenaustausch eines Stoffes (hier Kreatin) mit Wasser misst; liefert Karten statt eines Spektrums.</dd>
+<dt id="g-tspo" data-aliases="TSPO|TSPO-PET">TSPO</dt>
+<dd>Translocator-Protein in Mitochondrien von Mikroglia; PET-Ziel für Neuroinflammation. Die Variante rs6971 bestimmt die Bindungsaffinität.</dd>
+<dt id="g-fpygal" data-aliases="FPyGal">[¹⁸F]FPyGal</dt>
+<dd>PET-Tracer, der von SA-β-Galaktosidase gespalten wird und in seneszenten Zellen zurückbleibt.</dd>
+<dt id="g-fapi" data-aliases="FAPI-PET">FAPI-PET</dt>
+<dd>Tracer für das Fibroblasten-Aktivierungsprotein, ein Fibrosemarker.</dd>
+<dt id="g-dxa" data-aliases="DXA|HR-pQCT">DXA / HR-pQCT</dt>
+<dd>Röntgenbasierte Knochendichtemessung (DXA) bzw. hochauflösende periphere quantitative CT.</dd>
+<dt id="g-asl" data-aliases="ASL">ASL</dt>
+<dd>Perfusionsmessung, bei der das eigene Blut magnetisch markiert wird; ohne Kontrastmittel.</dd>
+<dt id="g-oct" data-aliases="OCT">OCT</dt>
+<dd>Optische Kohärenztomographie; misst Schichtdicken der Netzhaut im Mikrometerbereich.</dd>
+<dt id="g-mprage" data-aliases="MPRAGE|3D-T1">MPRAGE / 3D-T1</dt>
+<dd>Hochaufgelöste (≈1 mm³) T1-Sequenz, Forschungsstandard für Hirnvolumetrie.</dd>
+<dt id="g-dq" data-aliases="Dasatinib plus Quercetin">D+Q</dt>
+<dd>Dasatinib plus Quercetin, eine Senolytika-Kombination.</dd>
+<dt id="g-senolytika" data-aliases="Senolytika|Senolytikum">Senolytika</dt>
+<dd>Wirkstoffe, die seneszente Zellen gezielt absterben lassen, z. B. <a class="gl" href="#g-dq">D+Q</a>. Wichtigste Humanstudie in dieser Arbeit: Farr et al. 2024, Knochen bei Frauen nach der Menopause <a class="cite" href="#r39">[39]</a>. Ein anderer Ansatz als <a class="gl" href="#g-osk">OSK / ER-100</a>: Senolytika entfernen gealterte Zellen, OSK verjüngt Zellen epigenetisch.</dd>
+<dt id="g-osk" data-aliases="OSK|ER-100">OSK / ER-100</dt>
+<dd>Transkriptionsfaktoren OCT4, SOX2, KLF4 zur partiellen epigenetischen Reprogrammierung; ER-100 ist ein OSK-Gentherapiekandidat von Life Biosciences (Phase 1, Optikusneuropathien) <a class="cite" href="#r40">[40]</a>.</dd>
+<dt id="g-foxo3" data-aliases="FOXO3">FOXO3</dt>
+<dd>Transkriptionsfaktor im Insulin/IGF-Signalweg; reguliert u. a. Autophagie-Gene; Genotyp mit Langlebigkeit assoziiert <a class="cite" href="#r42">[42]</a>.</dd>
+<dt id="g-organuhr" data-aliases="Organuhr|Organuhren|Organ-Uhr">Organuhr</dt>
+<dd>Modell, das aus Bild- oder Blutdaten ein „Organalter“ vorhersagt. Erste Generation auf Kalenderalter trainiert, zweite auf Ergebnisse (z. B. Sterblichkeit).</dd>
+<dt id="g-bag" data-aliases="Brain Age Gap|BAG|brain-PAD|Altersabstand|Hirnalter|Brain Age">Altersabstand (BAG, brain-PAD)</dt>
+<dd>Vorhergesagtes Organalter minus Kalenderalter; positiv heißt „älter aussehend“.</dd>
+<dt id="g-mae" data-aliases="MAE">MAE (mittlerer absoluter Fehler)</dt>
+<dd>Durchschnitt von |vorhergesagt − tatsächlich|; bei Normalverteilung MAE ≈ 0,8·σ.</dd>
+<dt id="g-icc" data-aliases="ICC">ICC (Intraklassen-Korrelation)</dt>
+<dd>Anteil der Gesamtstreuung, der auf echte Unterschiede zwischen Personen entfällt; über 0,9 gilt als exzellent.</dd>
+<dt id="g-sem" data-aliases="SEM">SEM (Standardmessfehler)</dt>
+<dd>Typische Streuung einer Wiederholungsmessung um den wahren Wert (Formel unten).</dd>
+<dt id="g-mdc" data-aliases="MDC">MDC (kleinste erkennbare Veränderung)</dt>
+<dd>Änderungen darunter können beim Einzelnen Messrauschen sein (Formel unten).</dd>
+<dt id="g-surrogat" data-aliases="Surrogat-Endpunkt|Surrogat|Surrogat-Validierung">Surrogat-Endpunkt</dt>
+<dd>Messgröße, die anstelle eines harten Ergebnisses (Tod, Krankheit) als Wirkungsnachweis akzeptiert wird; setzt voraus, dass eine Änderung des Surrogats nachweislich das Ergebnis ändert.</dd>
+<dt id="g-hr" data-aliases="HR|Hazard Ratio">HR (Hazard Ratio)</dt>
+<dd>Relatives Ereignisrisiko pro Zeiteinheit; 2,0 heißt doppeltes Risiko.</dd>
+<dt id="g-auc" data-aliases="AUC">AUC</dt>
+<dd>Trennschärfe einer Vorhersage; 0,5 = Zufall, 1,0 = perfekt.</dd>
+<dt id="g-factorial" data-aliases="faktoriellen Design|faktorielles Design">2×2-faktorielles Design</dt>
+<dd>Vier Arme (A, B, A+B, Placebo); schätzt Einzeleffekte und Wechselwirkung.</dd>
+<dt id="g-proteomik" data-aliases="Proteomik|Blut-Proteomik">Blut-Proteomik-Uhr</dt>
+<dd>Organalter aus organangereicherten Plasmaproteinen (SomaScan, Olink); billig und wiederholbar, aber ohne räumliche Information.</dd>
+<dt id="g-tame" data-aliases="TAME">TAME</dt>
+<dd>Geplante Metformin-Studie gegen Altern mit klinischem Mehrfach-Endpunkt; Stand 09/2026 nicht gestartet.</dd>
+<dt id="g-harmonisierung" data-aliases="Harmonisierung|Scanner-Effekt">Harmonisierung / Scanner-Effekt</dt>
+<dd>Systematische Unterschiede zwischen Geräten, Herstellern und Protokollen und Verfahren, sie herauszurechnen.</dd>
+<dt id="g-dkg" data-aliases="DKG|DKG-Verzeichnis">DKG-Krankenhausverzeichnis</dt>
+<dd>Verzeichnis der Deutschen Krankenhausgesellschaft mit Selbstangaben aus den Qualitätsberichten, u. a. zur 24-h-Notfallverfügbarkeit von Geräten.</dd>
+<dt id="g-ruf" data-aliases="Rufbereitschaft">Rufbereitschaft</dt>
+<dd>Personal ist zu Hause und wird bei Bedarf gerufen; es ist nicht vor Ort.</dd>
+<dt id="g-mtr" data-aliases="MTR|MTRA|MTA">MTR / MTRA / MTA</dt>
+<dd>Medizinische(r) Technolog:in für Radiologie (bedient das Gerät); MTA = Sammelbegriff für medizinisch-technische Assistenzberufe.</dd>
+<dt id="g-vollkraft" data-aliases="Vollkraft|Vollkraefte">Vollkraft</dt>
+<dd>Rechnerische Vollzeitstelle (hier 39 Wochenstunden).</dd>
+<dt id="g-tvoed" data-aliases="TVoeD">TVöD-K</dt>
+<dd>Tarifvertrag öffentlicher Dienst, Bereich Krankenhäuser; Nachtzuschlag 20 % <a class="cite" href="#r104">[104]</a>.</dd>
+<dt id="g-zufall" data-aliases="Zufallsbefund|Zufallsbefunde">Zufallsbefund</dt>
+<dd>Auffälligkeit im Bild, nach der nicht gesucht wurde.</dd>
+<dt id="g-gendg" data-aliases="GenDG">GenDG</dt>
+<dd>Gendiagnostikgesetz; gilt nicht für Forschung (§ 2 Abs. 2 Nr. 1).</dd>
+<dt id="g-gdng" data-aliases="GDNG">GDNG</dt>
+<dd>Gesundheitsdatennutzungsgesetz (2024), Opt-out-Forschungsnutzung von ePA-Daten.</dd>
+<dt id="g-strlschg" data-aliases="StrlSchG">StrlSchG</dt>
+<dd>Strahlenschutzgesetz; § 31 regelt Strahlenanwendung am Menschen zu Forschungszwecken.</dd>
+<dt id="g-dlr" data-aliases="DLR|Deep-Learning-Rekonstruktion">DLR (Deep-Learning-Rekonstruktion)</dt>
+<dd>Neuronales Netz erzeugt aus weniger oder verrauschten Rohdaten (k-Raum) ein sauberes Bild; kürzt die Messzeit, kann aber Messwerte und Artefakte verändern.</dd>
+<dt id="g-cs" data-aliases="Compressed Sensing">Compressed Sensing</dt>
+<dd>Mathematisches Verfahren, das aus weniger Messungen ein vollständiges Bild rekonstruiert.</dd>
+<dt id="g-remote" data-aliases="Remote-Scanning|Remote Scanning|Fernscannen">Remote-Scanning</dt>
+<dd>Ein Experte steuert den Scanner aus der Ferne oder berät live; Person vor Ort bleibt in allen belegten Einsätzen.</dd>
+<dt id="g-telerad" data-aliases="Teleradiologie">Teleradiologie</dt>
+<dd>Befundung und Indikation aus der Ferne, bei CT/Röntgen nach § 14 StrlSchG genehmigungspflichtig; die Technik bleibt vor Ort.</dd>
+<dt id="g-mtbg" data-aliases="MTBG">MTBG</dt>
+<dd>MT-Berufe-Gesetz (seit 2023); § 5 reserviert die technische Durchführung bildgebender Verfahren den MTR, § 6 regelt Ausnahmen.</dd>
+<dt id="g-vorbehalt" data-aliases="Vorbehaltstaetigkeit|Berufsvorbehalt">Vorbehaltstätigkeit</dt>
+<dd>Aufgabe, die per Gesetz nur eine bestimmte Berufsgruppe oder benannte Ausnahmen ausüben dürfen.</dd>
+<dt id="g-fachkunde" data-aliases="Fachkunde">Fachkunde im Strahlenschutz</dt>
+<dd>Höhere Qualifikationsstufe nach Strahlenschutzrecht; „Kenntnisse“ ist die niedrigere. MTR erwerben die Fachkunde in der Ausbildung.</dd>
+<dt id="g-rechtf" data-aliases="rechtfertigende Indikation">Rechtfertigende Indikation</dt>
+<dd>Entscheidung eines Arztes mit Fachkunde, dass der Nutzen einer Strahlenanwendung das Risiko überwiegt (§ 83 StrlSchG).</dd>
+<dt id="g-mrso" data-aliases="MRSO">MRSO</dt>
+<dd>MR Safety Officer, Sicherheitsverantwortliche Person am MRT (Implantate, Quench, SAR).</dd>
+<dt id="g-sar" data-aliases="SAR">SAR</dt>
+<dd>Spezifische Absorptionsrate: Erwärmung des Körpers durch Radiowellen (W/kg).</dd>
+<dt id="g-quench" data-aliases="Quench">Quench</dt>
+<dd>Plötzliches Entweichen des Heliums aus dem supraleitenden Magneten (Notfall).</dd>
+<dt id="g-radiomics" data-aliases="radiomische Merkmale|Radiomics">Radiomische Merkmale</dt>
+<dd>Aus Bildern berechnete Textur- und Formkennzahlen; reagieren empfindlich auf Rekonstruktion und Gerät.</dd>
+<dt id="g-ulf" data-aliases="Ultra-Niedrigfeld-MRT|Niedrigfeld-MRT">Ultra-Niedrigfeld-MRT</dt>
+<dd>Tragbares MRT mit sehr schwachem Feld (z. B. 0,064 T), billig und raumunabhängig, aber verrauschter.</dd>
+<dt id="g-synthseg" data-aliases="SynthSeg">SynthSeg</dt>
+<dd>Kontrastunabhängige Hirnsegmentierung für Scans jeder Gewichtung und Auflösung ohne Neutraining.</dd>
+<dt id="g-fm" data-aliases="Foundation Models|Foundation Model">Foundation Model</dt>
+<dd>Großes, selbstüberwacht vortrainiertes Netz, das sich mit wenig Daten an viele Aufgaben anpassen lässt.</dd>
+<dt id="g-broad" data-aliases="Broad Consent|breite Einwilligung">Broad Consent</dt>
+<dd>Breite Einwilligung zur späteren, nicht im Detail festgelegten Forschungsnutzung von Daten.</dd>
+</dl>
+<h4>Formeln</h4>
+<dl class="gloss">
+<dt id="g-f-bag">Altersabstand</dt>
+<dd>BAG = Alter<sub>vorhergesagt</sub> − Alter<sub>chronologisch</sub>.</dd>
+<dt id="g-f-pdff">PDFF</dt>
+<dd>PDFF = F / (W + F); F, W = Fett- und Wassersignal.</dd>
+<dt id="g-f-ecv">ECV</dt>
+<dd>ECV = (1 − Hämatokrit) · (ΔR1<sub>Myokard</sub> / ΔR1<sub>Blut</sub>), mit R1 = 1/T1.</dd>
+<dt id="g-f-pcr">PCr-Erholung</dt>
+<dd>PCr(t) = PCr<sub>Ende</sub> + ΔPCr · (1 − e<sup>−t/τ</sup>).</dd>
+<dt id="g-f-mae">MAE und σ</dt>
+<dd>MAE = mittel(|vorhergesagt − tatsächlich|); bei Normalverteilung MAE ≈ 0,8·σ.</dd>
+<dt id="g-f-sem">SEM</dt>
+<dd>SEM = SD · √(1 − ICC).</dd>
+<dt id="g-f-mdc">MDC</dt>
+<dd>MDC<sub>95</sub> = 1,96 · √2 · SEM. Beispiel ASPREE: SEM 1,47–1,80 J. → MDC 4,07–4,99 J. <a class="cite" href="#r69">[69]</a>.</dd>
+<dt id="g-f-n">Fallzahl pro Arm</dt>
+<dd>n ≈ 2 · (z<sub>1−α/2</sub> + z<sub>1−β</sub>)² · σ² / Δ²; z<sub>0,975</sub> = 1,96, z<sub>0,8</sub> = 0,84, z<sub>0,9</sub> = 1,28; σ = SD der Veränderung, Δ = Gruppenunterschied. Für eine 2×2-Interaktion ≈ 4-fache Gesamtzahl.</dd>
+<dt id="g-f-p">Plätze pro Nacht</dt>
+<dd>P = floor(Fenster<sub>min</sub> / (Protokoll<sub>min</sub> + Wechsel<sub>min</sub>)); z. B. 360 / (40 + 15) = 6,5 → 6.</dd>
+<dt id="g-f-s">Scans pro Jahr</dt>
+<dd>S = Standorte × Nächte/Woche × Wochen × P × Erfolgsquote; Standorte = 1.324 × Beteiligungsquote; Jahre bis 100.000 = 100.000 / S.</dd>
+<dt id="g-f-k">Kosten</dt>
+<dd>Kosten/Scan = (Personal<sub>€/h</sub> × Fenster<sub>h</sub>) / (P × Erfolg) + Befundung + Strom + Geräteanteil; Kosten/Teilnehmer = Kosten/Scan + Organisation + Genom; Strom/Scan = 19,9 kWh × 0,20–0,35 €/kWh ≈ 4–7 €.</dd>
+<dt id="g-f-vk">Vollkräfte</dt>
+<dd>Vollkräfte = (Personen × Fenster<sub>h</sub> × Nächte/Woche × Standorte) / 39; mittel: 2 × 6 × 3 × 132 / 39 ≈ 122.</dd>
+<dt id="g-f-remote">MTR-Bedarf (Remote)</dt>
+<dd>N = Standorte × Nächte/Woche × 52; MTR-VK = N / (k · S) · (1 + Reserve), mit S ≈ 169 Schichten je VK und Jahr, k Standorte je Remote-MTR, Reserve 20 %. Mittel: 20.592 / (3 · 169) · 1,2 ≈ 49.</dd>
+<dt id="g-f-ruf">Rufbereitschafts-Pool</dt>
+<dd>Pool = r × 736; r = Anteil der eigenen 24-h-Standorte mit Vor-Ort-Nachtschicht (unbekannt; Beispiel r = 0,25 → ≈184).</dd>
+</dl>
+
+<!-- ============================ 10 QUELLEN ============================ -->
+<h2 id="s10">10 Quellen</h2>
+<p class="cap">Zusammengeführt aus allen vier Ästen, Dubletten vereinigt, thematisch gruppiert und fortlaufend nummeriert. Markierungen: <span class="fl pre">vor 2022</span> ältere Grundlagenarbeit · <span class="fl unv">unvollständig/unverifiziert</span> laut Ast oder Redaktion · <span class="fl own">eigene Daten</span> · <span class="fl old">P</span> Preprint/Pressemitteilung/Herstellerangabe · ✓ von der Redaktion am 07.11.2026 nachgeprüft.</p>
+
+<p class="rb">Rahmen</p>
+<ol class="refs" start="1">
+<li id="r1" data-year="2023">López-Otín C, Blasco MA, Partridge L, Serrano M, Kroemer G. <a class="gl" href="#g-hallmarks">Hallmarks of aging</a>: An expanding universe. <i>Cell</i> 2023;186(2):243–278. <a class="ext" href="https://doi.org/10.1016/j.cell.2022.11.001">doi:10.1016/j.cell.2022.11.001</a></li>
+</ol>
+
+<p class="rb">Bildgebungsgenetik (cb2)</p>
+<ol class="refs" start="2">
+<li id="r2" data-year="2025"><a class="gl" href="#g-ukb">UK Biobank</a>: Abschluss der 100.000 Bildgebungen. News-Medical, 16.07.2025, <a class="ext" href="https://www.news-medical.net/news/20250716/UK-Biobank-completes-worlds-largest-whole-body-imaging-project.aspx">Link</a>; UK Biobank-Pressemitteilung 15./16.07.2025, <a class="ext" href="https://www.ukbiobank.ac.uk/news/uk-biobank-celebrates-completion-of-worlds-largest-human-imaging-study-with-landmark-events/">Link</a>. <span class="fl old">P</span></li>
+<li id="r3" data-year="2018">Elliott LT, Sharp K, Alfaro-Almagro F, et al. Genome-wide association studies of brain imaging phenotypes in <a class="gl" href="#g-ukb">UK Biobank</a>. <i>Nature</i> 2018;562:210–216. <a class="ext" href="https://doi.org/10.1038/s41586-018-0571-7">doi:10.1038/s41586-018-0571-7</a> <span class="fl pre">vor 2022</span></li>
+<li id="r4" data-year="2021">Smith SM, Douaud G, et al. An expanded set of genome-wide association studies of brain imaging phenotypes in <a class="gl" href="#g-ukb">UK Biobank</a>. <i>Nat Neurosci</i> 2021;24:737–745; <a class="gl" href="#g-big40">BIG40</a>: <a class="ext" href="https://open.oxcin.ox.ac.uk/ukbiobank/big40/">Link</a>. <span class="fl pre">vor 2022</span></li>
+<li id="r5" data-year="2025"><a class="gl" href="#g-ukb">UK Biobank</a> Whole-Genome Sequencing Consortium. Whole-genome sequencing of 490,640 <a class="gl" href="#g-ukb">UK Biobank</a> participants. <i>Nature</i> 2025;645. Preprint: <a class="ext" href="https://www.medrxiv.org/content/10.1101/2023.12.06.23299426v1.full">medRxiv 2023</a>. <span class="fl unv">Zahlen aus Sekundärzusammenfassungen</span></li>
+<li id="r6" data-year="2023">Khurshid S, et al. Deep learning-derived left ventricular mass <a class="gl" href="#g-gwas">GWAS</a>. <i>Nat Commun</i> 2023;14:1558. <a class="ext" href="https://doi.org/10.1038/s41467-023-37173-w">doi:10.1038/s41467-023-37173-w</a></li>
+<li id="r7" data-year="2023">Ning C, et al. Left ventricular regional wall thickness <a class="gl" href="#g-gwas">GWAS</a>. <i>Nat Commun</i> 2023;14:7900. <a class="ext" href="https://doi.org/10.1038/s41467-023-43771-5">doi:10.1038/s41467-023-43771-5</a></li>
+<li id="r8" data-year="2024">3D-LV-Mesh-GWAS, 48.651 Personen. <i>Nat Mach Intell</i> 2024. <a class="ext" href="https://www.nature.com/articles/s42256-024-00801-1">Link</a> <span class="fl unv">Autoren unverifiziert</span></li>
+<li id="r9" data-year="2021">Liu Y, Basty N, Whitcher B, Bell JD, Sorokin EP, van Bruggen N, Thomas EL, Cule M. Genetic architecture of 11 organ traits derived from abdominal MRI using deep learning. <i>eLife</i> 2021. <a class="ext" href="https://doi.org/10.7554/eLife.65554">doi:10.7554/eLife.65554</a> <span class="fl pre">vor 2022</span> (Angaben durch cb6 ergänzt)</li>
+<li id="r10" data-year="2025">Fan et al. Mapping rare protein-coding variants on multi-organ imaging traits. <i>Nat Commun</i>, 23.12.2025. <a class="ext" href="https://doi.org/10.1038/s41467-025-67431-y">doi:10.1038/s41467-025-67431-y</a></li>
+<li id="r11" data-year="2023">Kavousi M, et al. Multi-ancestry genome-wide study identifies effector genes and druggable pathways for coronary artery calcification. <i>Nat Genet</i> 2023;55:1651–1664. <a class="ext" href="https://doi.org/10.1038/s41588-023-01518-4">doi:10.1038/s41588-023-01518-4</a></li>
+<li id="r12" data-year="2026">Zhuang R, et al. CT-Muskel/Fett-GWAS, Penn Medicine BioBank; RSNA-Bericht 2025/2026. <a class="ext" href="https://www.rsna.org/news/2026/may/ct-based-sarcopenia-screening">Link</a> <span class="fl old">P</span> Kongressbeitrag, kein Paper</li>
+<li id="r13" data-year="o. J."><a class="gl" href="#g-ukb">UK Biobank</a>, Imaging project (Wiederholungsbildgebung), undatiert. <a class="ext" href="https://www.ukbiobank.ac.uk/taking-part/participant-opportunities/imaging-project/">Link</a> <span class="fl unv">Abruf 403, Zahl aus Suchauszug</span></li>
+<li id="r14" data-year="2024">Chen et al. Brain <a class="gl" href="#g-idp">IDPs</a> und neurodegenerative Erkrankungen, MR. medRxiv 2024. <a class="ext" href="https://medrxiv.org/content/10.1101/2024.09.10.24313402v1">Link</a> <span class="fl old">P</span></li>
+<li id="r15" data-year="2022">van der Meer D, et al. The link between liver fat and cardiometabolic diseases is highlighted by genome-wide association study of MRI-derived measures of body composition. <i>Commun Biol</i> 2022. <a class="ext" href="https://doi.org/10.1038/s42003-022-04237-4">doi:10.1038/s42003-022-04237-4</a></li>
+<li id="r16" data-year="2025">Scaling genetic discovery for organ volumes using machine learning-assisted <a class="gl" href="#g-imputation">imputation</a> and bias-corrected <a class="gl" href="#g-gwas">GWAS</a>. medRxiv 11/2025. <a class="ext" href="https://www.medrxiv.org/content/10.1101/2025.11.07.25339752">Link</a> <span class="fl old">P</span></li>
+<li id="r17" data-year="2022">End-to-end automated body composition analyses with integrated quality control for opportunistic assessment of sarcopenia in <a class="gl" href="#g-ct">CT</a>. 2022. <a class="ext" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9038788/">Link</a>; Comp2Comp (Stanford MIMI): <a class="ext" href="https://med.stanford.edu/mimi/research/OpportunisticCT.html">Link</a> <span class="fl unv">Autoren fehlen</span></li>
+<li id="r18" data-year="2020">Pickhardt PJ, Graffy PM, Zea R, Lee SJ, Liu J, Sandfort V, Summers RM. Automated <a class="gl" href="#g-ct">CT</a> biomarkers for opportunistic prediction of future cardiovascular events and mortality in an asymptomatic screening population. <i>Lancet Digit Health</i> 2020. <a class="ext" href="https://doi.org/10.1016/S2589-7500(20)30025-X">doi:10.1016/S2589-7500(20)30025-X</a> <span class="fl pre">vor 2022</span> (Angaben durch cb6 ergänzt)</li>
+<li id="r19" data-year="2019">30.000 Ganzkörper-MRT-Untersuchungen in fünf Jahren (<a class="gl" href="#g-nako">NAKO</a>). <i>Deutsches Ärzteblatt</i>, 13.09.2019. <a class="ext" href="https://www.aerzteblatt.de/news/30000-ganzkoerper-mrt-untersuchungen-in-fuenf-jahren-8fcfdf1b-a2ae-4d15-8092-5c0fac8e83c7">Link</a> <span class="fl pre">vor 2022</span></li>
+<li id="r20" data-year="o. J."><a class="gl" href="#g-nako">NAKO</a>, Genetik-Seite (Genotypisierung, <a class="gl" href="#g-wgs">WGS</a>, Zugang). <a class="ext" href="https://nako.de/?p=43319">Link</a> <span class="fl unv">Stand unverifiziert</span></li>
+<li id="r21" data-year="o. J."><a class="gl" href="#g-nako">NAKO</a> MRT-Zwischenauswertung (11.371 <a class="gl" href="#g-mrt">MRT</a>, 96 % vollständig), RKI edoc: <a class="ext" href="https://edoc.rki.de/handle/176904/11419">Link</a>; Universität Regensburg, NAKO-Seite (205.000): <a class="ext" href="https://www.uni-regensburg.de/medizin/institut-fuer-epidemiologie-und-praeventivmedizin/epidemiologie-und-praeventivmedizin/forschung/nako-gesundheitsstudie">Link</a> <span class="fl unv">Jahr fehlt</span></li>
+<li id="r22" data-year="2022">The Rhineland Study: Kohortenbeschreibung <a class="ext" href="https://neurodegenerationresearch.eu/cohort/the-rhineland-study/">Link</a>; MRT-Teilstichprobe <i>Sci Rep</i> 2022, <a class="ext" href="https://link.springer.com/10.1038/s41598-022-06821-4">Link</a>; DZNE-Stellenanzeige (12.500, schwache Quelle).</li>
+<li id="r23" data-year="2022">China Kadoorie Biobank (Genotypisierung, Karotis-Ultraschall), <a class="ext" href="https://atlaslongitudinaldatasets.ac.uk/datasets/ckb">Link</a>; China Phenobank, <a class="ext" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11889274/">Link</a>.</li>
+<li id="r24" data-year="2024">Cross-ancestry-Hirn-GWAS (Han-Chinesen + <a class="gl" href="#g-ukb">UKB</a>). <i>Nat Genet</i> 2024. doi:10.1038/s41588-024-01766-y <span class="fl unv">Autoren/Titel unverifiziert</span></li>
+<li id="r25" data-year="2024">Bidirectional two-sample MR … structural and diffusion <a class="gl" href="#g-idp">IDPs</a> and major neurodegenerative diseases. <i>Transl Psychiatry</i> 2024. <a class="ext" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11133432/">Link</a></li>
+<li id="r26" data-year="2024">Patel K, et al. Unsupervised deep representation learning enables phenotype discovery for genetic association studies of brain imaging. <i>Commun Biol</i> 2024. <a class="ext" href="https://doi.org/10.1038/s42003-024-06096-7">doi:10.1038/s42003-024-06096-7</a></li>
+<li id="r27" data-year="2018">Diversität in <a class="gl" href="#g-ukb">UK Biobank</a>. <i>Nat Rev Genet</i> 2018. <a class="ext" href="https://www.nature.com/articles/s41576-018-0065-3">Link</a> <span class="fl pre">vor 2022</span> <span class="fl unv">Autor unverifiziert</span></li>
+<li id="r28" data-year="o. J."><a class="gl" href="#g-ukb">UK Biobank</a>, Projektbeschreibung zum Ausschluss Nicht-Weißer in <a class="gl" href="#g-gwas">Hirn-GWAS</a>. <a class="ext" href="https://www.ukbiobank.ac.uk/?p=62867">Link</a></li>
+<li id="r29" data-year="2022">Bradley / Nichols. Addressing selection bias in the <a class="gl" href="#g-ukb">UK Biobank</a> neurological imaging cohort. medRxiv 2022. <a class="ext" href="https://www.medrxiv.org/content/10.1101/2022.01.13.22269266v2">Link</a> <span class="fl old">P</span></li>
+<li id="r30" data-year="2022">Quantifying bias in psychological and physical health in the <a class="gl" href="#g-ukb">UK Biobank</a> imaging sub-sample. <i>Brain Commun</i> 2022;4(3):fcac119. <a class="ext" href="https://academic.oup.com/braincomms/article/4/3/fcac119/6582760">Link</a></li>
+</ol>
+
+<p class="rb"><a class="gl" href="#g-hallmarks">Hallmarks</a> × Bildgebung (cb3)</p>
+<ol class="refs" start="31">
+<li id="r31" data-year="2022">Wang C, Martins-Bach AB, Alfaro-Almagro F, et al. Phenotypic and genetic associations of quantitative magnetic susceptibility in <a class="gl" href="#g-ukb">UK Biobank</a> brain imaging. <i>Nat Neurosci</i> 2022;25(6):818–831. <a class="ext" href="https://doi.org/10.1038/s41593-022-01074-w">doi:10.1038/s41593-022-01074-w</a></li>
+<li id="r32" data-year="2023">Tian YE, Cropley V, Maier AB, Lautenschlager NT, Breakspear M, Zalesky A. Heterogeneous aging across multiple organ systems and prediction of chronic disease and mortality. <i>Nat Med</i> 2023. <a class="ext" href="https://doi.org/10.1038/s41591-023-02296-6">doi:10.1038/s41591-023-02296-6</a></li>
+<li id="r33" data-year="2025">Jawinski P, Forstbach H, Kirsten H, Beyer F, Villringer A, et al. Genome-wide analysis of <a class="gl" href="#g-bag">brain age</a> identifies 59 associated loci and unveils relationships with mental and physical health. <i>Nat Aging</i> 2025. <a class="ext" href="https://doi.org/10.1038/s43587-025-00962-7">doi:10.1038/s43587-025-00962-7</a></li>
+<li id="r34" data-year="2023">Topiwala A, Nichols TE, Williams LZJ, et al. Telomere length and brain imaging phenotypes in <a class="gl" href="#g-ukb">UK Biobank</a>. <i>PLoS One</i> 2023. <a class="ext" href="https://doi.org/10.1371/journal.pone.0282363">doi:10.1371/journal.pone.0282363</a></li>
+<li id="r35" data-year="2026">ClinicalTrials.gov. NCT07290244 – <a class="gl" href="#g-osk">ER-100</a> bei Optikusneuropathien (Phase 1/2a). <a class="ext" href="https://clinicaltrials.gov/study/NCT07290244">Link</a> <span class="fl unv">Endpunkte nicht abgerufen</span></li>
+<li id="r36" data-year="2024">Díez-Díez M, Ramos-Neble BL, de la Barrera J, et al. Unidirectional association of clonal hematopoiesis with atherosclerosis development. <i>Nat Med</i> 2024. <a class="ext" href="https://doi.org/10.1038/s41591-024-03213-1">doi:10.1038/s41591-024-03213-1</a></li>
+<li id="r37" data-year="2025">Singh M, Jhajharia A, Pruthi R, Carmichael OT. ³¹P-MRS-measured phosphocreatine recovery kinetics in human muscles in health and disease – a systematic review and meta-analysis. <i>NMR Biomed</i> 2025. <a class="ext" href="https://doi.org/10.1002/nbm.70023">doi:10.1002/nbm.70023</a> ✓ (Zeitschrift nachgeprüft)</li>
+<li id="r38" data-year="2022">Sano S, Horitani K, Ogawa H, et al. Hematopoietic loss of Y chromosome leads to cardiac fibrosis and heart failure mortality. <i>Science</i> 2022;377:292–297. <a class="ext" href="https://doi.org/10.1126/science.abn3100">doi:10.1126/science.abn3100</a></li>
+<li id="r39" data-year="2024">Farr JN, Atkinson EJ, Achenbach SJ, …, Khosla S. Effects of intermittent senolytic therapy on bone metabolism in postmenopausal women: a phase 2 randomized controlled trial. <i>Nat Med</i> 2024. <a class="ext" href="https://doi.org/10.1038/s41591-024-03096-2">doi:10.1038/s41591-024-03096-2</a></li>
+<li id="r40" data-year="2026">Life Biosciences. First Patient Dosed in Phase 1 Trial of <a class="gl" href="#g-osk">ER-100</a> for Optic Neuropathies. Pressemitteilung, 09.06.2026. <a class="ext" href="https://www.lifebiosciences.com/life-biosciences-announces-first-patient-dosed-in-phase-1-trial-of-er-100-for-optic-neuropathies/">Link</a> <span class="fl old">P</span></li>
+<li id="r41" data-year="2026">Life Biosciences. First-in-Human Data from Ongoing Phase 1 Trial Evaluating <a class="gl" href="#g-osk">ER-100</a> in Optic Neuropathies. Pressemitteilung, 08.10.2026. <a class="ext" href="https://www.lifebiosciences.com/life-biosciences-announces-first-in-human-data-from-ongoing-phase-1-trial-evaluating-er-100-in-optic-neuropathies/">Link</a> <span class="fl old">P</span></li>
+<li id="r42" data-year="2008">Willcox BJ, Donlon TA, He Q, et al. FOXO3A genotype is strongly associated with human longevity. <i>PNAS</i> 2008;105(37):13987–13992. <a class="ext" href="https://doi.org/10.1073/pnas.0801030105">doi:10.1073/pnas.0801030105</a> <span class="fl pre">vor 2022</span> <span class="fl unv">im Ast aus dem Gedächtnis zitiert</span></li>
+<li id="r43" data-year="2022">Domen A, Deben C, Verswyvel J, et al. Cellular senescence in cancer: clinical detection and prognostic implications. <i>J Exp Clin Cancer Res</i> 2022. <a class="ext" href="https://doi.org/10.1186/s13046-022-02555-3">doi:10.1186/s13046-022-02555-3</a></li>
+<li id="r44" data-year="2025">Gagliardi A, Migliari S, Guercio A, et al. Emerging radioligands as tools to track multi-organ senescence. <i>Diagnostics</i> 2025;15(19):2518. <a class="ext" href="https://doi.org/10.3390/diagnostics15192518">doi:10.3390/diagnostics15192518</a></li>
+<li id="r45" data-year="2014">Suridjan I, Rusjan PM, Voineskos AN, et al. Neuroinflammation in healthy aging: a <a class="gl" href="#g-pet">PET</a> study using a novel translocator protein 18 kDa (<a class="gl" href="#g-tspo">TSPO</a>) radioligand, [¹⁸F]-FEPPA. <i>NeuroImage</i> 2014 (online 2013). <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6283059/">Link</a> <span class="fl pre">vor 2022</span> ✓ (Zeitschrift nachgeprüft)</li>
+<li id="r46" data-year="2022">Milicic L, Vacher M, Porter T, et al. Comprehensive analysis of epigenetic clocks reveals associations between disproportionate biological ageing and hippocampal volume. <i>GeroScience</i> 2022. PMID 35445885 ✓ (Zeitschrift über Zitat in Folgearbeit bestätigt)</li>
+<li id="r47" data-year="2022">Jansen WJ, Ossenkoppele R, Knol DL, et al. Prevalence of cerebral amyloid pathology in persons without dementia: a meta-analysis. <i>JAMA</i> 2015 (<a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4486209/">Link</a>), und Update: Jansen WJ, Janssen O, Tijms BM, et al. <i>JAMA Neurol</i> 2022 (<a class="ext" href="https://jamanetwork.com/journals/jamaneurology/fullarticle/2788270">Link</a>). Originalarbeit <span class="fl pre">vor 2022</span></li>
+<li id="r48" data-year="2018">Baum T, Rohrmeier A, Syväri J, et al. Anatomical variation of age-related changes in vertebral bone marrow composition using chemical shift encoding-based water–fat MRI. <i>Front Endocrinol</i> 2018. <a class="ext" href="https://doi.org/10.3389/fendo.2018.00141">doi:10.3389/fendo.2018.00141</a> <span class="fl pre">vor 2022</span></li>
+<li id="r49" data-year="2025">Tan J, Ding Z, Zheng J, et al. Potential regulators and metabolic networks of muscle fatty infiltration: genomic and <a class="gl" href="#g-radiomics">radiomics</a> investigation based on 33 300 participants. 2025. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12825550/">Link</a> <span class="fl unv">Zeitschrift unverifiziert</span></li>
+<li id="r50" data-year="2020">Kumar D, Nanga RPR, Thakuri D, et al. Recovery kinetics of creatine in mild plantar flexion exercise using 3D <a class="gl" href="#g-crcest">CrCEST</a> imaging at 7T. 2020. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7774507/">Link</a> <span class="fl pre">vor 2022</span> (n = 5)</li>
+<li id="r51" data-year="2023">Vlasschaert C, Heimlich JB, Rauh MJ, Natarajan P, Bick AG. Interleukin-6 receptor polymorphism attenuates clonal hematopoiesis-mediated coronary artery disease risk among 451 180 individuals in the <a class="gl" href="#g-ukb">UK Biobank</a>. <i>Circulation</i> 2023;147:358–360.</li>
+<li id="r52" data-year="2013">Yoder KK, Nho K, Risacher SL, et al. Influence of <a class="gl" href="#g-tspo">TSPO</a> genotype on ¹¹C-PBR28 standardized uptake values. <i>J Nucl Med</i> 2013;54(8):1320. <a class="ext" href="https://jnm.snmjournals.org/content/54/8/1320">Link</a> <span class="fl pre">vor 2022</span></li>
+<li id="r53" data-year="2024">Huang B, Yang L, Liu F, Gou S, Liu J. The causal effects of gut microbiota on <a class="gl" href="#g-qsm">QSM</a> and T2* imaging-derived phenotypes: a <a class="gl" href="#g-mr">Mendelian randomization</a> study. <i>Quant Imaging Med Surg</i> 2024. <a class="ext" href="https://qims.amegroups.org/article/view/131061/html">Link</a></li>
+<li id="r54" data-year="2023">Zhou M, Chen S, Chen Y, Wang C, Chen C. Causal associations between gut microbiota and regional cortical structure: a <a class="gl" href="#g-mr">Mendelian randomization</a> study. <i>Front Neurosci</i> 2023. <a class="ext" href="https://doi.org/10.3389/fnins.2023.1296145">doi:10.3389/fnins.2023.1296145</a></li>
+<li id="r55" data-year="2026">Durstenfeld MS, Kentoffio K, Teng AE, et al. Clonal hematopoiesis in HIV and atherosclerosis, arterial inflammation, and lymph node metabolic activity. Preprint 2026. doi:10.64898/2026.02.05.26345712 <span class="fl old">P</span></li>
+<li id="r56" data-year="2025">Zheng X, Han W, Li Y, et al. Associations of accelerated biological ageing with incident dementia, cognitive functions and brain structure: <a class="gl" href="#g-ukb">UK Biobank</a>. <i>Stroke Vasc Neurol</i> 2025. <a class="ext" href="https://doi.org/10.1136/svn-2024-003690">doi:10.1136/svn-2024-003690</a></li>
+<li id="r57" data-year="2020">Loos B, et al. On the relevance of precision autophagy flux control in vivo – points of departure for clinical translation. <i>Autophagy</i> 2019/2020. <a class="ext" href="https://doi.org/10.1080/15548627.2019.1687211">doi:10.1080/15548627.2019.1687211</a> <span class="fl pre">vor 2022</span></li>
+<li id="r58" data-year="2025">Zhang JJ, Yang J, Patel JS, et al. Emerging molecular <a class="gl" href="#g-pet">PET</a> imaging for cell death in neurodegenerative diseases. 2025. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12621196/">Link</a> <span class="fl unv">Zeitschrift fehlt</span></li>
+<li id="r59" data-year="2026">Seidu NM, Lindberg O, Kern S, Rydén L, Wahlund LO, et al. Polygenic scores for longevity in relation to brain MRI measures in a cohort of 70-year-olds. <i>npj Aging</i> 2026. <a class="ext" href="https://www.nature.com/articles/s41514-026-00546-8">Link</a></li>
+<li id="r60" data-year="2024">Armbruster RR, Kumar D, Benyard B, et al. Personalized and muscle-specific OXPHOS measurement with integrated <a class="gl" href="#g-crcest">CrCEST</a> MRI and proton MR spectroscopy. <i>Nat Commun</i> 2024. <a class="ext" href="https://doi.org/10.1038/s41467-024-49253-6">doi:10.1038/s41467-024-49253-6</a></li>
+<li id="r61" data-year="2020">Mansur A, Rabiner EA, Tsukada H, et al. Test–retest variability and reference region-based quantification of ¹⁸F-BCPP-EF for imaging mitochondrial complex I in the human brain. <i>J Cereb Blood Flow Metab</i> 2020/2021. <a class="ext" href="https://doi.org/10.1177/0271678X20928149">doi:10.1177/0271678X20928149</a> <span class="fl pre">vor 2022</span></li>
+<li id="r62" data-year="2024">Daldrup-Link HE, Suryadevara V, Tanyildizi Y, et al. Musculoskeletal imaging of senescence. 2024. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11303117/">Link</a></li>
+<li id="r63" data-year="2020">Dieckmeyer M, Junker D, Ruschke S, et al. Vertebral bone marrow heterogeneity using texture analysis of chemical shift encoding-based MRI. <i>Front Endocrinol</i> 2020. <a class="ext" href="https://doi.org/10.3389/fendo.2020.555931">doi:10.3389/fendo.2020.555931</a> <span class="fl pre">vor 2022</span></li>
+<li id="r64" data-year="2013">Guo Q, Colasanti A, Owen DR, et al. Quantification of the specific <a class="gl" href="#g-tspo">TSPO</a> signal of ¹⁸F-PBR111 in healthy humans: a genetic polymorphism effect on in vivo binding. <i>J Nucl Med</i> 2013;54(11):1915. <a class="ext" href="https://jnm.snmjournals.org/content/54/11/1915">Link</a> <span class="fl pre">vor 2022</span></li>
+</ol>
+
+<p class="rb"><a class="gl" href="#g-organuhr">Organuhren</a> und Endpunkte (cb4)</p>
+<ol class="refs" start="65">
+<li id="r65" data-year="2024">Wen J, Tian YE, Skampardoni I, et al., Davatzikos C. The genetic architecture of biological age in nine human organ systems. <i>Nat Aging</i> 2024;4(9):1290–1307. <a class="ext" href="https://doi.org/10.1038/s43587-024-00662-8">doi:10.1038/s43587-024-00662-8</a></li>
+<li id="r66" data-year="2023">Oh HS-H, Rutledge J, Nachun D, et al., Wyss-Coray T. Organ aging signatures in the plasma proteome track health and disease. <i>Nature</i> 2023. <a class="ext" href="https://doi.org/10.1038/s41586-023-06802-1">doi:10.1038/s41586-023-06802-1</a></li>
+<li id="r67" data-year="2025">Oh HS-H, Le Guen Y, Rappoport N, et al., Wyss-Coray T. Plasma proteomics links brain and immune system aging with healthspan and longevity. <i>Nat Med</i> 2025. <a class="ext" href="https://doi.org/10.1038/s41591-025-03798-1">doi:10.1038/s41591-025-03798-1</a></li>
+<li id="r68" data-year="2017">Cole JH, Poudel RPK, Tsagkrasoulis D, et al., Montana G. Predicting <a class="gl" href="#g-bag">brain age</a> with deep learning from raw imaging data results in a reliable and heritable biomarker. <i>NeuroImage</i> 2017. <a class="ext" href="https://arxiv.org/abs/1612.02572">arXiv:1612.02572</a> <span class="fl pre">vor 2022</span></li>
+<li id="r69" data-year="2022">Wrigglesworth J, Harding IH, Ward P, et al., Ryan J. Factors influencing change in brain-predicted age difference in a cohort of healthy older individuals. <i>J Alzheimers Dis Rep</i> 2022;6(1):163–176. <a class="ext" href="https://doi.org/10.3233/ADR-220011">doi:10.3233/ADR-220011</a> ✓ (Zeitschrift nachgeprüft)</li>
+<li id="r70" data-year="2025">Wan L, Molina-Hidalgo C, Crisafio ME, et al., Erickson KI. Fitness and exercise effects on <a class="gl" href="#g-bag">brain age</a>: a randomized clinical trial. <i>J Sport Health Sci</i> 2025;15:101079. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12828596/">Link</a></li>
+<li id="r71" data-year="2023">Wing D, Eyler LT, Lenze EJ, et al. Fatness but not fitness linked to BrainAge: longitudinal changes in brain aging during an exercise intervention. 2023. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10947938/">Link</a> <span class="fl unv">Zeitschrift fehlt</span></li>
+<li id="r72" data-year="2025">Saraei T, Schrenk S, Puta C, et al., Gaser C. Physical activity and BrainAGE: exploring the impact on brain health and plasticity in older adults (FIT4BRAIN). 2025. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12519997/">Link</a> <span class="fl unv">Zeitschrift fehlt</span></li>
+<li id="r73" data-year="2023">Levakov G, Kaplan A, Yaskolka Meir A, et al. The effect of weight loss following 18 months of lifestyle intervention on <a class="gl" href="#g-bag">brain age</a> assessed with resting-state functional connectivity. <i>eLife</i> 2023;12:e83604. <a class="ext" href="https://elifesciences.org/articles/83604">Link</a></li>
+<li id="r74" data-year="2024">Moqri M, Herzog C, Poganik JR, et al. (Biomarkers of Aging Consortium). Validation of biomarkers of aging. <i>Nat Med</i> 2024. <a class="ext" href="https://doi.org/10.1038/s41591-023-02784-9">doi:10.1038/s41591-023-02784-9</a></li>
+<li id="r75" data-year="2025">Mazin A. Interview mit Nir Barzilai: „Positive evidence for metformin is mounting“. <i>Lifespan.io</i>, 08/2025. <a class="ext" href="https://lifespan.io/nir-barzilai-positive-evidence-for-metformin-is-mounting/">Link</a> <span class="fl old">P</span> Expertenaussage</li>
+<li id="r76" data-year="2026">Lakherwal P. Metformin's aging trial has never enrolled a patient. <i>Longevity Science Daily</i>, 09/2026. <a class="ext" href="https://www.longevitysciencedaily.com/articles/metformin-tame-trial-never-started">Link</a> <span class="fl old">P</span> Sekundärquelle</li>
+<li id="r77" data-year="2023">Leonardsen EH, Vidal-Piñeiro D, Roe JM, et al. Genetic architecture of <a class="gl" href="#g-bag">brain age</a> and its causal relations with brain and mental disorders. <i>Mol Psychiatry</i> 2023. <a class="ext" href="https://doi.org/10.1038/s41380-023-02087-y">doi:10.1038/s41380-023-02087-y</a></li>
+<li id="r78" data-year="2023">Shah M, de A. Inácio MH, Lu C, et al., O'Regan DP. Environmental and genetic predictors of human cardiovascular ageing. <i>Nat Commun</i> 2023. <a class="ext" href="https://doi.org/10.1038/s41467-023-40566-6">doi:10.1038/s41467-023-40566-6</a></li>
+<li id="r79" data-year="2022">Le Goallec A, Diai S, Collin S, et al., Patel CJ. Using deep learning to predict abdominal age from liver and pancreas magnetic resonance images. <i>Nat Commun</i> 2022. <a class="ext" href="https://doi.org/10.1038/s41467-022-29525-9">doi:10.1038/s41467-022-29525-9</a></li>
+<li id="r80" data-year="2024">Rule AD, Grossardt BR, Weston AD, et al., St. Sauver JL. Older tissue age derived from abdominal <a class="gl" href="#g-ct">CT</a> biomarkers of muscle, fat, and bone is associated with chronic conditions and higher mortality. 2024. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11153040/">Link</a> <span class="fl unv">Zeitschrift fehlt</span></li>
+<li id="r81" data-year="2023">Dörfel RP, Arenas-Gomez JM, Fisher PM, et al., Plavén-Sigray P. Prediction of <a class="gl" href="#g-bag">brain age</a> using structural MRI: a comparison of accuracy and test–retest reliability of publicly available software packages. <i>Hum Brain Mapp</i> 2023. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10619370/">Link</a></li>
+<li id="r82" data-year="2024">Puglisi L, Rondinella A, De Meo L, Guarnera F, Battiato S, Ravì D. SynthBA: reliable <a class="gl" href="#g-bag">brain age</a> estimation across multiple MRI sequences and resolutions. <i>IEEE MetroXRAINE</i> 2024, S. 559–564. <a class="ext" href="https://arxiv.org/abs/2406.00365">arXiv:2406.00365</a></li>
+</ol>
+
+<p class="rb">Kapazität, Kosten, Recht (cb5)</p>
+<ol class="refs" start="83">
+<li id="r83" data-year="2026">Deutsche Krankenhausgesellschaft: Deutsches Krankenhausverzeichnis, Feld „24 <a class="gl" href="#g-hr">hr</a> emergency availability“, abgerufen 07.11.2026. <a class="ext" href="https://www.deutsches-krankenhaus-verzeichnis.de">Link</a>. Eigene Auswertung: <code>daten/ct_mrt_24h.csv</code>, <code>daten/parse.py</code>, <code>daten/bundesland_auswertung.md</code>, Rohseiten-Archiv <code>daten/dkg_rohseiten_2026-11-07.tar.gz</code>. <span class="fl own">eigene Daten</span></li>
+<li id="r84" data-year="2025">OECD. Health at a Glance 2025, Kapitel „Diagnostic technologies“, 13.11.2025. <a class="ext" href="https://www.oecd.org/en/publications/2025/11/health-at-a-glance-2025_a894f72e/full-report/diagnostic-technologies_9039027d.html">Link</a></li>
+<li id="r85" data-year="2024">Radiologie.de: „Deutsche Radiologie in Zahlen“ (Abruf 19.04.2024; nennt Destatis 2022/2021, OECD 2021, BfS). <a class="ext" href="https://www.radiologie.de/deutsche-radiologie-zahlen/">Link</a> Sekundärquelle</li>
+<li id="r86" data-year="2019">Blum K (DKI) im Auftrag des DVTA. Fachkräftemangel und Fachkräftebedarf in MTA-Berufen. 2019. <a class="ext" href="https://www.dki.de/forschungsprojekt/fachkraeftemangel-und-fachkraeftebedarf-in-mta-berufen">Link</a>; Gutachten-PDF: <a class="ext" href="https://www.dki.de/fileadmin/publikationen/2019_05_Fachkraeftemangel_und_Fachkraeftebedarf_in_MTA-Berufen_final.pdf">Link</a> <span class="fl pre">vor 2022</span></li>
+<li id="r87" data-year="2026">Radiologienetz/curagita (mit RADiness). Umfrage unter Radiologiepraxen und -abteilungen: MRT-Ausfälle durch Personalmangel weit verbreitet. 01.07.2026 (n = 227). <a class="ext" href="https://www.radiologienetz.de/curacompact-blog/umfrage-unter-radiologiepraxen-und-abteilungen-mrt-ausfaelle-durch-personalmangel-weit-verbreitet">Link</a> <span class="fl old">P</span> nicht neutral</li>
+<li id="r88" data-year="2024">Beddy P, et al. Towards 24/7 MRI: the effect of routine weekend inpatient MRI scanning on patient waiting times. 2024. <a class="ext" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11294432/">Link</a> <span class="fl unv">Zeitschrift unverifiziert</span></li>
+<li id="r89" data-year="2025">Philips / Society of Radiographers (gesponsert). Philips and Imperial College Healthcare NHS Trust cut patient waiting lists with late-night MRI scanning pilot. 2025. <a class="ext" href="https://society-of-radiographers.shorthandstories.com/philips-and-imperial-college-healthcare-nhs-trust-cut-patient-waiting-lists-with-late-night-mri-scanning-pilot/index.html">Link</a> <span class="fl old">P</span> Herstellerbeitrag</li>
+<li id="r90" data-year="2020">Heye T, et al. The energy consumption of radiology: energy- and cost-saving opportunities for <a class="gl" href="#g-ct">CT</a> and MRI operation. <i>Radiology</i> 2020;295(3):593–605. <a class="ext" href="https://pubmed.ncbi.nlm.nih.gov/32208096/">PubMed</a> <span class="fl pre">vor 2022</span> ✓ (Heft nachgeprüft)</li>
+<li id="r91" data-year="2023">Woolen SA, Becker AE, Martin AJ, et al. Ecodesign and operational strategies to reduce the carbon footprint of MRI for energy cost savings. <i>Radiology</i> 2023;307(4):e230441. <a class="ext" href="https://doi.org/10.1148/radiol.230441">doi:10.1148/radiol.230441</a> ✓ (Autoren nachgeprüft; Zahlen aus Suchauszug)</li>
+<li id="r92" data-year="2024">Universitätsmedizin Greifswald. Pressemitteilung <a class="gl" href="#g-nako">NAKO</a>, 2024 (135.000 Untersuchte, 18.000 <a class="gl" href="#g-mrt">MRT</a> in der zweiten Welle). <a class="ext" href="https://www.medizin.uni-greifswald.de/fileadmin/user_extern_upload/Presse/2024/PM_NAKO.pdf">Link</a> <span class="fl old">P</span> <span class="fl unv">Seite nicht erreichbar, Zahl aus Suchauszug</span></li>
+<li id="r93" data-year="o. J.">Ärzte Zeitung: Großstudie mit bisher 160.000 Probanden (171 Mio. Bund/Länder + 85 Mio. Helmholtz = 256 Mio. €, 2013–2023). <a class="ext" href="https://www.aerztezeitung.de/Politik/Grossstudie-mit-bisher-160000-Probanden-230163.html">Link</a>; alternativ ≈210 Mio. € laut Landespressemitteilung NRW. <span class="fl unv">Zuordnung unsicher</span></li>
+<li id="r94" data-year="2013">Potentially relevant incidental findings on research whole-body MRI in the general adult population: frequencies and management (SHIP). 2012/13. <a class="ext" href="https://pubmed.ncbi.nlm.nih.gov/22911290/">PubMed</a> <span class="fl pre">vor 2022</span> <span class="fl unv">Autoren unverifiziert</span></li>
+<li id="r95" data-year="2021">KORA-MRI: Incidental findings in whole-body MR imaging of a population-based cohort study. <i>Eur J Radiol</i> 2020/21, <a class="ext" href="https://www.ejradiology.com/article/S0720-048X(20)30641-0/fulltext">Link</a>; Folgestudie: Long-term psychosocial consequences of whole-body MRI. <i>Diagnostics</i> 2022;12(10):2356. <span class="fl pre">vor 2022</span> <span class="fl unv">Autoren unverifiziert</span></li>
+<li id="r96" data-year="2025">Bundesamt für Strahlenschutz. Nähere Informationen zur Anzeige und Genehmigung (medizinische Forschung, § 31 <a class="gl" href="#g-strlschg">StrlSchG</a>), Stand nach 01.07.2025. <a class="ext" href="https://www.bfs.de/DE/themen/ion/anwendung-medizin/forschung/allgemeines/informationen-anzeige-genehmigung.html">Link</a></li>
+<li id="r97" data-year="2023">Gendiagnostikgesetz (<a class="gl" href="#g-gendg">GenDG</a>), § 2 Abs. 2 Nr. 1, <a class="ext" href="https://www.gesetze-im-internet.de/gendg/BJNR252900009.html">Link</a>; Rosenau H. Gilt das Gendiagnostikgesetz für die Forschung(sdaten)? genom.de, 2023, <a class="ext" href="https://www.genom.de/sites/default/files/2023-07/S4_01_Prof.%20Dr.%20iur.%20Henning%20Rosenau.pdf">Link</a>.</li>
+<li id="r98" data-year="2024">Bundesministerium für Gesundheit. Daten für die Forschung und Versorgung (<a class="gl" href="#g-gdng">GDNG</a>, Forschungsdatenzentrum Gesundheit, Opt-out). <a class="ext" href="https://www.bundesgesundheitsministerium.de/themen/digitalisierung/daten-fuer-die-forschung-und-versorgung">Link</a></li>
+<li id="r99" data-year="2024">GKV-Spitzenverband. Modellvorhaben Genomsequenzierung nach § 64e SGB V, <a class="ext" href="https://www.gkv-spitzenverband.de/krankenversicherung/forschung_modellvorhaben/mv_genomsequenzierung/genomsequenzierung.jsp">Link</a>; genomDE, <a class="ext" href="https://www.genom.de/de/fuer-eine-innovative-und-patientenorientierte-gesundheitsversorgung">Link</a>.</li>
+<li id="r100" data-year="2017">Plöthner M, Frank M, von der Schulenburg J-MG. Cost analysis of <a class="gl" href="#g-wgs">whole genome sequencing</a> in German clinical practice. <i>Eur J Health Econ</i> 2017. <a class="ext" href="https://link.springer.com/article/10.1007/s10198-016-0815-0">Link</a> <span class="fl pre">vor 2022</span> veraltet</li>
+<li id="r101" data-year="2025">Ultima Genomics. <a class="gl" href="#g-wgs">Whole genome sequencing</a> cost (60 US-$ pro Genom), abgerufen 2026, <a class="ext" href="https://www.ultimagenomics.com/focus-areas/whole-genome-sequencing/">Link</a>; Pressemitteilung 24.02.2025 (80-$-Genom). <span class="fl old">P</span> Herstellerangabe</li>
+<li id="r102" data-year="o. J.">Labiotech. Genome sequencing review projects (NovaSeq X ≈200 US-$, MGI &lt;100 US-$). <a class="ext" href="https://www.labiotech.eu/in-depth/genome-sequencing-review-projects/">Link</a> <span class="fl unv">Datum unverifiziert</span></li>
+<li id="r103" data-year="2026">University of Iowa, Institute of Human Genetics. Microarrays and fees (GSA-24 v3: 78 US-$, gültig ab 01.07.2026), <a class="ext" href="https://humangenetics.medicine.uiowa.edu/genomics-division/microarray/microarrays-and-fees">Link</a>; NGI Sweden, Preisliste Illumina-Arrays ab 01.08.2022.</li>
+<li id="r104" data-year="2026">TVöD-Zuschläge und Entgelttabelle: KommunalForum.de; MEDIZIN.JOBS; Städtisches Klinikum Braunschweig, Entgeltinformation (TVöD-VKA ab 01.05.2026, EG 9a Stufe 6: 4.979,97 €), <a class="ext" href="https://karriere.skbs.de/infos/entgelttransparenz?type=999">Link</a>; TVöD-Bund E 9a und Nachtzuschlag § 8 nach Tarifportalen (cb6). Sekundärquellen, nicht der Tarifvertrag selbst.</li>
+</ol>
+<p class="rb">Nachtrag (Methodengeschichte)</p>
+<ol class="refs" start="105">
+<li id="r105" data-year="2010">Franke K, Ziegler G, Klöppel S, Gaser C. Estimating the age of healthy subjects from T1-weighted MRI scans using kernel methods: exploring the influence of various parameters. <i>NeuroImage</i> 2010;50(3):883–892. <a class="ext" href="https://doi.org/10.1016/j.neuroimage.2010.01.005">doi:10.1016/j.neuroimage.2010.01.005</a> <span class="fl pre">vor 2022</span> Landmark-Arbeit ✓ (Titel und DOI nachgeprüft, PubMed 20070949)</li>
+</ol>
+<p class="rb">KI-Beschleunigung, <a class="gl" href="#g-remote">Remote-Scanning</a>, Beruf (cb6)</p>
+<ol class="refs" start="106">
+<li id="r106" data-year="2025">Fransen SJ, Roest C, Simonis FFJ, Yakar D, Kwee TC. The scientific evidence of commercial AI products for MRI acceleration: a systematic review. <i>Eur Radiol</i> 2025. <a class="ext" href="https://doi.org/10.1007/s00330-025-11423-5">doi:10.1007/s00330-025-11423-5</a></li>
+<li id="r107" data-year="2024">Yang A, Finkelstein M, Koo C, Doshi AH. Impact of deep learning image reconstruction methods on MRI throughput. <i>Radiol Artif Intell</i> 2024. <a class="ext" href="https://doi.org/10.1148/ryai.230181">doi:10.1148/ryai.230181</a></li>
+<li id="r108" data-year="2025">Deep learning MRI halves scan time and preserves image quality across routine neuroradiologic examinations (Siemens Deep Resolve, 3 T). <i>Radiology Advances</i> 2025. <a class="ext" href="https://doi.org/10.1093/radadv/umaf029">doi:10.1093/radadv/umaf029</a> <span class="fl unv">Autoren nicht erfasst</span></li>
+<li id="r109" data-year="2026">Studie zu Deep Resolve Boost, 2D-Hirnsequenzen, 200 Patienten (Bern). <i>AJNR</i> 2026;47(6):1551. <a class="ext" href="https://www.ajnr.org/content/47/6/1551">Link</a> <span class="fl unv">Volltext 403, Angaben aus Suchzusammenfassung</span></li>
+<li id="r110" data-year="2025">Canon Medical. 3D Welcome Pack with AiCE: standardized 3D brain MR examination with 6 sequences in 6 minutes. Herstellerdokument 2025. <a class="ext" href="https://academy.eu.medical.canon/wp-content/uploads/2025/06/637376378681871831GP-3D-Welcome-Pack-with-Advanced-intelligent-Clear-IQ-Engine-AiCE-a-standardized-3D-brain-MR-examination-with-6-sequences-in-6-minutes.pdf">Link</a> <span class="fl old">P</span></li>
+<li id="r111" data-year="2025">Philips SmartSpeed Precise, FDA-Freigabe 2025 (Applied Radiology; Radiology Business). <a class="ext" href="https://www.appliedradiology.com/news/philips-gains-fda-clearance-for-smartspeed-precise-advancing-ai-driven-mri-scanning">Link</a> <span class="fl old">P</span> Herstellerangaben</li>
+<li id="r112" data-year="2021">GE HealthCare. AIR Recon DL (SignaPulse 2021; FDA-Freigabe 3D/PROPELLER). <a class="ext" href="https://signapulse.gehealthcare.com/spring-2021/deep-learning-technology-delivers-shorter-exam-times-and-better-image-quality">Link</a> <span class="fl pre">vor 2022</span> <span class="fl old">P</span> Herstellerangaben</li>
+<li id="r113" data-year="2024">Li H, Alves VV, Pednekar A, et al., Dillman JR. Impact of emerging deep learning-based MR image reconstruction algorithms on abdominal MRI radiomic features. <i>J Comput Assist Tomogr</i> 2024. <a class="ext" href="https://doi.org/10.1097/RCT.0000000000001648">doi:10.1097/RCT.0000000000001648</a></li>
+<li id="r114" data-year="2023">Singh D, et al. Emerging trends in fast MRI using deep-learning reconstruction on undersampled k-space data: a systematic review. <i>Bioengineering</i> 2023. <a class="ext" href="https://doi.org/10.3390/bioengineering10091012">doi:10.3390/bioengineering10091012</a></li>
+<li id="r115" data-year="2019">Siemens Healthineers. <a class="gl" href="#g-remote">Remote scanning</a> in radiology (Universitätsklinikum Essen), 07.06.2019. <a class="ext" href="https://www.siemens-healthineers.com/de-ch/news/mso-remote-scanning-in-radiology.html">Link</a> <span class="fl pre">vor 2022</span> <span class="fl old">P</span></li>
+<li id="r116" data-year="2023">Siemens Healthineers, syngo Virtual Cockpit Produktflyer (2019); Fraser Health (Royal Columbian Hospital), 08/2023. <a class="ext" href="https://www.fraserhealth.ca/news/2023/Aug/new-software-allows-technologists-remote-access-into-ct-scanners">Link</a> <span class="fl old">P</span></li>
+<li id="r117" data-year="2025">Philips Deutschland / Med 360°. <a class="gl" href="#g-remote">Remote Scanning</a> mit dem Radiology Operations Command Center, Pressemitteilung 09.04.2025. <a class="ext" href="https://www.philips.de/about/news-and-insights/press-release/philips-bringt-mit-der-med-360-remote-scanning-erfolgreich-in-die-radiologie">Link</a> <span class="fl old">P</span></li>
+<li id="r118" data-year="2026">RAD Magazine. GE HealthCare collaborates to help scale remote MRI scanning (Starvision), Feb./März 2026. <a class="ext" href="https://www.radmagazine.com/ge-healthcare-collaborates-to-help-scale-remote-mri-scanning/">Link</a> <span class="fl old">P</span></li>
+<li id="r119" data-year="2026">Walker CM, Maldonado MG, Jacobsen MC, et al. Initial experience with remote MRI scanning support in an oncology focused practice. <i>J Appl Clin Med Phys</i> 2026. <a class="ext" href="https://doi.org/10.1002/acm2.70461">doi:10.1002/acm2.70461</a></li>
+<li id="r120" data-year="2022">Hudson D, Sahibbil JP. <a class="gl" href="#g-remote">Remote scanning</a> support in magnetic resonance imaging: friend or foe? <i>Radiography</i> 2022. <a class="ext" href="https://doi.org/10.1016/j.radi.2022.03.010">doi:10.1016/j.radi.2022.03.010</a></li>
+<li id="r121" data-year="2026">Konstantinidis K, Katsas I, Apostolakis I, Dimoulas E. Exploring the acceptance of remote MR scanning technology among radiographers. <i>Indian J Radiol Imaging</i> 2026. <a class="ext" href="https://doi.org/10.1055/s-0045-1810625">doi:10.1055/s-0045-1810625</a></li>
+<li id="r122" data-year="2023">Quinsten AS, Apel M, Oliveira S. Remote MR scanning – a solution for shortage of skilled radiographers. <i>J Med Imaging Radiat Sci</i> 2023. <a class="ext" href="https://doi.org/10.1016/j.jmir.2023.05.046">doi:10.1016/j.jmir.2023.05.046</a> <span class="fl unv">Inhalt nicht geprüft</span></li>
+<li id="r123" data-year="2024">Kanal E. Divided liability remote MR scanning. <i>J Magn Reson Imaging</i> 2024. <a class="ext" href="https://doi.org/10.1002/jmri.28715">doi:10.1002/jmri.28715</a> <span class="fl unv">Inhalt nicht geprüft</span></li>
+<li id="r124" data-year="2024">Deistung A, Gussew A, Schneider J, Beblacz A, Pech M, Wohlgemuth WA. Remote operation of cross-sectional imaging devices as a new form of teleoperation: structural, technical, regulatory, and qualification aspects in Germany. <i>RöFo</i> 2024;196:928–938. <a class="ext" href="https://doi.org/10.1055/a-2232-2907">doi:10.1055/a-2232-2907</a></li>
+<li id="r125" data-year="2022">DVTA e.V. (Rössing C, Oertel C, Josten B). Stellungnahme zum Konzept „Tele-MTRA“, 13.03.2022. <a class="ext" href="https://dvta.de/sites/default/files/Stellungnahme%20DVTA%20e.V.%20Tele-MTRA_final_0.pdf">Link</a> Verbandsstellungnahme</li>
+<li id="r126" data-year="o. J.">Strahlenschutzgesetz (<a class="gl" href="#g-strlschg">StrlSchG</a>) § 14 (<a class="gl" href="#g-telerad">Teleradiologie</a>), §§ 31, 32 (Forschung), § 83 (<a class="gl" href="#g-rechtf">rechtfertigende Indikation</a>), Wortlaut abgerufen 07.11.2026. <a class="ext" href="https://www.gesetze-im-internet.de/strlschg/__14.html">§ 14</a> · <a class="ext" href="https://www.gesetze-im-internet.de/strlschg/__31.html">§ 31</a> · <a class="ext" href="https://www.gesetze-im-internet.de/strlschg/__83.html">§ 83</a>; § 31c nur über Suchzusammenfassung.</li>
+<li id="r127" data-year="2023">MT-Berufe-Gesetz (<a class="gl" href="#g-mtbg">MTBG</a>, in Kraft seit 01.01.2023) §§ 1, 5, 6, 13, Wortlaut abgerufen 07.11.2026. <a class="ext" href="https://www.gesetze-im-internet.de/mtbg/__5.html">§ 5</a> · <a class="ext" href="https://www.gesetze-im-internet.de/mtbg/__6.html">§ 6</a> · <a class="ext" href="https://www.gesetze-im-internet.de/mtbg/__13.html">§ 13</a></li>
+<li id="r128" data-year="2025">Bundesagentur für Arbeit. Fachkräfteengpassanalyse 2024 (Mai 2025). <a class="ext" href="https://www.arbeitsagentur.de/presse/2025-25-qualifizierte-fachkraefte-weiterhin-gesucht">Link</a> <span class="fl unv">MTR-Eintrag nicht gefunden</span></li>
+<li id="r129" data-year="2020">Littlejohns TJ, Holliday J, Gibson LM, et al. The <a class="gl" href="#g-ukb">UK Biobank</a> imaging enhancement of 100,000 participants: rationale, data collection, management and future directions. <i>Nat Commun</i> 2020. <a class="ext" href="https://doi.org/10.1038/s41467-020-15948-9">doi:10.1038/s41467-020-15948-9</a> <span class="fl pre">vor 2022</span></li>
+<li id="r130" data-year="2016">Miller KL, Alfaro-Almagro F, Bangerter NK, et al. Multimodal population brain imaging in the <a class="gl" href="#g-ukb">UK Biobank</a> prospective epidemiological study. <i>Nat Neurosci</i> 2016. <a class="ext" href="https://doi.org/10.1038/nn.4393">doi:10.1038/nn.4393</a> <span class="fl pre">vor 2022</span></li>
+<li id="r131" data-year="2018">Alfaro-Almagro F, Jenkinson M, Bangerter NK, et al. Image processing and quality control for the first 10,000 brain imaging datasets from <a class="gl" href="#g-ukb">UK Biobank</a>. <i>NeuroImage</i> 2018;166:400–424. <a class="ext" href="https://doi.org/10.1016/j.neuroimage.2017.10.034">doi:10.1016/j.neuroimage.2017.10.034</a> <span class="fl pre">vor 2022</span></li>
+<li id="r132" data-year="2018">Gibson LM, Paul L, Chappell FM, et al. Potentially serious incidental findings on brain and body magnetic resonance imaging of apparently asymptomatic adults: systematic review and meta-analysis. <i>BMJ</i> 2018;363:k4577. <a class="ext" href="https://doi.org/10.1136/bmj.k4577">doi:10.1136/bmj.k4577</a> <span class="fl pre">vor 2022</span></li>
+<li id="r133" data-year="2018">Gibson LM, Littlejohns TJ, Adamska L, et al. Impact of detecting potentially serious incidental findings during multi-modal imaging. <i>Wellcome Open Res</i> 2017/2018. <a class="ext" href="https://doi.org/10.12688/wellcomeopenres.13181.3">doi:10.12688/wellcomeopenres.13181.3</a> <span class="fl pre">vor 2022</span></li>
+<li id="r134" data-year="2024">Bamberg F, et al. MRT-Basisuntersuchung in der <a class="gl" href="#g-nako">NAKO</a> Gesundheitsstudie. <i>Dtsch Ärztebl</i> 2024. <a class="ext" href="https://doi.org/10.3238/arztebl.m2024.0151">doi:10.3238/arztebl.m2024.0151</a> <span class="fl unv">Autoren nur über NAKO-Seite bestätigt</span></li>
+<li id="r135" data-year="2023">Billot B, Greve DN, Puonti O, et al., Iglesias JE. <a class="gl" href="#g-synthseg">SynthSeg</a>: segmentation of brain MRI scans of any contrast and resolution without retraining. <i>Med Image Anal</i> 2023. <a class="ext" href="https://doi.org/10.1016/j.media.2023.102789">doi:10.1016/j.media.2023.102789</a></li>
+<li id="r136" data-year="2023">Billot B, Magdamo C, Cheng Y, Arnold SE, Das S, Iglesias JE. Robust machine learning segmentation for large-scale analysis of heterogeneous clinical brain MRI datasets. <i>PNAS</i> 2023. <a class="ext" href="https://doi.org/10.1073/pnas.2216399120">doi:10.1073/pnas.2216399120</a></li>
+<li id="r137" data-year="2023">Iglesias JE, Schleicher R, Laguna S, Billot B, et al. Quantitative brain morphometry of portable low-field-strength MRI using super-resolution machine learning. <i>Radiology</i> 2023. <a class="ext" href="https://doi.org/10.1148/radiol.220522">doi:10.1148/radiol.220522</a>; SynthSR (Iglesias 2023) <span class="fl unv">Zeitschrift nicht bestätigt</span></li>
+<li id="r138" data-year="2026">Biondo F, Bennallick C, Martin SA, Puglisi L, Booth TC, Wood DA, Iglesias JE, Váša F, Cole JH. Brain-age in ultra-low-field MRI: how well does it work? <i>Imaging Neurosci</i> 2026. <a class="ext" href="https://doi.org/10.1162/imag.a.1352">doi:10.1162/imag.a.1352</a>; Preprint medRxiv 2025.</li>
+<li id="r139" data-year="2026">Tak D, Garomsa BA, Zapaishchykova A, et al. A generalizable <a class="gl" href="#g-fm">foundation model</a> for analysis of human brain MRI (BrainIAC). <i>Nat Neurosci</i> 2026. <a class="ext" href="https://doi.org/10.1038/s41593-026-02202-6">doi:10.1038/s41593-026-02202-6</a></li>
+<li id="r140" data-year="2022">Park J, MacLean MT, Lucas AM, et al. Exome-wide association analysis of <a class="gl" href="#g-ct">CT</a> imaging-derived hepatic fat in a medical biobank. <i>Cell Rep Med</i> 2022. <a class="ext" href="https://doi.org/10.1016/j.xcrm.2022.100855">doi:10.1016/j.xcrm.2022.100855</a></li>
+<li id="r141" data-year="2023">Arnold TC, Freeman CW, Litt B, Stein JM. Low-field MRI: clinical promise and challenges. <i>J Magn Reson Imaging</i> 2023, <a class="ext" href="https://doi.org/10.1002/jmri.28408">doi:10.1002/jmri.28408</a>; Kimberly WT, Sorby-Adams AJ, Webb AG, et al. Brain imaging with portable low-field MRI. <i>Nat Rev Bioeng</i> 2023, <a class="ext" href="https://doi.org/10.1038/s44222-023-00086-w">doi:10.1038/s44222-023-00086-w</a>.</li>
+<li id="r142" data-year="2006">Automatische vs. manuelle Hirn-Schichtplanung. <i>Radiology</i> 2006. <a class="ext" href="https://pubs.rsna.org/doi/10.1148/radiol.2391050221">Link</a>; Canon Auto Planning (Herstellerangabe). <span class="fl pre">vor 2022</span> <span class="fl unv">Autoren nicht erfasst</span></li>
+<li id="r143" data-year="2024">Eyre K, Rafiee MJ, Leo M, et al. Clinical utility of a rapid two-dimensional balanced steady-state free precession sequence with deep learning reconstruction. <i>J Cardiovasc Magn Reson</i> 2024. <a class="ext" href="https://doi.org/10.1016/j.jocmr.2024.101069">doi:10.1016/j.jocmr.2024.101069</a></li>
+<li id="r144" data-year="o. J.">MR-Sicherheitsbeauftragte/r: ISMRM, Recommended responsibilities, <a class="ext" href="https://www.ismrm.org/smrt/safety_page/Calamante_recommended_responsibilities.pdf">Link</a>; EFOMP-Positionspapier „MRI safety and the medical physicist’s role“ <span class="fl unv">nur über Meldung geprüft</span></li>
+</ol>
+<p class="cap">Nur erwähnt, nicht live gegengeprüft und daher nicht nummeriert: Argentieri et al., <i>Nat Med</i> 2024 (proteomische Uhr); Waziry et al., <i>Nature Aging</i> 2023 (CALERIE, DunedinPACE).</p>
+
+<h3 id="s10-1">Aktualität der Quellen</h3>
+<p>Von 144 nummerierten Quellen stammen <b>106 (74 %) aus 2022–2026</b>, 30 (21 %) sind ältere Grundlagenarbeiten (markiert: Methodik, Genotyp-Effekte, Landmark-GWAS, UK-Biobank-Protokolle) und 8 sind undatierte Web-, Gesetzes- oder Institutionsseiten. Allein aus 2025 und 2026 kommen 41 Quellen. Bei Quellen mit mehreren Jahren zählt das maßgebliche Jahr (z. B. Update 2022 bei [47]).</p>
+<div class="yearbars" aria-label="Quellen pro Jahr">2026  █████████████████ 17
+2025  ████████████████████████ 24
+2024  █████████████████████████ 25
+2023  ████████████████████████ 24
+2022  ████████████████ 16
+2021  ████ 4
+2020  ███████ 7
+2019  ███ 3
+2018  ██████ 6
+2017  ██ 2
+2016  █ 1
+2014  █ 1
+2013  ███ 3
+2010  █ 1
+2008  █ 1
+2006  █ 1
+o. J. ████████ 8</div>
+
+<footer>
+  cobrä cb1.IX · Bildgebung als Phänotyp-Motor · Stand 07.11.2026 · Äste: cb2.IX.1 (Sonnet), cb3.IX.2 (Opus), cb4.IX.3 (Opus), cb5.IX.4 (Sonnet), cb6.IX.5 (Sonnet); Redaktion und Synthese: Opus. Eigene Daten: DKG-Krankenhausverzeichnis, 2.204 Standorte. Kein medizinischer Rat, keine Rechtsberatung.
+</footer>
+</div>
+<script>
+(function () {
+  var ids = ["c-sd", "c-d", "c-pw", "c-ds", "c-do"];
+  function val(id) { return parseFloat(document.getElementById(id).value); }
+  function fmt(n) { return Math.ceil(n).toLocaleString("de-DE"); }
+  function run() {
+    var sd = val("c-sd"), d = val("c-d"), zb = val("c-pw"), cells = val("c-ds"), dr = val("c-do");
+    var out = document.getElementById("c-out");
+    if (!(sd > 0) || !(d > 0)) { out.textContent = "Bitte σ und Δ größer als 0 eingeben."; return; }
+    var z = 1.959964 + zb;
+    var perArm = 2 * z * z * sd * sd / (d * d);
+    var total = perArm * cells;
+    var withDrop = total / (1 - dr);
+    out.textContent = (cells === 4 ? "pro Zelle: " : "pro Arm: ") + fmt(perArm) +
+      " · gesamt: " + fmt(total) + " · mit " + Math.round(dr * 100) + " % Ausfällen: " + fmt(withDrop) +
+      " Teilnehmende (je ≥ 2 standardisierte Scans)";
+  }
+  ids.forEach(function (id) { var el = document.getElementById(id); el.addEventListener("input", run); el.addEventListener("change", run); });
+  run();
+})();
+</script>
+</body>
+</html>
